@@ -100,16 +100,16 @@ export const Tasks = ({ listId }: TasksProps) => {
     };
 
     return (
-        <div className="space-y-4">
+        <div className="tasks space-y-4">
             <div>
                 <ul className="space-y-2">
                     {tasks.map((task) => (
-                        <li key={task.id} className="flex items-center gap-2">
+                        <li key={task.id} className="task-item">
                             <strong className="flex-grow">{task.description} - {formatTimeLeft(task.due_date)}</strong>
-                            <button onClick={() => handleEdit(task.id)} className="text-sm hover:text-neon transition-colors">edit</button>
-                            <button onClick={() => handleTaskComplete(task.id)} className="text-sm hover:text-neon transition-colors">complete</button>
-                            <button onClick={() => {/*duplicate logic */ }} className="text-sm hover:text-neon transition-colors">duplicate</button>
-                            <button onClick={() => handleDelete(task.id)} className="text-sm hover:text-red-400 transition-colors">delete</button>
+                            <button onClick={() => handleEdit(task.id)}>edit</button>
+                            <button onClick={() => handleTaskComplete(task.id)}>complete</button>
+                            <button onClick={() => {/*duplicate logic */ }}>duplicate</button>
+                            <button onClick={() => handleDelete(task.id)} className="delete">delete</button>
                         </li>
                     ))}
                 </ul>
@@ -120,14 +120,14 @@ export const Tasks = ({ listId }: TasksProps) => {
                     placeholder="Description"
                     value={newDescription}
                     onChange={(e) => setNewDescription(e.target.value)}
-                    className="flex-grow px-2 py-1 rounded bg-gray-700 text-gray-100"
+                    className="input"
                 />
                 <input
                     type="datetime-local"
                     onChange={(e) => setNewDueDate(new Date(e.target.value))}
-                    className="px-2 py-1 rounded bg-gray-700 text-gray-100"
+                    className="input"
                 />
-                <button onClick={handleCreate} className="px-3 py-1 rounded bg-neon text-black hover:opacity-80 transition">Add Task</button>
+                <button onClick={handleCreate} className="btn">Add Task</button>
             </div>
             <div>
                 a textbox to add a new task description,
@@ -137,3 +137,4 @@ export const Tasks = ({ listId }: TasksProps) => {
         </div>
     )
 }
+

@@ -87,13 +87,13 @@ export const Lists = ({ onSelectList }: ListsProps) => {
 
 
     return (
-        <div className="space-y-4 p-4 bg-gray-800/50 rounded-lg shadow-md backdrop-blur-md">
-            <h2 className="text-xl font-semibold"> My Lists</h2>
-            <ul className="list-none space-y-2">
+        <div className="list-container space-y-4">
+            <h2> My Lists</h2>
+            <ul>
                 {lists.map((list) => (
-                    <li key={list.id} className={`flex items-center justify-between ${list.id === selectedListId ? 'font-bold text-neon' : ''}`}>
+                    <li key={list.id} className={` ${list.id === selectedListId ? 'font-bold' : ''}`}>
                         <span onClick={() => handleSelect(list.id)} className="cursor-pointer">{list.name}</span>
-                        <button onClick={() => handleDelete(list.id)} className="hover:text-red-400 transition-colors">🗑</button>
+                        <button onClick={() => handleDelete(list.id)} className="delete">🗑</button>
                     </li>
                 ))}
             </ul>
@@ -104,9 +104,9 @@ export const Lists = ({ onSelectList }: ListsProps) => {
                     value={newListName}
                     onChange={(e) => setNewListName(e.target.value)}
                     placeholder="New list name"
-                    className="flex-grow px-2 py-1 rounded bg-gray-700 text-gray-100"
+                    className="input"
                 />
-                <button onClick={handleCreate} className="px-3 py-1 rounded bg-neon text-black hover:opacity-80 transition">+</button>
+                <button onClick={handleCreate} className="btn">+</button>
             </div>
 
             {selectedListId && (
@@ -116,10 +116,10 @@ export const Lists = ({ onSelectList }: ListsProps) => {
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
                         placeholder="edit list name"
-                        className="flex-grow px-2 py-1 rounded bg-gray-700 text-gray-100"
+                        className="input"
                     />
 
-                    <button onClick={handleEdit} className="px-3 py-1 rounded bg-neon text-black hover:opacity-80 transition">Update</button>
+                    <button onClick={handleEdit} className="btn">Update</button>
 
                 </div>
 
@@ -138,3 +138,4 @@ export const Lists = ({ onSelectList }: ListsProps) => {
         </div>
     )
 }
+
