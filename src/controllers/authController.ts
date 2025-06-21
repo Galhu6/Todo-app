@@ -1,3 +1,4 @@
+import { verifyGoogleToken } from "../components/Auth/GoogleLogin/googleVerify";
 import { loginUser, registerUser } from "../services/Auth/authService";
 import type { Request, Response, RequestHandler } from "express";
 
@@ -42,3 +43,14 @@ export const signIn: RequestHandler = async (req: Request, res: Response) => {
     }
 
 }
+
+export const googleLogin: RequestHandler = async (req: Request, res: Response) => {
+    try {
+        const { token } = req.body;
+        const userData = await verifyGoogleToken(token);
+
+        res.json({ success: true, user: userData });
+    } catch (error) {
+        res.status(401).json({ success: false, message: "Invalid token" });
+    }
+};
