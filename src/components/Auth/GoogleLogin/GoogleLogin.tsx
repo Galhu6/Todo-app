@@ -1,6 +1,6 @@
-import { GoogleLogin } from "@react-oauth/google"
+import { GoogleLogin as GoogleLoginComponent } from "@react-oauth/google"
 
-export const GoogleLogin = () => {
+export const GoogleLoginButton = () => {
     const handleLogin = async (credentialResponse: any) => {
         const token = credentialResponse.credential;
         const res = await fetch("http://localhost:3000/auth/google", {
@@ -17,7 +17,7 @@ export const GoogleLogin = () => {
     return (
         <div>
             <h2>Login with Google</h2>
-            <GoogleLogin
+            <GoogleLoginComponent
                 onSuccess={handleLogin}
                 onError={() => console.log("Login failed")}
             />
