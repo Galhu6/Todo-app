@@ -33,24 +33,25 @@ export const Navbar = () => {
     }, [])
 
     return (
-        <nav className={`sticky top-0 z-50 flex justify-between items-center px-6 py-4 transition-all ${scrolled ? 'bg-gray-900/80 backdrop-blur-md shadow-lg' : 'bg-gray-900/50'}`}>
-            <div className="flex items-center">
-                <a href="#home" className="text-2xl font-bold text-neon">Todo.io</a>
+        <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+            <div className="logo">
+                <a href="#home">Todo.io</a>
             </div>
 
-            <div className="hidden md:flex gap-4 text-sm">
-                <a href="#about" className="hover:text-neon transition-colors">about</a>
-                <a href="#programming" className="hover:text-neon transition-colors">programming</a>
-                <a href="#contact" className="hover:text-neon transition-colors">contact us</a>
+            <div className="nav-links">
+                <a href="#about">about</a>
+                <a href="#programming">programming</a>
+                <a href="#contact">contact us</a>
             </div>
 
             <div className="flex items-center">
                 {isLoggedIn ? (
-                    <a href="/dashboard" className="hover:text-neon transition-colors"> Hello {userName}, to Dashboard </a>
+                    <a href="/dashboard"> Hello {userName}, to Dashboard </a>
                 ) : (
-                    <a href="/auth" className="hover:text-neon transition-colors">Login / Sign-Up</a>
+                    <a href="/auth">Login / Sign-Up</a>
                 )}
             </div>
         </nav>
     )
 }
+

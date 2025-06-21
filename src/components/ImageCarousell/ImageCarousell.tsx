@@ -20,13 +20,14 @@ export const ImageCarousell = () => {
     const visibleImgIndex = imgArr.length > 0 ? counter % imgArr.length : 0;
 
     return (
-        <div className="w-full h-72 overflow-hidden rounded-xl shadow-lg" id="Image-carousell">
+        <div className="carousel" id="Image-carousell">
             {imgArr.length > 0 && (
                 <img
                     src={imgArr[visibleImgIndex]}
                     alt={`Image ${visibleImgIndex + 1}`}
-                    className="w-full h-full object-cover animate-fade" />
+                    className="carousel-img" />
             )}
 
         </div>)
 }
+
