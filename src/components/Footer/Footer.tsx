@@ -3,15 +3,14 @@ import { useState, useEffect } from "react";
 import { LogoGrid } from "../LogoGrid/LogoGrid";
 export const Footer = () => {
     const [isScrollOverLimit, setIScrollOverLimit] = useState(false);
+
     useEffect(() => {
         const handleScroll = () => {
-            if (window.scrollY > 800) {
-                setIScrollOverLimit(true);
-            } else {
-                setIScrollOverLimit(false)
-            }
+            const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+            setIScrollOverLimit(nearBottom);
         };
 
+        handleScroll();
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
