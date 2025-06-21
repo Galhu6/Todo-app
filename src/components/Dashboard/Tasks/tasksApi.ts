@@ -1,0 +1,53 @@
+
+export const allTasks = async (listId: number) => await fetch(`/api/lists/${listId}/tasks/`, {
+    method: "GET",
+    headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+}).then(res => res.json()).then(data => data.task);
+
+export const selectedTask = async (listId: number, taskId: number) => await fetch(`/api/lists/${listId}/tasks/${taskId}`, {
+    method: 'GET',
+    headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+}).then(res => res.json()).then(data => data.task);
+
+
+export const createTask = async (listId: number, task: { description: string, dueDate: Date }) => await fetch(`/api/lists/${listId}/tasks/new-task`, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+    },
+    body: JSON.stringify(task)
+
+}).then(res => res.json()).then(data => data.task)
+
+export const editTask = async (listId: number, taskId: number, updates: { newDescription?: string, newDueDate?: Date | null }) => await fetch(`/api/lists/${listId}/tasks/${taskId}`, {
+    method: "PATCH",
+    headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+    },
+    body: JSON.stringify(updates)
+
+}).then(res => res.json()).then(data => data.task)
+
+export const deleteTask = async (listId: number, taskId: number) => await fetch(`/api/lists/${listId}/tasks/${taskId}`, {
+    method: "DELETE",
+    headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+});
+
+export const completeTask = async (listId: number, taskId: number) => await fetch(`/api/lists/${listId}/tasks/${taskId}/complete`, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+
+    }
+}).then(res => res.json()).then(data => data.task)

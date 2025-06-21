@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
-import {
-    editList,
-    createList,
-    deleteList,
-    getAllLists,
-    getList
-}
-    from "../../../services/Lists/listService";
+import { createList, editList, deleteList, selectedList, allLists } from "./listsApi";
 import "./Lists.css"
+import { Tasks } from "../Tasks/Tasks";
 
 export type List = {
     id: number;
@@ -21,30 +15,33 @@ export type List = {
 
 type ListsProps = {
     onSelectList: (id: number) => void;
-}
+};
+
 export const Lists = ({ onSelectList }: ListsProps) => {
     const [lists, setLists] = useState<List[]>([]);
     const [selectedListId, setSelectedListId] = useState<number | null>(null);
     const [newListName, setNewListName] = useState("");
     const [editName, setEditName] = useState("");
-    const [isDeleted, setIsDeleted] = useState<List["isdeleted"]>();
-    const [newList, setNewList] = useState<List>();
-    const [listGridMode, setListGridMode] = useState(0);
+    const [selectedListDetails, setSelectedListDetails] = useState<List | null>(null)
 
+
+    // const [isDeleted, setIsDeleted] = useState<List["isdeleted"]>();
+    // const [newList, setNewList] = useState<List>();
+    // const [listGridMode, setListGridMode] = useState(0);
+
+
+    // fetch all lists once on mount
     useEffect(() => {
-        const fetchLists = async () => {
-            try {
-                const userId = Number(localStorage.getItem("user_id"));
-                const allLists = await getAllLists(userId);
-                setLists(allLists);
-            } catch (error) {
-                console.error("Error fetching lists:", error);
-
-            }
+        const fetchAllLists = async () => {
+            const fetchedLists = await allLists();
+            setLists(fetchedLists)
         };
 
-        fetchLists();
+        fetchAllLists();
+
     }, []);
+
+    // automatically select the first list if non is selected
     useEffect(() => {
         if (!selectedListId && lists.length > 0) {
             const firstId = lists[0].id;
@@ -53,37 +50,36 @@ export const Lists = ({ onSelectList }: ListsProps) => {
         }
     }, [lists]);
 
+
+
     const handleSelect = async (listId: number) => {
-        const userId = Number(localStorage.getItem("user_id"));
         setSelectedListId(listId);
+        setEditName("");
         onSelectList(listId);
-        getList(listId, userId)
+        const list = await selectedList(listId);
+        setSelectedListDetails(list)
 
-
-    }
+    };
 
     const handleEdit = async () => {
         if (!selectedListId || !editName.trim()) return;
-        const userId = Number(localStorage.getItem("user_id"));
-        const updated = await editList(selectedListId, userId, editName);
+        const updated = await editList(selectedListId, editName)
         setLists(lists.map(list => list.id === selectedListId ? updated : list));
-        setSelectedListId(null);
+        setSelectedListDetails(updated);
         setEditName("");
 
 
     };
 
     const handleDelete = async (listId: number) => {
-        const userId = Number(localStorage.getItem("user_id"));
-        await deleteList(listId, userId);
+        await deleteList(listId);
         setLists(lists.filter(list => list.id !== listId));
 
     };
 
     const handleCreate = async () => {
-        const userId = Number(localStorage.getItem("user_id"));
         if (!newListName.trim()) return;
-        const created = await createList(newListName, userId)
+        const created = await createList(newListName);
         setLists([...lists, created]);
         setNewListName("");
     };
@@ -102,7 +98,7 @@ export const Lists = ({ onSelectList }: ListsProps) => {
                 ))}
             </ul>
 
-            <div className="craete-list">
+            <div className="create-list">
                 <input
                     type="text"
                     value={newListName}
@@ -123,6 +119,18 @@ export const Lists = ({ onSelectList }: ListsProps) => {
 
                     <button onClick={handleEdit}>Update</button>
 
+                </div>
+
+            )}
+
+            {lists.length === 0 && (
+                <h3>create a new list to add tasks!</h3>
+            )}
+
+            {lists.length > 0 && selectedListId && (
+                <div className="openList">
+                    <h2>{selectedListDetails?.name}</h2>
+                    <Tasks listId={selectedListId!} />
                 </div>
             )}
         </div>

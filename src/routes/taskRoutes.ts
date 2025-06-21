@@ -13,7 +13,7 @@ const router = Router();
 
 router.use(authMiddleware);
 
-router.get("/lists/:listId/tasks", getTasksController);
+router.get("/lists/:listId/tasks/", getTasksController);
 router.post("/lists/:listId/new-task", createTaskController);
 router.patch("/lists/:listId/tasks/:taskId", verifyTaskOwnership, editTaskController);
 router.post("/lists/:listId/tasks/:taskId/complete", verifyTaskOwnership, completeTaskController);
