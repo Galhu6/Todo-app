@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./LogoGrid.css"
+
 
 export const LogoGrid = () => {
     const [counter, setCounter] = useState(0)

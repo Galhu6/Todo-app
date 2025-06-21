@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./ImageCarousell.css"
+
 // import image arr
 
 export const ImageCarousell = () => {
@@ -20,12 +20,12 @@ export const ImageCarousell = () => {
     const visibleImgIndex = imgArr.length > 0 ? counter % imgArr.length : 0;
 
     return (
-        <div className="Image-carousell" id="Image-carousell">
+        <div className="w-full h-72 overflow-hidden rounded-xl shadow-lg" id="Image-carousell">
             {imgArr.length > 0 && (
-                <img src={
-                    imgArr[visibleImgIndex]}
+                <img
+                    src={imgArr[visibleImgIndex]}
                     alt={`Image ${visibleImgIndex + 1}`}
-                    className="logo-img" />
+                    className="w-full h-full object-cover animate-fade" />
             )}
 
         </div>)
