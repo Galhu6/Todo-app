@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createList, editList, deleteList, selectedList, allLists } from "./listsApi";
-import "./Lists.css"
+
 import { Tasks } from "../Tasks/Tasks";
 
 export type List = {
@@ -87,49 +87,51 @@ export const Lists = ({ onSelectList }: ListsProps) => {
 
 
     return (
-        <div className="lists-container">
-            <h2> My Lists</h2>
-            <ul>
+        <div className="space-y-4 p-4 bg-gray-800/50 rounded-lg shadow-md backdrop-blur-md">
+            <h2 className="text-xl font-semibold"> My Lists</h2>
+            <ul className="list-none space-y-2">
                 {lists.map((list) => (
-                    <li key={list.id} className={list.id === selectedListId ? "selected" : ""}>
-                        <span onClick={() => handleSelect(list.id)}>{list.name}</span>
-                        <button onClick={() => handleDelete(list.id)}>🗑</button>
+                    <li key={list.id} className={`flex items-center justify-between ${list.id === selectedListId ? 'font-bold text-neon' : ''}`}>
+                        <span onClick={() => handleSelect(list.id)} className="cursor-pointer">{list.name}</span>
+                        <button onClick={() => handleDelete(list.id)} className="hover:text-red-400 transition-colors">🗑</button>
                     </li>
                 ))}
             </ul>
 
-            <div className="create-list">
+            <div className="flex gap-2">
                 <input
                     type="text"
                     value={newListName}
                     onChange={(e) => setNewListName(e.target.value)}
                     placeholder="New list name"
+                    className="flex-grow px-2 py-1 rounded bg-gray-700 text-gray-100"
                 />
-                <button onClick={handleCreate}>+</button>
+                <button onClick={handleCreate} className="px-3 py-1 rounded bg-neon text-black hover:opacity-80 transition">+</button>
             </div>
 
             {selectedListId && (
-                <div className="edit-list">
+                <div className="flex gap-2 mt-2">
                     <input
                         type="text"
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
                         placeholder="edit list name"
+                        className="flex-grow px-2 py-1 rounded bg-gray-700 text-gray-100"
                     />
 
-                    <button onClick={handleEdit}>Update</button>
+                    <button onClick={handleEdit} className="px-3 py-1 rounded bg-neon text-black hover:opacity-80 transition">Update</button>
 
                 </div>
 
             )}
 
             {lists.length === 0 && (
-                <h3>create a new list to add tasks!</h3>
+                <h3 className="text-center">create a new list to add tasks!</h3>
             )}
 
             {lists.length > 0 && selectedListId && (
-                <div className="openList">
-                    <h2>{selectedListDetails?.name}</h2>
+                <div className="mt-4">
+                    <h2 className="text-lg font-semibold mb-2">{selectedListDetails?.name}</h2>
                     <Tasks listId={selectedListId!} />
                 </div>
             )}
