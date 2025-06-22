@@ -3,7 +3,7 @@ import { pool } from "../db";
 
 export const verifyTaskOwnership: RequestHandler = async (req, res, next) => {
     const userId = (req as any).user?.id;
-    const taskId = parseInt(req.params.task);
+    const taskId = parseInt(req.params.taskId);
 
     if (!userId || isNaN(taskId)) {
         res.status(400).json({ success: false, error: "Missing user or task id" });

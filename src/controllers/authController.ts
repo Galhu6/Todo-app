@@ -7,7 +7,7 @@ export const signUp: RequestHandler = async (req: Request, res: Response) => {
 
     const { email, password, name } = req.body;
 
-    if (!email || !password || !name) res.status(400).json({ error: "name/email/password missing" });
+    if (!email || !password || !name) { res.status(400).json({ error: "name/email/password missing" }); return; };
 
 
     try {
@@ -30,6 +30,7 @@ export const signIn: RequestHandler = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     if (!email || !password) {
         res.status(400).json({ success: false, error: "missing email/password" });
+        return;
 
     }
     try {

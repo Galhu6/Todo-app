@@ -5,6 +5,6 @@ const router = Router();
 
 router.post("/login", signIn);
 router.post("/signup", signUp);
-router.post("/google-login", googleLogin);
+router.post("/google", googleLogin);
 
 export default router;

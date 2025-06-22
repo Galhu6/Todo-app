@@ -102,7 +102,7 @@ export const AuthSignup = () => {
                     value={signupEmail}
                     onChange={(e) => setSignupEmail(e.target.value)}
                 />
-                <p style={{ color: !handleEmail() ? 'green' : 'red' }}>
+                <p style={{ color: handleEmail() ? 'green' : 'red' }}>
                     Email must be in right format
                 </p>
                 <p style={{ color: isEmailAvailable ? "green" : "red" }}>

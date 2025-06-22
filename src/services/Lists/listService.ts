@@ -26,7 +26,7 @@ export async function deleteList(listId: number, userId: number) {
         UPDATE Lists SET isDeleted = TRUE WHERE user_id = $1 AND id = $2 RETURNING *;
         `, [userId, listId]
     );
-    result.rows[0];
+    return result.rows[0];
 };
 
 export async function getList(listId: number, userId: number) {
