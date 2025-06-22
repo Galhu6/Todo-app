@@ -21,26 +21,33 @@ export const AuthLogin = () => {
 
     return (
         <>
-            {toggleSignUp ? (<AuthSignup />
-
+            {toggleSignUp ? (
+                <AuthSignup />
             ) : (
-                <div className="Auth">
+                <div className="flex flex-col gap-4 max-w-sm mx-auto">
                     <AuthLoginForm />
-
-                    <div className="break-and-to-sign">
-                        <hr />
-                        <p>Don't have an account? <a onClick={(e) => { e.preventDefault(); handleToggle(); }} style={{ cursor: "pointer" }}>Sign up!</a></p>
-
+                    <div className="flex flex-col items-center gap-2 text-sm">
+                        <hr className="w-full border-t border-indigo-600" />
+                        <p>
+                            Don't have an account?{' '}
+                            <a
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleToggle();
+                                }}
+                                className="cursor-pointer text-indigo-400 hover:underline"
+                            >
+                                Sign up!
+                            </a>
+                        </p>
                     </div>
                 </div>
             )}
-            <hr />
+            <hr className="my-4" />
 
-            <div className="google-sign-in">
+            <div className="text-center">
                 <GoogleLoginButton />
-
             </div>
-
         </>
 
 
