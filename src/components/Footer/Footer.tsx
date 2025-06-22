@@ -6,7 +6,7 @@ export const Footer = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+            const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight;
             setIScrollOverLimit(nearBottom);
         };
 
@@ -16,7 +16,7 @@ export const Footer = () => {
     }, []);
 
     return (
-        <> 
+        <>
             <div className={`footer ${isScrollOverLimit ? 'visible' : 'hidden'}`}>
                 <div>
                     <ul className="space-y-2">
