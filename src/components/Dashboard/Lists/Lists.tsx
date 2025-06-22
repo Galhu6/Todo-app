@@ -87,13 +87,20 @@ export const Lists = ({ onSelectList }: ListsProps) => {
 
 
     return (
-        <div className="list-container space-y-4">
-            <h2> My Lists</h2>
-            <ul>
+        <div className="space-y-4 rounded bg-gray-800/50 p-4 shadow-lg max-w-md w-full">
+            <h2 className="text-lg font-semibold">My Lists</h2>
+            <ul className="space-y-2">
                 {lists.map((list) => (
-                    <li key={list.id} className={` ${list.id === selectedListId ? 'font-bold' : ''}`}>
-                        <span onClick={() => handleSelect(list.id)} className="cursor-pointer">{list.name}</span>
-                        <button onClick={() => handleDelete(list.id)} className="delete">🗑</button>
+                    <li
+                        key={list.id}
+                        className={`flex justify-between items-center rounded px-2 py-1 transition hover:bg-gray-700/50 ${list.id === selectedListId ? 'font-bold' : ''}`}
+                    >
+                        <span onClick={() => handleSelect(list.id)} className="cursor-pointer flex-grow">
+                            {list.name}
+                        </span>
+                        <button onClick={() => handleDelete(list.id)} className="text-sm hover:text-indigo-400">
+                            🗑
+                        </button>
                     </li>
                 ))}
             </ul>
@@ -104,38 +111,46 @@ export const Lists = ({ onSelectList }: ListsProps) => {
                     value={newListName}
                     onChange={(e) => setNewListName(e.target.value)}
                     placeholder="New list name"
-                    className="input"
+                    className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
                 />
-                <button onClick={handleCreate} className="btn">+</button>
+                <button
+                    onClick={handleCreate}
+                    className="rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
+                >
+                    +
+                </button>
             </div>
 
             {selectedListId && (
-                <div className="flex gap-2 mt-2">
+                <div className="mt-2 flex gap-2">
                     <input
                         type="text"
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
                         placeholder="edit list name"
-                        className="input"
+                        className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
                     />
 
-                    <button onClick={handleEdit} className="btn">Update</button>
-
+                    <button
+                        onClick={handleEdit}
+                        className="rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
+                    >
+                        Update
+                    </button>
                 </div>
-
             )}
 
             {lists.length === 0 && (
-                <h3 className="text-center">create a new list to add tasks!</h3>
+                <h3 className="text-center text-gray-400">create a new list to add tasks!</h3>
             )}
 
             {lists.length > 0 && selectedListId && (
                 <div className="mt-4">
-                    <h2 className="text-lg font-semibold mb-2">{selectedListDetails?.name}</h2>
+                    <h2 className="mb-2 text-lg font-semibold">{selectedListDetails?.name}</h2>
                     <Tasks listId={selectedListId!} />
                 </div>
             )}
         </div>
-    )
+    );
 }
 

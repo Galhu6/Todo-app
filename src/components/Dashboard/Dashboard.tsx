@@ -10,9 +10,9 @@ export const Dashboard = () => {
 
 
     return (
-        <>
+        <div className="flex flex-col items-center gap-6 p-4">
             <Lists onSelectList={(id: number) => setSelectedListId(id)} />
             {selectedListId && <Tasks listId={selectedListId} />}
-        </>
-    )
+        </div>
+    );
 }

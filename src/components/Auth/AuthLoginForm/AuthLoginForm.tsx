@@ -35,12 +35,27 @@ export const AuthLoginForm = () => {
 
     };
     return (
-        <div className="regular-sign-in">
-            <input type="email" placeholder="email" value={loginEmail}
-                onChange={(e) => setLoginEmail(e.target.value)} />
-            <input type="password" placeholder="password" value={loginPaaword}
-                onChange={(e) => setLoginPassword(e.target.value)} />
-            <button onClick={handleLogin}></button>
-        </div >
-    )
+        <div className="flex flex-col gap-3">
+            <input
+                type="email"
+                placeholder="email"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                className="rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
+            />
+            <input
+                type="password"
+                placeholder="password"
+                value={loginPaaword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                className="rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
+            />
+            <button
+                onClick={handleLogin}
+                className="rounded bg-indigo-600 px-4 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
+            >
+                Sign In
+            </button>
+        </div>
+    );
 }
