@@ -84,15 +84,16 @@ export const AuthSignup = () => {
     };
 
     return (
-        <div className="regular-sign-in">
-            <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+        <div className="flex flex-col gap-3">
+            <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-3">
                 <input
                     type="text"
                     placeholder="name"
                     value={signupName}
                     onChange={(e) => setSignupName(e.target.value)}
+                    className="w-full rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
                 />
-                <p style={{ color: handleName() ? 'green' : 'red' }}>
+                <p className="text-sm" style={{ color: handleName() ? 'green' : 'red' }}>
                     Name must be more than 2 letters
                 </p>
 
@@ -101,17 +102,17 @@ export const AuthSignup = () => {
                     placeholder="email"
                     value={signupEmail}
                     onChange={(e) => setSignupEmail(e.target.value)}
+                    className="w-full rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
                 />
-                <p style={{ color: handleEmail() ? 'green' : 'red' }}>
+                <p className="text-sm" style={{ color: handleEmail() ? 'green' : 'red' }}>
                     Email must be in right format
                 </p>
-                <p style={{ color: isEmailAvailable ? "green" : "red" }}>
+                <p className="text-sm" style={{ color: isEmailAvailable ? 'green' : 'red' }}>
                     {emailCheckLoading
-                        ? "Checking email..."
+                        ? 'Checking email...'
                         : isEmailAvailable
-                            ? "Email is available"
-                            : "Email already in use"
-                    }
+                        ? 'Email is available'
+                        : 'Email already in use'}
                 </p>
 
                 <PasswordValidation
@@ -125,10 +126,11 @@ export const AuthSignup = () => {
                     type="submit"
                     onClick={handleSubmit}
                     disabled={!isPasswordValid || !handleName() || !handleEmail() || !doPasswordsMatch || !isEmailAvailable}
+                    className="w-full rounded bg-indigo-600 px-4 py-2 text-white transition hover:bg-indigo-500 disabled:opacity-50 focus:outline-none focus:ring focus:ring-indigo-500"
                 >
                     Sign Up
                 </button>
             </form>
-        </div >
-    )
+        </div>
+    );
 }

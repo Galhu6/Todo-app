@@ -100,41 +100,54 @@ export const Tasks = ({ listId }: TasksProps) => {
     };
 
     return (
-        <div className="tasks space-y-4">
+        <div className="space-y-4">
             <div>
                 <ul className="space-y-2">
                     {tasks.map((task) => (
-                        <li key={task.id} className="task-item">
-                            <strong className="flex-grow">{task.description} - {formatTimeLeft(task.due_date)}</strong>
-                            <button onClick={() => handleEdit(task.id)}>edit</button>
-                            <button onClick={() => handleTaskComplete(task.id)}>complete</button>
-                            <button onClick={() => {/*duplicate logic */ }}>duplicate</button>
-                            <button onClick={() => handleDelete(task.id)} className="delete">delete</button>
+                        <li
+                            key={task.id}
+                            className="flex items-center gap-2 rounded bg-gray-800 px-2 py-1 transition hover:shadow"
+                        >
+                            <span className="flex-grow text-sm">
+                                {task.description} - {formatTimeLeft(task.due_date)}
+                            </span>
+                            <button onClick={() => handleEdit(task.id)} className="text-xs hover:text-indigo-400">
+                                edit
+                            </button>
+                            <button onClick={() => handleTaskComplete(task.id)} className="text-xs hover:text-indigo-400">
+                                complete
+                            </button>
+                            <button onClick={() => {/*duplicate logic */ }} className="text-xs hover:text-indigo-400">
+                                duplicate
+                            </button>
+                            <button onClick={() => handleDelete(task.id)} className="text-xs hover:text-red-400">
+                                delete
+                            </button>
                         </li>
                     ))}
                 </ul>
             </div>
-            <div className="flex items-end gap-2">
+            <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-end">
                 <input
                     type="text"
                     placeholder="Description"
                     value={newDescription}
                     onChange={(e) => setNewDescription(e.target.value)}
-                    className="input"
+                    className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
                 />
                 <input
                     type="datetime-local"
                     onChange={(e) => setNewDueDate(new Date(e.target.value))}
-                    className="input"
+                    className="rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
                 />
-                <button onClick={handleCreate} className="btn">Add Task</button>
-            </div>
-            <div>
-                a textbox to add a new task description,
-                button to add due date and time,
-                if due not provided have a popup window to ask for the due time.
+                <button
+                    onClick={handleCreate}
+                    className="rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
+                >
+                    Add Task
+                </button>
             </div>
         </div>
-    )
+    );
 }
 
