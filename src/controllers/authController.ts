@@ -18,9 +18,11 @@ export const signUp: RequestHandler = async (req: Request, res: Response) => {
     } catch (err: any) {
         console.error("Signup failed", err);
         if (err.message === "User already exists") {
-            res.status(400).json({ success: false, error: err.message })
+            res.status(400).json({ success: false, error: err.message });
+            return;
         }
-        res.status(500).json({ success: false, error: "failed to register" })
+        res.status(500).json({ success: false, error: "failed to register" });
+        return;
 
     }
 
@@ -38,9 +40,11 @@ export const signIn: RequestHandler = async (req: Request, res: Response) => {
         res.status(200).json({ success: true, token: login.token, user: login.user });
     } catch (err: any) {
         if (err.message === "incorrect password") {
-            res.status(400).json({ success: false, error: "incorrect password" })
+            res.status(400).json({ success: false, error: "incorrect password" });
+            return;
         }
-        res.status(500).json({ success: false, error: "server failed to login" })
+        res.status(500).json({ success: false, error: "server failed to login" });
+        return;
     }
 
 }
@@ -51,7 +55,9 @@ export const googleLogin: RequestHandler = async (req: Request, res: Response) =
         const userData = await verifyGoogleToken(token);
 
         res.json({ success: true, user: userData });
+        return;
     } catch (error) {
         res.status(401).json({ success: false, message: "Invalid token" });
+        return;
     }
 };

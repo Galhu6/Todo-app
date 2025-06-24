@@ -12,7 +12,7 @@ export async function registerUser(email: string, password: string, name: string
         `, [email]
     );
 
-    if (isExist.rows.length > 0) throw new Error("User alredy exists")
+    if (isExist.rows.length > 0) throw new Error("User already exists")
 
     const hashedPassword = await bcrypt.hash(password, 10) //not the correct syntax
 
