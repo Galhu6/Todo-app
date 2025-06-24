@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AuthLoginForm } from "../AuthLoginForm/AuthLoginForm";
 import { GoogleLoginButton } from "../GoogleLogin/GoogleLogin";
 import { AuthSignup } from "../AuthSignup/AuthSignup";
@@ -7,12 +7,6 @@ import { AuthSignup } from "../AuthSignup/AuthSignup";
 
 export const AuthLogin = () => {
     const [toggleSignUp, setToggleSignUp] = useState(false);
-
-
-    useEffect(() => {
-
-
-    }, [toggleSignUp]);
 
     const handleToggle = () => {
         setToggleSignUp(true)

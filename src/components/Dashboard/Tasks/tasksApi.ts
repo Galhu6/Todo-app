@@ -1,5 +1,5 @@
 
-export const allTasks = async (listId: number) => await fetch(`/api/lists/${listId}/tasks/`, {
+export const allTasks = async (listId: number) => await fetch(`http://localhost:3000/api/lists/${listId}/tasks/`, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
@@ -7,7 +7,7 @@ export const allTasks = async (listId: number) => await fetch(`/api/lists/${list
     }
 }).then(res => res.json()).then(data => data.task);
 
-export const selectedTask = async (listId: number, taskId: number) => await fetch(`/api/lists/${listId}/tasks/${taskId}`, {
+export const selectedTask = async (listId: number, taskId: number) => await fetch(`http://localhost:3000/api/lists/${listId}/tasks/${taskId}`, {
     method: 'GET',
     headers: {
         "Content-Type": "application/json",
@@ -16,7 +16,7 @@ export const selectedTask = async (listId: number, taskId: number) => await fetc
 }).then(res => res.json()).then(data => data.task);
 
 
-export const createTask = async (listId: number, task: { description: string, dueDate: Date }) => await fetch(`/api/lists/${listId}/tasks/new-task`, {
+export const createTask = async (listId: number, task: { description: string, dueDate: Date }) => await fetch(`http://localhost:3000/api/lists/${listId}/tasks/new-task`, {
     method: "POST",
     headers: {
         "Content-Type": "application/json",
@@ -26,24 +26,28 @@ export const createTask = async (listId: number, task: { description: string, du
 
 }).then(res => res.json()).then(data => data.task)
 
-export const editTask = async (listId: number, taskId: number, updates: { newDescription?: string, newDueDate?: Date | null }) => await fetch(`/api/lists/${listId}/tasks/${taskId}`, {
-    method: "PATCH",
-    headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-    },
-    body: JSON.stringify(updates)
+export const editTask = async (
+    listId: number,
+    taskId: number,
+    updates: { newDescription?: string, newDueDate?: Date | null }) =>
+    await fetch(`http://localhost:3000/api/lists/${listId}/tasks/${taskId}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify(updates)
 
-}).then(res => res.json()).then(data => data.task)
+    }).then(res => res.json()).then(data => data.task)
 
-export const deleteTask = async (listId: number, taskId: number) => await fetch(`/api/lists/${listId}/tasks/${taskId}`, {
+export const deleteTask = async (listId: number, taskId: number) => await fetch(`http://localhost:3000/api/lists/${listId}/tasks/${taskId}`, {
     method: "DELETE",
     headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
     }
 });
 
-export const completeTask = async (listId: number, taskId: number) => await fetch(`/api/lists/${listId}/tasks/${taskId}/complete`, {
+export const completeTask = async (listId: number, taskId: number) => await fetch(`http://localhost:3000/api/lists/${listId}/tasks/${taskId}/complete`, {
     method: "POST",
     headers: {
         "Content-Type": "application/json",

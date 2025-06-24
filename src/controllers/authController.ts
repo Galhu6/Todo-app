@@ -1,18 +1,17 @@
 import { verifyGoogleToken } from "../components/Auth/GoogleLogin/googleVerify";
-import { loginUser, registerUser } from "../services/Auth/authService";
+import { loginUser, registerUser, checkEmailInDB } from "../services/Auth/authService";
 import type { Request, Response, RequestHandler } from "express";
 
-
 export const signUp: RequestHandler = async (req: Request, res: Response) => {
-
     const { email, password, name } = req.body;
 
-    if (!email || !password || !name) { res.status(400).json({ error: "name/email/password missing" }); return; };
+    if (!email || !password || !name) {
+        res.status(400).json({ error: "name/email/password missing" });
+        return;
+    }
 
 
     try {
-
-
         await registerUser(email, password, name);
         res.status(201).json({ success: true });
     } catch (err: any) {
@@ -22,10 +21,7 @@ export const signUp: RequestHandler = async (req: Request, res: Response) => {
             return;
         }
         res.status(500).json({ success: false, error: "failed to register" });
-        return;
-
     }
-
 };
 
 export const signIn: RequestHandler = async (req: Request, res: Response) => {
@@ -44,10 +40,8 @@ export const signIn: RequestHandler = async (req: Request, res: Response) => {
             return;
         }
         res.status(500).json({ success: false, error: "server failed to login" });
-        return;
     }
-
-}
+};
 
 export const googleLogin: RequestHandler = async (req: Request, res: Response) => {
     try {
@@ -55,9 +49,20 @@ export const googleLogin: RequestHandler = async (req: Request, res: Response) =
         const userData = await verifyGoogleToken(token);
 
         res.json({ success: true, user: userData });
-        return;
     } catch (error) {
         res.status(401).json({ success: false, message: "Invalid token" });
-        return;
     }
+};
+
+export const checkEmailAvailability: RequestHandler = async (req: Request, res: Response) => {
+
+    const { email } = req.query
+    if (!email) {
+        res.status(400).json({ success: false, error: "Email is required" })
+        return;
+    };
+
+    const results = checkEmailInDB(String(email));
+    res.status(200).json({ success: results })
+
 };
