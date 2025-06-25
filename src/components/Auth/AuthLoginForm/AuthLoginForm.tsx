@@ -25,7 +25,10 @@ export const AuthLoginForm = () => {
             } else {
                 const data = await response.json();
                 console.log("Login success:", data);
-                localStorage.setItem("token", data.token)
+                localStorage.setItem("token", data.token);
+                if (data.user?.id) {
+                    localStorage.setItem("userId", String(data.user.id))
+                }
                 navigate('/dashboard')
 
             }

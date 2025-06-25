@@ -75,7 +75,9 @@ export const AuthSignup = () => {
                 localStorage.setItem("token", data.token)
                 console.log("Signup success:", data);
                 console.log("navigating to dashboard");
-
+                if (data.user?.id) {
+                    localStorage.setItem("userId", String(data.user.id))
+                }
                 navigate('/dashboard')
 
             }

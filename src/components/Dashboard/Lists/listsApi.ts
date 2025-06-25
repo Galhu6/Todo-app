@@ -4,7 +4,8 @@ export const allLists = async () => {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "X-User-ID": `${localStorage.getItem("userId")}`
         }
     });
     if (!res.ok) {
@@ -18,7 +19,9 @@ export const createList = async (newListName: string) => await fetch(`http://loc
     method: "POST",
     headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "X-User-ID": `${localStorage.getItem("userId")}`
+
     },
     body: JSON.stringify({ name: newListName })
 }).then(res => res.json()).then(data => data.list);
@@ -27,7 +30,9 @@ export const selectedList = async (selectedListId: number) => await fetch(`http:
     method: "GET",
     headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "X-User-ID": `${localStorage.getItem("userId")}`
+
     }
 }).then(res => res.json()).then(data => data.list);
 
@@ -35,7 +40,9 @@ export const selectedList = async (selectedListId: number) => await fetch(`http:
 export const deleteList = async (selectedListId: number) => await fetch(`http://localhost:3000/api/lists/${selectedListId}`, {
     method: "DELETE",
     headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "X-User-ID": `${localStorage.getItem("userId")}`
+
     }
 });
 
@@ -43,7 +50,9 @@ export const editList = async (selectedListId: number, editName: string) => awai
     method: "PATCH",
     headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "X-User-ID": `${localStorage.getItem("userId")}`
+
     },
     body: JSON.stringify({ name: editName }),
 }).then(res => res.json()).then(data => data.list);
