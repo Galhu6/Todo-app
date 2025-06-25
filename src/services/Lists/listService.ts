@@ -41,7 +41,7 @@ export async function getList(listId: number, userId: number) {
 export async function getAllLists(userId: number) {
     const result = await pool.query(
         `
-        SELECT * FROM Lists WHERE user_id = $1;
+        SELECT * FROM Lists WHERE user_id = $1 and isdeleted = false;
         `, [userId]
     );
     return result.rows;

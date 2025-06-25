@@ -68,7 +68,7 @@ export async function getTask(listId: number, taskId: number) {
 export async function getAllTasks(listId: number) {
     const result = await pool.query(
         `
-        SELECT * FROM tasks WHERE list_id = $1;
+        SELECT * FROM tasks WHERE list_id = $1 and isdeleted = false;
         `, [listId]
     );
     return result.rows;

@@ -1,12 +1,18 @@
 
-export const allLists = async () => await fetch(`http://localhost:3000/api/lists/`, {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-    }
-}).then(res => res.json()).then(data => data.list);
-
+export const allLists = async () => {
+    const res = await fetch(`http://localhost:3000/api/lists/`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+    });
+    if (!res.ok) {
+        throw new Error(`failed to fetch lists: ${res.statusText}`)
+    };
+    const data = await res.json();
+    return data.list;
+};
 
 export const createList = async (newListName: string) => await fetch(`http://localhost:3000/api/lists/new-list`, {
     method: "POST",

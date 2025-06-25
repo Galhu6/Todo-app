@@ -25,6 +25,7 @@ export const AuthLoginForm = () => {
             } else {
                 const data = await response.json();
                 console.log("Login success:", data);
+                localStorage.setItem("token", data.token)
                 navigate('/dashboard')
 
             }

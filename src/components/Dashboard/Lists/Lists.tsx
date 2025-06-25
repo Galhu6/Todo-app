@@ -23,18 +23,18 @@ export const Lists = ({ onSelectList }: ListsProps) => {
     const [newListName, setNewListName] = useState("");
     const [editName, setEditName] = useState("");
     const [selectedListDetails, setSelectedListDetails] = useState<List | null>(null)
-
-
-    // const [isDeleted, setIsDeleted] = useState<List["isdeleted"]>();
-    // const [newList, setNewList] = useState<List>();
-    // const [listGridMode, setListGridMode] = useState(0);
-
+    const [error, setError] = useState<string | null>(null);
 
     // fetch all lists once on mount
     useEffect(() => {
         const fetchAllLists = async () => {
-            const fetchedLists = await allLists();
-            setLists(fetchedLists)
+            try {
+                const fetchedLists = await allLists();
+                setLists(fetchedLists)
+            } catch (err) {
+                setLists([]);
+                setError('failed to fetch lists')
+            }
         };
 
         fetchAllLists();
@@ -89,8 +89,11 @@ export const Lists = ({ onSelectList }: ListsProps) => {
     return (
         <div className="space-y-4 rounded bg-gray-800/50 p-4 shadow-lg max-w-md w-full">
             <h2 className="text-lg font-semibold">My Lists</h2>
+            {error &&
+                <p className="text-red-400">{error}</p>
+            }
             <ul className="space-y-2">
-                {lists.map((list) => (
+                {Array.isArray(lists) && lists.map((list) => (
                     <li
                         key={list.id}
                         className={`flex justify-between items-center rounded px-2 py-1 transition hover:bg-gray-700/50 ${list.id === selectedListId ? 'font-bold' : ''}`}
