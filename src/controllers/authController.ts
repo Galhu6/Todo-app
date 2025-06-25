@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken"
 import { verifyGoogleToken } from "../components/Auth/GoogleLogin/googleVerify.js";
 import { loginUser, registerUser, checkEmailInDB } from "../services/Auth/authService.js";
 import type { Request, Response, RequestHandler } from "express";
@@ -14,8 +13,12 @@ export const signUp: RequestHandler = async (req: Request, res: Response) => {
 
 
     try {
-        await registerUser(email, password, name)
-        res.status(201).json({ success: true, message: "user registerd successfully" });
+        const signup = await registerUser(email, password, name);
+        if (!signup) {
+            res.status(500).json({ success: false, error: "registration failed" });
+            return;
+        }
+        res.status(201).json({ success: true, message: "user registerd successfully", token: signup.token, user: signup.user });
     } catch (err: any) {
         console.error("Signup failed", err);
         if (err.message === "User already exists") {

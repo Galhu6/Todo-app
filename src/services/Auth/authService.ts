@@ -17,13 +17,16 @@ export async function registerUser(email: string, password: string, name: string
     const hashedPassword = await bcrypt.hash(password, 10) //not the correct syntax
 
     try {
-        await pool.query( //posting the email and password after hashing it
+        const result = await pool.query( //posting the email and password after hashing it
             `INSERT INTO Users (
             email,
             password_hash,
-            name) VALUES ($1, $2, $3)`, [email, hashedPassword, name]
+            name) VALUES ($1, $2, $3) RETURNING id, email, name`, [email, hashedPassword, name]
         );
-        return { success: true }
+        const user = result.rows[0];
+
+        const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET!, { expiresIn: "30m" });
+        return { success: true, token, user }
     } catch (err) {
         console.error("falied with err: ", err);
 

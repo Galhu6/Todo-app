@@ -72,7 +72,10 @@ export const AuthSignup = () => {
 
             } else {
                 const data = await response.json();
+                localStorage.setItem("token", data.token)
                 console.log("Signup success:", data);
+                console.log("navigating to dashboard");
+
                 navigate('/dashboard')
 
             }
