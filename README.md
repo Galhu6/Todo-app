@@ -1,54 +1,72 @@
-# React + TypeScript + Vite
+# Todo App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository contains a full stack application for managing TODO lists. The front end is built with **React**, **TypeScript** and **Vite**, styled using **Tailwind CSS**, while the back end exposes a REST API using **Express** and **PostgreSQL**.
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Install dependencies and start both servers during development:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
+npm run dev:server    # start the Express API with nodemon
+npm run dev           # start the Vite development server
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Environment variables are expected in a `.env` file and include:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `DATABASE_URL` – connection string for PostgreSQL
+- `JWT_SECRET` – secret used to sign authentication tokens
+- `CLIENT_ID` – Google OAuth client id (for social login)
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+## Project Structure
+
 ```
+src/
+  server.ts             # Express application entry point
+  db.ts                 # PostgreSQL connection helper
+  controllers/          # Route handlers
+  routes/               # API route definitions
+  services/             # Database access logic
+  middlewares/          # Reusable Express middleware
+  components/           # React UI components
+  screens/              # Page level React components
+```
+
+### Backend
+
+The API is defined in `src/server.ts` and mounts three main route groups:
+
+- `api/auth` – authentication endpoints
+- `api/lists` – CRUD operations for lists
+- `api/` – task related endpoints
+
+Controllers under `src/controllers` handle incoming requests by calling service functions. Service modules encapsulate SQL queries using the `pg` module. Authentication uses **JWT** tokens generated in `Auth/authService.ts`. Middleware such as `authMiddleware` and `verifyOwnerships` enforce token validation and resource ownership.
+
+### Frontend
+
+React components live in `src/components` and are grouped by feature:
+
+- **Auth** – login, signup and Google OAuth components
+- **Dashboard** – lists and tasks management UI
+- **DashboardProtection** – redirects unauthenticated users
+- **Navbar**, **Footer**, **ImageCarousell** and **LogoGrid** – layout components
+
+Screen components in `src/screens` assemble these pieces. The entry point `App.tsx` defines routes using `react-router-dom`.
+
+Data fetching happens in small API wrappers (`listsApi.ts` and `tasksApi.ts`) which call the Express backend with the user token.
+
+### Database
+
+A basic schema for users, lists and tasks is expected (see `schema.sql`). `db.ts` exposes a single `Pool` instance used by the service layer. Each service (e.g. `listService.ts` or `tasksService.ts`) performs parameterised queries and returns plain JavaScript objects to the controllers.
+
+## Testing
+
+Unit tests can be executed with:
+
+```bash
+npm test
+```
+
+Jest is configured through `jest.config.ts`. Currently there are no application specific test files, but the configuration is in place for future additions.
+
+
