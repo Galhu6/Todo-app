@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
+const logos = [
+    "https://user-images.githubusercontent.com/12243763/33518868-6e2595c4-d76a-11e7-8260-31b4e8110c93.png",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlGmKtrnxElpqw3AExKXPWWBulcwjlvDJa1Q&s",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Vitejs-logo.svg/1039px-Vitejs-logo.svg.png",
+    "https://cdn.pixabay.com/photo/2022/01/30/13/33/github-6980894_1280.png",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Tailwind_CSS_Logo.svg/2560px-Tailwind_CSS_Logo.svg.png",
+    "https://www.postgresql.org/media/img/about/press/elephant.png"
 
+]
 
 export const LogoGrid = () => {
     const [counter, setCounter] = useState(0)
@@ -10,7 +18,7 @@ export const LogoGrid = () => {
         return () => clearInterval(interval);
     }, [])
 
-    const logoArr: string[] = [] //import later from a different file
+    const logoArr: string[] = logos //import later from a different file
     const visibleLogoIndex = counter % logoArr.length;
     return (
 

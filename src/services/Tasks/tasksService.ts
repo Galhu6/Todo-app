@@ -73,3 +73,17 @@ export async function getAllTasks(listId: number) {
     );
     return result.rows;
 };
+
+export async function duplicateTask(listId: number, taskId: number) {
+    const currentTask = await getTask(listId, taskId)
+    const result = await pool.query(
+        `
+        INSERT INTO tasks (
+        description,
+        list_id,
+        due_date) VALUES ($1, $2, $3) RETURNING *;
+        `, [currentTask.description, currentTask.listId, currentTask.dueDate]
+
+    );
+    return result.rows
+}

@@ -33,7 +33,7 @@ export const Footer = () => {
                         </a>
                     </li>
                     <li>
-                        <a href="git-link" className="hover:text-indigo-400">
+                        <a href="https://github.com/Galhu6/Todo-app" className="hover:text-indigo-400">
                             GitRepo
                         </a>
                     </li>

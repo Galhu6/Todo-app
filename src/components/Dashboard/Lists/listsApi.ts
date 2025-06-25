@@ -1,6 +1,9 @@
+import dotenv from "dotenv";
+dotenv.config();
+const server = process.env.SERVER_URL;
 
 export const allLists = async () => {
-    const res = await fetch(`http://localhost:3000/api/lists/`, {
+    const res = await fetch(`${server}/api/lists/`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -15,7 +18,7 @@ export const allLists = async () => {
     return data.list;
 };
 
-export const createList = async (newListName: string) => await fetch(`http://localhost:3000/api/lists/new-list`, {
+export const createList = async (newListName: string) => await fetch(`${server}/api/lists/new-list`, {
     method: "POST",
     headers: {
         "Content-Type": "application/json",
@@ -26,7 +29,7 @@ export const createList = async (newListName: string) => await fetch(`http://loc
     body: JSON.stringify({ name: newListName })
 }).then(res => res.json()).then(data => data.list);
 
-export const selectedList = async (selectedListId: number) => await fetch(`http://localhost:3000/api/lists/${selectedListId}`, {
+export const selectedList = async (selectedListId: number) => await fetch(`${server}/api/lists/${selectedListId}`, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
@@ -37,7 +40,7 @@ export const selectedList = async (selectedListId: number) => await fetch(`http:
 }).then(res => res.json()).then(data => data.list);
 
 
-export const deleteList = async (selectedListId: number) => await fetch(`http://localhost:3000/api/lists/${selectedListId}`, {
+export const deleteList = async (selectedListId: number) => await fetch(`${server}/api/lists/${selectedListId}`, {
     method: "DELETE",
     headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -46,7 +49,7 @@ export const deleteList = async (selectedListId: number) => await fetch(`http://
     }
 });
 
-export const editList = async (selectedListId: number, editName: string) => await fetch(`http://localhost:3000/api/lists/${selectedListId}`, {
+export const editList = async (selectedListId: number, editName: string) => await fetch(`${server}/api/lists/${selectedListId}`, {
     method: "PATCH",
     headers: {
         "Content-Type": "application/json",

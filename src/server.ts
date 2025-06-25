@@ -10,7 +10,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin: "http://localhost:5173", // אפשר גם '*' בזמן פיתוח
+    origin: process.env.FRONTEND_URL, // אפשר גם '*' בזמן פיתוח
     credentials: true // אם אתה משתמש ב-cookie או header עם credentials
 }));
 

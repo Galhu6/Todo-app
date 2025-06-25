@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import dotenv from "dotenv";
 import { PasswordValidation } from "./PasswordValidation.js";
-
-
+dotenv.config()
+const server = process.env.SERVER_URL
 export const AuthSignup = () => {
 
     const navigate = useNavigate();
@@ -25,7 +26,7 @@ export const AuthSignup = () => {
         const timeout = setTimeout(async () => {
             try {
                 setEmailCheckLoading(true);
-                const res = await fetch(`http://localhost:3000/api/auth/check-email?email=${signupEmail}`);
+                const res = await fetch(`${server}/api/auth/check-email?email=${signupEmail}`);
                 const data = await res.json();
                 setIsEmailAvailable(!data.exists);
             } catch (err) {
@@ -55,7 +56,7 @@ export const AuthSignup = () => {
         }
 
         try {
-            const response = await fetch("http://localhost:3000/api/auth/signup", {
+            const response = await fetch(`${server}/api/auth/signup`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

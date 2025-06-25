@@ -1,21 +1,25 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import dotenv from "dotenv";
 
+dotenv.config();
+
+const server = process.env.SERVER_URL
 export const AuthLoginForm = () => {
     const navigate = useNavigate();
     const [loginEmail, setLoginEmail] = useState("");
-    const [loginPaaword, setLoginPassword] = useState("");
+    const [loginPassword, setLoginPassword] = useState("");
 
     const handleLogin = async () => {
         try {
-            const response = await fetch("http://localhost:3000/api/auth/login", {
+            const response = await fetch(`${server}/api/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     email: loginEmail,
-                    password: loginPaaword
+                    password: loginPassword
                 })
             });
 
@@ -50,7 +54,7 @@ export const AuthLoginForm = () => {
             <input
                 type="password"
                 placeholder="password"
-                value={loginPaaword}
+                value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
                 className="rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
             />

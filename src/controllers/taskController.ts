@@ -1,5 +1,5 @@
 import type { RequestHandler, Request, Response } from "express"
-import { completeTask, createTask, deleteTask, editTask, getAllTasks, getTask } from "../services/Tasks/tasksService.js";
+import { completeTask, createTask, deleteTask, duplicateTask, editTask, getAllTasks, getTask } from "../services/Tasks/tasksService.js";
 
 export const createTaskController: RequestHandler = async (req: Request, res: Response) => {
     const { description, dueDate } = req.body
@@ -134,4 +134,26 @@ export const getAllTasksController: RequestHandler = async (req: Request, res: R
         res.status(500).json({ success: false, error: "server error while getting tasks" });
         return;
     }
+};
+
+export const duplicateTaskController: RequestHandler = async (req: Request, res: Response) => {
+    const listId = parseInt(req.params.listId);
+    const taskId = parseInt(req.params.taskId);
+
+    if (!listId || !taskId) {
+        res.status(400).json({ success: false, error: "missing list id or task id" });
+        return;
+    }
+
+    try {
+        const duplicate = await duplicateTask(listId, taskId);
+        res.status(200).json({ success: true, task: duplicate });
+        return;
+
+    } catch (err) {
+        console.error("failed to duplicate task");
+        res.status(500).json({ success: false, error: "server error while duplicating task" });
+
+
+    };
 };

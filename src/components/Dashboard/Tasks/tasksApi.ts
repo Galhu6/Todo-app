@@ -1,5 +1,8 @@
+import dotenv from "dotenv";
+dotenv.config();
+const server = process.env.SERVER_URL;
 
-export const allTasks = async (listId: number) => await fetch(`http://localhost:3000/api/lists/${listId}/tasks/`, {
+export const allTasks = async (listId: number) => await fetch(`${server}/api/lists/${listId}/tasks/`, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
@@ -9,7 +12,7 @@ export const allTasks = async (listId: number) => await fetch(`http://localhost:
     }
 }).then(res => res.json()).then(data => data.task);
 
-export const selectedTask = async (listId: number, taskId: number) => await fetch(`http://localhost:3000/api/lists/${listId}/tasks/${taskId}`, {
+export const selectedTask = async (listId: number, taskId: number) => await fetch(`${server}/api/lists/${listId}/tasks/${taskId}`, {
     method: 'GET',
     headers: {
         "Content-Type": "application/json",
@@ -21,7 +24,7 @@ export const selectedTask = async (listId: number, taskId: number) => await fetc
 
 
 export const createTask = async (listId: number, task: { description: string, dueDate: Date }) =>
-    await fetch(`http://localhost:3000/api/lists/${listId}/new-task`, {
+    await fetch(`${server}/api/lists/${listId}/new-task`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -37,7 +40,7 @@ export const editTask = async (
     listId: number,
     taskId: number,
     updates: { newDescription?: string, newDueDate?: Date | null }) =>
-    await fetch(`http://localhost:3000/api/lists/${listId}/tasks/${taskId}`, {
+    await fetch(`${server}/api/lists/${listId}/tasks/${taskId}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -49,7 +52,7 @@ export const editTask = async (
 
     }).then(res => res.json()).then(data => data.task)
 
-export const deleteTask = async (listId: number, taskId: number) => await fetch(`http://localhost:3000/api/lists/${listId}/tasks/${taskId}`, {
+export const deleteTask = async (listId: number, taskId: number) => await fetch(`${server}/api/lists/${listId}/tasks/${taskId}`, {
     method: "DELETE",
     headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -58,7 +61,7 @@ export const deleteTask = async (listId: number, taskId: number) => await fetch(
     }
 });
 
-export const completeTask = async (listId: number, taskId: number) => await fetch(`http://localhost:3000/api/lists/${listId}/tasks/${taskId}/complete`, {
+export const completeTask = async (listId: number, taskId: number) => await fetch(`${server}/api/lists/${listId}/tasks/${taskId}/complete`, {
     method: "POST",
     headers: {
         "Content-Type": "application/json",
@@ -66,5 +69,14 @@ export const completeTask = async (listId: number, taskId: number) => await fetc
         "X-User-ID": `${localStorage.getItem("userId")}`
 
 
+    }
+}).then(res => res.json()).then(data => data.task);
+
+export const duplicateTask = async (listId: number, taskId: number) => await fetch(`${server}/api/lists/${listId}/tasks/${taskId}/duplicate`, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "X-User-ID": `${localStorage.getItem("userId")}`
     }
 }).then(res => res.json()).then(data => data.task)

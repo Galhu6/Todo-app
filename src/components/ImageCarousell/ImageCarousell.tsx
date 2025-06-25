@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 
-// import image arr
+const images = [
+    "https://images.pexels.com/photos/2034373/pexels-photo-2034373.jpeg",
+    "https://images.pexels.com/photos/68562/pexels-photo-68562.jpeg",
+    "https://images.pexels.com/photos/606539/pexels-photo-606539.jpeg"
+
+
+
+]
 
 export const ImageCarousell = () => {
     const [counter, setCounter] = useState(0);
@@ -16,7 +23,7 @@ export const ImageCarousell = () => {
 
     }, [])
 
-    const imgArr: string[] = []//imported imgs urls 
+    const imgArr: string[] = images//imported imgs urls 
     const visibleImgIndex = imgArr.length > 0 ? counter % imgArr.length : 0;
 
     return (

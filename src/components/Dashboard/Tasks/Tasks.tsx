@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { createTask, allTasks, /*selectedTask,*/ completeTask, editTask, deleteTask } from "./tasksApi.js";
+import { createTask, allTasks, /*selectedTask,*/ completeTask, editTask, deleteTask, duplicateTask } from "./tasksApi.js";
 
 
 export class Task {
@@ -99,6 +99,12 @@ export const Tasks = ({ listId }: TasksProps) => {
 
     };
 
+    const handleTaskDuplicate = async (taskId: number) => {
+        const duplicated = await duplicateTask(listId, taskId);
+        setTasks(tasks.map((task) => (task.id === taskId ? duplicated : task)))
+
+    }
+
     return (
         <div className="space-y-4">
             <div>
@@ -117,7 +123,7 @@ export const Tasks = ({ listId }: TasksProps) => {
                             <button onClick={() => handleTaskComplete(task.id)} className="text-xs hover:text-indigo-400">
                                 complete
                             </button>
-                            <button onClick={() => {/*duplicate logic */ }} className="text-xs hover:text-indigo-400">
+                            <button onClick={() => handleTaskDuplicate(task.id)} className="text-xs hover:text-indigo-400">
                                 duplicate
                             </button>
                             <button onClick={() => handleDelete(task.id)} className="text-xs hover:text-red-400">
