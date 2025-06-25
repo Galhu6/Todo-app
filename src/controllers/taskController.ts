@@ -10,6 +10,10 @@ export const createTaskController: RequestHandler = async (req: Request, res: Re
     }
     try {
         const newTask = await createTask(description, listId, dueDate);
+        if (!newTask) {
+            res.status(500).json({ success: false, error: "failed to create task" });
+            return;
+        }
         res.status(201).json({ success: true, task: newTask });
         return;
     } catch (err) {
@@ -31,6 +35,10 @@ export const editTaskController: RequestHandler = async (req: Request, res: Resp
 
     try {
         const editedTask = await editTask(taskId, listId, newDescription, newDueDate);
+        if (!editedTask) {
+            res.status(404).json({ success: false, error: "Task not found" });
+            return;
+        }
         res.status(200).json({ success: true, task: editedTask });
         return;
 
@@ -49,6 +57,10 @@ export const completeTaskController: RequestHandler = async (req: Request, res: 
     }
     try {
         const complition = await completeTask(taskId);
+        if (!complition) {
+            res.status(404).json({ success: false, error: "Task not found" });
+            return;
+        }
         res.status(200).json({ success: true, task: complition });
         return;
 
@@ -68,6 +80,10 @@ export const deleteTaskController: RequestHandler = async (req: Request, res: Re
 
     try {
         const deletedTask = await deleteTask(taskId);
+        if (!deletedTask) {
+            res.status(404).json({ success: false, error: "Task not found" });
+            return;
+        }
         res.status(200).json({ success: true, task: deletedTask });
         return;
     } catch (err) {
@@ -86,6 +102,10 @@ export const getTasksController: RequestHandler = async (req: Request, res: Resp
     }
     try {
         const task = await getTask(listId, taskId);
+        if (!task) {
+            res.status(404).json({ success: false, error: "Task not found" });
+            return;
+        }
         res.status(200).json({ success: true, task });
         return;
 

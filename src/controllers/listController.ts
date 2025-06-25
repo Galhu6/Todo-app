@@ -34,6 +34,10 @@ export const editListController: RequestHandler = async (req: Request, res: Resp
 
     try {
         const editedList = await editList(listId, userId, name);
+        if (!editedList) {
+            res.status(404).json({ success: false, error: "List not found" });
+            return;
+        }
         res.status(200).json({ success: true, list: editedList });
         return;
 
@@ -52,6 +56,10 @@ export const deleteListController: RequestHandler = async (req: Request, res: Re
 
     try {
         const deletedList = await deleteList(listId, userId);
+        if (!deletedList) {
+            res.status(404).json({ success: false, error: "List not found" });
+            return;
+        }
         res.status(200).json({ success: true, list: deletedList });
         return;
 
@@ -71,6 +79,10 @@ export const getListController: RequestHandler = async (req: Request, res: Respo
 
     try {
         const list = await getList(listId, userId);
+        if (!list) {
+            res.status(404).json({ success: false, error: "List not found" });
+            return;
+        }
         res.status(200).json({ success: true, list: list });
         return;
 
