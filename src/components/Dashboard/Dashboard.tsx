@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Tasks } from "./Tasks/Tasks";
-import { Lists } from "./Lists/Lists";
+import { Tasks } from "./Tasks/Tasks.js";
+import { Lists } from "./Lists/Lists.js";
 
 export const Dashboard = () => {
     const [selectedListId, setSelectedListId] = useState(0);

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
-import { LogoGrid } from "../LogoGrid/LogoGrid";
+import { LogoGrid } from "../LogoGrid/LogoGrid.js";
+
 export const Footer = () => {
     const [isScrollOverLimit, setIScrollOverLimit] = useState(false);
 

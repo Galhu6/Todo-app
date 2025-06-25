@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createList, editList, deleteList, selectedList, allLists } from "./listsApi";
+import { createList, editList, deleteList, selectedList, allLists } from "./listsApi.js";
 
 import { Tasks } from "../Tasks/Tasks";
 

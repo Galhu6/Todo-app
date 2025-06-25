@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PasswordValidation } from "./PasswordValidation";
+import { PasswordValidation } from "./PasswordValidation.js";
 
 
 export const AuthSignup = () => {
@@ -85,7 +85,7 @@ export const AuthSignup = () => {
 
     return (
         <div className="flex flex-col gap-3">
-            <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-3">
+            <form onSubmit={(e) => { e.preventDefault(); }} className="space-y-3">
                 <input
                     type="text"
                     placeholder="name"

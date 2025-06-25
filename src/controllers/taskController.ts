@@ -1,5 +1,5 @@
 import type { RequestHandler, Request, Response } from "express"
-import { completeTask, createTask, deleteTask, editTask, getAllTasks, getTask } from "../services/Tasks/tasksService";
+import { completeTask, createTask, deleteTask, editTask, getAllTasks, getTask } from "../services/Tasks/tasksService.js";
 
 export const createTaskController: RequestHandler = async (req: Request, res: Response) => {
     const { description, dueDate } = req.body

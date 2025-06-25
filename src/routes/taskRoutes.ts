@@ -6,9 +6,9 @@ import {
     deleteTaskController,
     getAllTasksController,
     getTasksController,
-} from "../controllers/taskController";
-import { authMiddleware } from "../middlewares/authMiddleware";
-import { verifyTaskOwnership } from "../middlewares/verifyOwnerships";
+} from "../controllers/taskController.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { verifyTaskOwnership } from "../middlewares/verifyOwnerships.js";
 
 const router = Router();
 

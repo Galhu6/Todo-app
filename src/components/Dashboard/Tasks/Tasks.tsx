@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { createTask, allTasks, /*selectedTask,*/ completeTask, editTask, deleteTask } from "./tasksApi";
+import { createTask, allTasks, /*selectedTask,*/ completeTask, editTask, deleteTask } from "./tasksApi.js";
 
 
 export class Task {

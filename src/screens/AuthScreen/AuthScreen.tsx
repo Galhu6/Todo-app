@@ -1,4 +1,4 @@
-import { AuthLogin } from "../../components/Auth/AuthLogin/AuthLogin";
+import { AuthLogin } from "../../components/Auth/AuthLogin/AuthLogin.js";
 
 export const AuthScreen = () => {
     return (

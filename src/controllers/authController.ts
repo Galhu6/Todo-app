@@ -1,5 +1,6 @@
-import { verifyGoogleToken } from "../components/Auth/GoogleLogin/googleVerify";
-import { loginUser, registerUser, checkEmailInDB } from "../services/Auth/authService";
+import jwt from "jsonwebtoken"
+import { verifyGoogleToken } from "../components/Auth/GoogleLogin/googleVerify.js";
+import { loginUser, registerUser, checkEmailInDB } from "../services/Auth/authService.js";
 import type { Request, Response, RequestHandler } from "express";
 
 export const signUp: RequestHandler = async (req: Request, res: Response) => {
@@ -8,12 +9,13 @@ export const signUp: RequestHandler = async (req: Request, res: Response) => {
     if (!email || !password || !name) {
         res.status(400).json({ error: "name/email/password missing" });
         return;
-    }
+    };
+
 
 
     try {
-        await registerUser(email, password, name);
-        res.status(201).json({ success: true });
+        await registerUser(email, password, name)
+        res.status(201).json({ success: true, message: "user registerd successfully" });
     } catch (err: any) {
         console.error("Signup failed", err);
         if (err.message === "User already exists") {
@@ -62,7 +64,7 @@ export const checkEmailAvailability: RequestHandler = async (req: Request, res: 
         return;
     };
 
-    const results = checkEmailInDB(String(email));
-    res.status(200).json({ success: results })
+    const exists = await checkEmailInDB(String(email));
+    res.status(200).json({ exists })
 
 };

@@ -1,4 +1,4 @@
-import { pool } from "../../db";
+import { pool } from "../../db.js";
 
 export async function createTask(description: string, listId: number, dueDate: Date) {
     const result = await pool.query(

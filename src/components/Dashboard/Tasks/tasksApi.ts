@@ -16,15 +16,16 @@ export const selectedTask = async (listId: number, taskId: number) => await fetc
 }).then(res => res.json()).then(data => data.task);
 
 
-export const createTask = async (listId: number, task: { description: string, dueDate: Date }) => await fetch(`http://localhost:3000/api/lists/${listId}/tasks/new-task`, {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-    },
-    body: JSON.stringify(task)
+export const createTask = async (listId: number, task: { description: string, dueDate: Date }) =>
+    await fetch(`http://localhost:3000/api/lists/${listId}/new-task`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify(task)
 
-}).then(res => res.json()).then(data => data.task)
+    }).then(res => res.json()).then(data => data.task)
 
 export const editTask = async (
     listId: number,

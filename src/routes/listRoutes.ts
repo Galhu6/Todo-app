@@ -5,8 +5,8 @@ import {
     deleteListController,
     getListController,
     getAllListsController,
-} from "../controllers/listController";
-import { authMiddleware } from "../middlewares/authMiddleware";
+} from "../controllers/listController.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = Router();
 

@@ -1,4 +1,4 @@
-import { pool } from "../../db";
+import { pool } from "../../db.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
@@ -63,9 +63,8 @@ export async function loginUser(email: string, password: string) {
 
 export async function checkEmailInDB(email: string) {
     const isMailExists = await pool.query(
-        `SELECT * FROM Users WHERE email = $1`, [email]
+        `SELECT 1 FROM users WHERE email = $1`, [email]
     );
 
-    if (isMailExists.rows.length !== 0) throw new Error("email already exists");
-    return false;
+    return isMailExists.rows.length > 0;
 }

@@ -1,9 +1,11 @@
 {
   "name": "todo-app",
+  "type": "module",
   "private": true,
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
+    "dev:server": "nodemon",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -42,6 +44,7 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
     "jest": "^30.0.0",
+    "nodemon": "^3.1.10",
     "postcss": "^8.5.6",
     "supertest": "^7.1.1",
     "tailwindcss": "^3.4.4",

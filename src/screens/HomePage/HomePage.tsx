@@ -1,6 +1,6 @@
-import { Navbar } from "../../components/Navbar/Navbar";
-import { Footer } from "../../components/Footer/Footer";
-import { ImageCarousell } from "../../components/ImageCarousell/ImageCarousell";
+import { Navbar } from "../../components/Navbar/Navbar.js";
+import { Footer } from "../../components/Footer/Footer.js";
+import { ImageCarousell } from "../../components/ImageCarousell/ImageCarousell.js";
 
 
 export const HomePage = () => {

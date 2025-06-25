@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { AuthLoginForm } from "../AuthLoginForm/AuthLoginForm";
-import { GoogleLoginButton } from "../GoogleLogin/GoogleLogin";
-import { AuthSignup } from "../AuthSignup/AuthSignup";
+import { AuthLoginForm } from "../AuthLoginForm/AuthLoginForm.js";
+import { GoogleLoginButton } from "../GoogleLogin/GoogleLogin.js";
+import { AuthSignup } from "../AuthSignup/AuthSignup.js";
 
 
 

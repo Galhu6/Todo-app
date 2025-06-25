@@ -1,5 +1,5 @@
 import type { RequestHandler, Request, Response, NextFunction } from "express"
-import { createList, deleteList, editList, getAllLists, getList } from "../services/Lists/listService";
+import { createList, deleteList, editList, getAllLists, getList } from "../services/Lists/listService.js";
 
 export const createListController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const { name } = req.body;

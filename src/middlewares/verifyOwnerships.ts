@@ -1,5 +1,5 @@
 import type { RequestHandler } from "express";
-import { pool } from "../db";
+import { pool } from "../db.js";
 
 export const verifyTaskOwnership: RequestHandler = async (req, res, next) => {
     const userId = (req as any).user?.id;

@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { HomePage } from './screens/HomePage/HomePage'
-import { DashboardProtection } from './components/DashboardProtection/DashboardProtection'
-import { Dashboard } from './components/Dashboard/Dashboard';
-import { AuthScreen } from "./screens/AuthScreen/AuthScreen";
+import { HomePage } from './screens/HomePage/HomePage.js'
+import { DashboardProtection } from './components/DashboardProtection/DashboardProtection.js'
+import { Dashboard } from './components/Dashboard/Dashboard.js';
+import { AuthScreen } from "./screens/AuthScreen/AuthScreen.js";
 
 function App() {
 
