@@ -58,34 +58,24 @@ export const Tasks = ({ listId }: TasksProps) => {
     }, [listId]);
 
     const formatTimeLeft = (dueDate: Date) => {
-
         const now = new Date();
         const due = new Date(dueDate);
 
-        const localNow = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
-        const localDue = new Date(due.getTime() + due.getTimezoneOffset() * 60000);
-
-        const diff = localDue.getTime() - localNow.getTime();
-        console.log("local : ", new Date().toString());
-        console.log("utc: ", new Date().toUTCString());
-
-
+        const diff = due.getTime() - now.getTime();
         if (diff <= 0) return "Past due";
 
-        const totalMinutes = Math.floor(diff / (1000 * 60))
-        const minutes = totalMinutes % 60
+        const totalMinutes = Math.floor(diff / (1000 * 60));
+        const minutes = totalMinutes % 60;
         const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
         const days = Math.floor(totalMinutes / (60 * 24));
-
 
         if (days > 0) {
             return `${days}d ${hours}h left`;
         } else if (hours > 0) {
-            return `${hours}h, ${minutes}m  left`
+            return `${hours}h ${minutes}m  left`
         } else {
             return `${minutes}m left`;
         }
-
     };
 
     const handleCreate = async () => {
@@ -103,10 +93,14 @@ export const Tasks = ({ listId }: TasksProps) => {
         setTasks(tasks.filter((task) => task.id !== taskId));
     };
     const handleEdit = async (taskId: number) => {
+        const updates: any = {}
         if (!newDescription.trim() && !newDueDate) return;
-        const updates = { newDescription, newDueDate };
+
+        if (newDescription.trim()) updates.description = newDescription;
+        if (newDueDate) updates.due_date = newDueDate;
         const updated = await editTask(listId, taskId, updates);
         setTasks(tasks.map(task => task.id === taskId ? updated : task))
+        setShowEdit(false)
     };
 
     const handleTaskComplete = async (taskId: number) => {
@@ -124,16 +118,16 @@ export const Tasks = ({ listId }: TasksProps) => {
     return (
         <div className="space-y-4">
             <div>
-                <ul className="space-y-2">
+                <ul className="space-y-2 divide-y divide-gray-700">
                     {tasks.map((task) => (
                         <li
                             key={task.id}
                             onClick={() => setSelectedTaskId(task.id)}
-                            className="flex items-center gap-2 rounded bg-gray-800 px-2 py-1 transition hover:shadow"
+                            className={`flex items-center gap-2 rounded px-2 py-1 transition hover:shadow ${task.status === 'completed' ? 'bg-green-900 line-through' : 'bg-gray-800 hover:bg-gray-700'}`}
                         >
-                            {(isCompleted) && (<span className="flex-grow text-sm">
-                                {task.description} - {formatTimeLeft(task.due_date)}
-                            </span>)}
+                            <span className="flex-grow text-sm">
+                                {task.description} - {task.status === 'completed' ? 'Completed' : formatTimeLeft(task.due_date)}
+                            </span>
                             <button onClick={() => setShowEdit(true)} className="text-xs hover:text-indigo-400">
                                 edit
                             </button>
@@ -147,29 +141,33 @@ export const Tasks = ({ listId }: TasksProps) => {
                             <button onClick={() => handleDelete(task.id)} className="text-xs hover:text-red-400">
                                 delete
                             </button>
+                            {(showEdit) && <div className="flex flex-col gap-2 rounded bg-gray-800 p-4">
+                                <input
+                                    type="text"
+                                    value={newDescription}
+                                    onChange={(e) => setNewDescription(e.target.value)}
+                                    placeholder="edit task description"
+                                    className="flex-grow rounded bg-gray-700 p-2 text-ehite focus:outline-none focus:ring focus:rig-indigo-500"
+                                />
+                                <input
+                                    type="date"
+                                    value={newDueDate.toISOString().split("T")[0]}
+                                    onChange={(e) => setNewDueDate(new Date(e.target.value))}
+                                    placeholder="edit task description"
+                                    className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                                />
+                                <button onClick={() => handleEdit(selectedTaskId)}
+                                    className="self-start rounded bg-indigo-600px-3 py-2 text-whitetransition hover:bg-indigo-500"
+                                >
+                                    Submit Changes
+                                </button>
+                            </div>}
                         </li>
                     ))}
                 </ul>
             </div>
-            {(showEdit) && <div className="editing inputs">
-                <input
-                    type="text"
-                    value={newDescription}
-                    onChange={(e) => setNewDescription(e.target.value)}
-                    placeholder="edit task description"
-                    className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
-                />
-                <input
-                    type="date"
-                    value={newDueDate.toISOString().split("T")[0]}
-                    onChange={(e) => setNewDueDate(new Date(e.target.value))}
-                    placeholder="edit task description"
-                    className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
-                />
-                <button onClick={() => handleEdit(selectedTaskId)}>Submit Changes</button>
 
-            </div>}
-            <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-end">
+            <div className="dlex flex-col items-stretch gap-2 rounded bg-gray-900 p-4 sm:flex-row sm:items-end">
                 <input
                     type="text"
                     placeholder="Description"
