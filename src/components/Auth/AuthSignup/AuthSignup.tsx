@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import dotenv from "dotenv";
 import { PasswordValidation } from "./PasswordValidation.js";
-dotenv.config()
-const server = process.env.SERVER_URL
+
+const server = import.meta.env.VITE_SERVER_URL
 export const AuthSignup = () => {
 
     const navigate = useNavigate();

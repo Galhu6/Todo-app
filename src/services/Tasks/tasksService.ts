@@ -82,8 +82,8 @@ export async function duplicateTask(listId: number, taskId: number) {
         description,
         list_id,
         due_date) VALUES ($1, $2, $3) RETURNING *;
-        `, [currentTask.description, currentTask.listId, currentTask.dueDate]
+        `, [currentTask.description, currentTask.list_id, currentTask.due_date]
 
     );
-    return result.rows
+    return result.rows[0]
 }

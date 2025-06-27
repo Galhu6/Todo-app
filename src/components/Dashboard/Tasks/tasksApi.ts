@@ -1,6 +1,5 @@
-import dotenv from "dotenv";
-dotenv.config();
-const server = process.env.SERVER_URL;
+
+const server = import.meta.env.VITE_SERVER_URL;
 
 export const allTasks = async (listId: number) => await fetch(`${server}/api/lists/${listId}/tasks/`, {
     method: "GET",

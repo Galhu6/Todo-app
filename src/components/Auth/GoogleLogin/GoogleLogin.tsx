@@ -1,8 +1,6 @@
 import { GoogleLogin as GoogleLoginComponent } from "@react-oauth/google"
-import dotenv from "dotenv";
-dotenv.config();
 
-const server = process.env.SERVER_URL
+const server = import.meta.env.VITE_SERVER_URL
 export const GoogleLoginButton = () => {
     const handleLogin = async (credentialResponse: any) => {
         const token = credentialResponse.credential;

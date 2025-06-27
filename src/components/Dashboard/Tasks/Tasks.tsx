@@ -39,7 +39,9 @@ type TasksProps = {
 export const Tasks = ({ listId }: TasksProps) => {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [newDescription, setNewDescription] = useState("");
-    const [newDueDate, setNewDueDate] = useState<Date | null>(null);
+    const [showEdit, setShowEdit] = useState(false);
+    const [selectedTaskId, setSelectedTaskId] = useState<number>(0);
+    const [newDueDate, setNewDueDate] = useState<Date>(new Date());
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -56,18 +58,32 @@ export const Tasks = ({ listId }: TasksProps) => {
     }, [listId]);
 
     const formatTimeLeft = (dueDate: Date) => {
+
         const now = new Date();
         const due = new Date(dueDate);
-        const diff = due.getTime() - now.getTime();
 
-        if (diff <= 0) return "Past due"
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const days = Math.floor(hours / 24)
+        const localNow = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+        const localDue = new Date(due.getTime() + due.getTimezoneOffset() * 60000);
 
-        if (days === 0) {
-            return `${hours} hours left`;
+        const diff = localDue.getTime() - localNow.getTime();
+        console.log("local : ", new Date().toString());
+        console.log("utc: ", new Date().toUTCString());
+
+
+        if (diff <= 0) return "Past due";
+
+        const totalMinutes = Math.floor(diff / (1000 * 60))
+        const minutes = totalMinutes % 60
+        const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+        const days = Math.floor(totalMinutes / (60 * 24));
+
+
+        if (days > 0) {
+            return `${days}d ${hours}h left`;
+        } else if (hours > 0) {
+            return `${hours}h, ${minutes}m  left`
         } else {
-            return `${days} days, ${hours % 24} hours left`
+            return `${minutes}m left`;
         }
 
     };
@@ -78,7 +94,7 @@ export const Tasks = ({ listId }: TasksProps) => {
         const created = await createTask(listId, newTask);
         setTasks([...tasks, created])
         setNewDescription("");
-        setNewDueDate(null);
+        setNewDueDate(new Date());
 
 
     };
@@ -101,7 +117,7 @@ export const Tasks = ({ listId }: TasksProps) => {
 
     const handleTaskDuplicate = async (taskId: number) => {
         const duplicated = await duplicateTask(listId, taskId);
-        setTasks(tasks.map((task) => (task.id === taskId ? duplicated : task)))
+        setTasks([...tasks, duplicated])
 
     }
 
@@ -112,14 +128,16 @@ export const Tasks = ({ listId }: TasksProps) => {
                     {tasks.map((task) => (
                         <li
                             key={task.id}
+                            onClick={() => setSelectedTaskId(task.id)}
                             className="flex items-center gap-2 rounded bg-gray-800 px-2 py-1 transition hover:shadow"
                         >
-                            <span className="flex-grow text-sm">
+                            {(isCompleted) && (<span className="flex-grow text-sm">
                                 {task.description} - {formatTimeLeft(task.due_date)}
-                            </span>
-                            <button onClick={() => handleEdit(task.id)} className="text-xs hover:text-indigo-400">
+                            </span>)}
+                            <button onClick={() => setShowEdit(true)} className="text-xs hover:text-indigo-400">
                                 edit
                             </button>
+
                             <button onClick={() => handleTaskComplete(task.id)} className="text-xs hover:text-indigo-400">
                                 complete
                             </button>
@@ -133,6 +151,24 @@ export const Tasks = ({ listId }: TasksProps) => {
                     ))}
                 </ul>
             </div>
+            {(showEdit) && <div className="editing inputs">
+                <input
+                    type="text"
+                    value={newDescription}
+                    onChange={(e) => setNewDescription(e.target.value)}
+                    placeholder="edit task description"
+                    className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                />
+                <input
+                    type="date"
+                    value={newDueDate.toISOString().split("T")[0]}
+                    onChange={(e) => setNewDueDate(new Date(e.target.value))}
+                    placeholder="edit task description"
+                    className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                />
+                <button onClick={() => handleEdit(selectedTaskId)}>Submit Changes</button>
+
+            </div>}
             <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-end">
                 <input
                     type="text"
