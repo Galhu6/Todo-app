@@ -1,12 +1,13 @@
 import { verifyGoogleToken } from "../components/Auth/GoogleLogin/googleVerify.js";
 import { loginUser, registerUser, checkEmailInDB } from "../services/Auth/authService.js";
-import type { Request, Response, RequestHandler } from "express";
+import { HttpError } from "../middlewares/errorHandler.js"
+import type { Request, Response, RequestHandler, NextFunction } from "express";
 
-export const signUp: RequestHandler = async (req: Request, res: Response) => {
+export const signUp: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password, name } = req.body;
 
     if (!email || !password || !name) {
-        res.status(400).json({ error: "name/email/password missing" });
+        next(new HttpError(400, "name/email/password missing"))
         return;
     };
 
@@ -15,59 +16,62 @@ export const signUp: RequestHandler = async (req: Request, res: Response) => {
     try {
         const signup = await registerUser(email, password, name);
         if (!signup) {
-            res.status(500).json({ success: false, error: "registration failed" });
+            next(new HttpError(500, "register failed"))
             return;
         }
         res.status(201).json({ success: true, message: "user registerd successfully", token: signup.token, user: signup.user });
     } catch (err: any) {
         console.error("Signup failed", err);
         if (err.message === "User already exists") {
-            res.status(400).json({ success: false, error: err.message });
+            next(new HttpError(400, err.message)); ``
             return;
         }
-        res.status(500).json({ success: false, error: "failed to register" });
+        next(err)
     }
 };
 
-export const signIn: RequestHandler = async (req: Request, res: Response) => {
+export const signIn: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
     if (!email || !password) {
-        res.status(400).json({ success: false, error: "missing email/password" });
+        next(new HttpError(400, "missing email/password"));
         return;
-
     }
     try {
         const login = await loginUser(email, password);
         res.status(200).json({ success: true, token: login.token, user: login.user });
     } catch (err: any) {
         if (err.message === "incorrect password") {
-            res.status(400).json({ success: false, error: "incorrect password" });
+            next(new HttpError(400, "incorrect password"));
             return;
         }
-        res.status(500).json({ success: false, error: "server failed to login" });
+        next(err);
     }
 };
 
-export const googleLogin: RequestHandler = async (req: Request, res: Response) => {
+export const googleLogin: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { token } = req.body;
         const userData = await verifyGoogleToken(token);
 
         res.json({ success: true, user: userData });
     } catch (error) {
-        res.status(401).json({ success: false, message: "Invalid token" });
+        next(new HttpError(401, "Invalid token"));
     }
 };
 
-export const checkEmailAvailability: RequestHandler = async (req: Request, res: Response) => {
+export const checkEmailAvailability: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
 
     const { email } = req.query
     if (!email) {
-        res.status(400).json({ success: false, error: "Email is required" })
+        next(new HttpError(400, "Email is required"));
         return;
     };
+    try {
+        const exists = await checkEmailInDB(String(email));
+        res.status(200).json({ exists })
+    } catch (err) {
+        next(err);
 
-    const exists = await checkEmailInDB(String(email));
-    res.status(200).json({ exists })
+    }
 
 };

@@ -1,42 +1,43 @@
-import type { RequestHandler, Request, Response } from "express"
+import type { RequestHandler, Request, Response, NextFunction } from "express"
 import { completeTask, createTask, deleteTask, duplicateTask, editTask, getAllTasks, getTask, setTaskPending } from "../services/Tasks/tasksService.js";
+import { HttpError } from "../middlewares/errorHandler.js";
 
-export const createTaskController: RequestHandler = async (req: Request, res: Response) => {
+export const createTaskController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const { description, dueDate } = req.body
     const listId = parseInt(req.params.listId)
     if (!listId || !description || !dueDate) {
-        res.status(400).json({ success: false, error: "List id and task description and due date are required" });
+        next(new HttpError(400, "List id and task description and due date are required"));
         return;
     }
     try {
         const newTask = await createTask(description, listId, dueDate);
         if (!newTask) {
-            res.status(500).json({ success: false, error: "failed to create task" });
+            next(new HttpError(500, "failed to create task"));
             return;
         }
         res.status(201).json({ success: true, task: newTask });
         return;
     } catch (err) {
         console.error("failed to create task:", err);
-        res.status(500).json({ success: false, error: "server error while creating task" });
+        next(err);
         return;
 
     }
 };
-export const editTaskController: RequestHandler = async (req: Request, res: Response) => {
+export const editTaskController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const { newDescription, newDueDate } = req.body;
     const listId = parseInt(req.params.listId);
     const taskId = parseInt(req.params.taskId)
 
     if (!listId || !taskId || (!newDescription && !newDueDate)) {
-        res.status(400).json({ success: false, error: "new task updates and ids are required" });
+        next(new HttpError(400, "new task updates and ids are required"));
         return;
     }
 
     try {
         const editedTask = await editTask(taskId, listId, newDescription, newDueDate);
         if (!editedTask) {
-            res.status(404).json({ success: false, error: "Task not found" });
+            next(new HttpError(404, "Task not found"));
             return;
         }
         res.status(200).json({ success: true, task: editedTask });
@@ -44,44 +45,42 @@ export const editTaskController: RequestHandler = async (req: Request, res: Resp
 
     } catch (err) {
         console.error("failed to edit task:", err);
-        res.status(500).json({ success: false, error: "server error while editing task" });
+        next(err);
         return;
     }
 };
-export const completeTaskController: RequestHandler = async (req: Request, res: Response) => {
+export const completeTaskController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const taskId = parseInt(req.params.taskId);
     if (!taskId) {
-        res.status(400).json({ success: false, error: "task id required" });
+        next(new HttpError(400, "task id required"))
         return;
 
     }
     try {
         const complition = await completeTask(taskId);
         if (!complition) {
-            res.status(404).json({ success: false, error: "Task not found" });
+            next(new HttpError(404, "Task not found"));
             return;
         }
         res.status(200).json({ success: true, task: complition });
         return;
 
-
     } catch (err) {
         console.error("failed to complete task:", err);
-        res.status(500).json({ success: false, error: "server error while completing task" });
+        next(err);
         return;
     }
 };
-export const setTaskPendingController: RequestHandler = async (req: Request, res: Response) => {
+export const setTaskPendingController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const taskId = parseInt(req.params.taskId);
     if (!taskId) {
-        res.status(400).json({ success: false, error: "task id required" });
+        next(new HttpError(400, "task id required"));
         return;
-
     }
     try {
         const pending = await setTaskPending(taskId);
         if (!pending) {
-            res.status(404).json({ success: false, error: "Task not found" });
+            next(new HttpError(404, "Task not found"));
             return;
         }
         res.status(200).json({ success: true, task: pending });
@@ -90,43 +89,43 @@ export const setTaskPendingController: RequestHandler = async (req: Request, res
 
     } catch (err) {
         console.error("failed to set task pending:", err);
-        res.status(500).json({ success: false, error: "server error while setting task pending" });
+        next(err)
         return;
     }
 };
-export const deleteTaskController: RequestHandler = async (req: Request, res: Response) => {
+export const deleteTaskController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const taskId = parseInt(req.params.taskId);
     if (!taskId) {
-        res.status(400).json({ success: false, error: "task id required" });
+        next(new HttpError(400, "task id required"));
         return;
     }
 
     try {
         const deletedTask = await deleteTask(taskId);
         if (!deletedTask) {
-            res.status(404).json({ success: false, error: "Task not found" });
+            next(new HttpError(404, "Task not found"));
             return;
         }
         res.status(200).json({ success: true, task: deletedTask });
         return;
     } catch (err) {
         console.error("failed to delete task:", err);
-        res.status(500).json({ success: false, error: "server error while deleting task" });
+        next(err);
         return;
     }
 };
-export const getTasksController: RequestHandler = async (req: Request, res: Response) => {
+export const getTasksController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const listId = parseInt(req.params.listId);
     const taskId = parseInt(req.params.taskId);
 
     if (!listId || !taskId) {
-        res.status(400).json({ success: false, error: "list and task id are required" });
+        next(new HttpError(400, "list and task id are required"));
         return;
     }
     try {
         const task = await getTask(listId, taskId);
         if (!task) {
-            res.status(404).json({ success: false, error: "Task not found" });
+            next(new HttpError(404, "Task not found"));
             return;
         }
         res.status(200).json({ success: true, task });
@@ -135,15 +134,15 @@ export const getTasksController: RequestHandler = async (req: Request, res: Resp
 
     } catch (err) {
         console.error("failed to get task:", err);
-        res.status(500).json({ success: false, error: "server error while getting task" });
+        next(err);
         return;
     }
 };
 
-export const getAllTasksController: RequestHandler = async (req: Request, res: Response) => {
+export const getAllTasksController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const listId = parseInt(req.params.listId);
     if (!listId) {
-        res.status(400).json({ success: false, error: "list id required" });
+        next(new HttpError(400, "list id required"))
         return;
     }
     try {
@@ -154,17 +153,17 @@ export const getAllTasksController: RequestHandler = async (req: Request, res: R
 
     } catch (err) {
         console.error("failed to get tasks:", err);
-        res.status(500).json({ success: false, error: "server error while getting tasks" });
+        next(err);
         return;
     }
 };
 
-export const duplicateTaskController: RequestHandler = async (req: Request, res: Response) => {
+export const duplicateTaskController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const listId = parseInt(req.params.listId);
     const taskId = parseInt(req.params.taskId);
 
     if (!listId || !taskId) {
-        res.status(400).json({ success: false, error: "missing list id or task id" });
+        next(new HttpError(400, "missing list id or task id"));
         return;
     }
 
@@ -175,8 +174,6 @@ export const duplicateTaskController: RequestHandler = async (req: Request, res:
 
     } catch (err) {
         console.error("failed to duplicate task");
-        res.status(500).json({ success: false, error: "server error while duplicating task" });
-
-
+        next(err)
     };
 };

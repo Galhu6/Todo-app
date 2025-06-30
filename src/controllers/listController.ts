@@ -1,12 +1,13 @@
 import type { RequestHandler, Request, Response, NextFunction } from "express"
 import { createList, deleteList, editList, getAllLists, getList } from "../services/Lists/listService.js";
+import { HttpError } from "../middlewares/errorHandler.js";
 
 export const createListController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const { name } = req.body;
     const userId = (req as any).user?.id;
 
     if (!name || !userId) {
-        res.status(400).json({ success: false, error: "List name and user id are required" });
+        next(new HttpError(400, "List name and user id are required"));
         return;
     }
     try {
@@ -24,18 +25,14 @@ export const editListController: RequestHandler = async (req: Request, res: Resp
     const userId = (req as any).user?.id;
 
     if (isNaN(listId) || !userId || !name) {
-        res.status(400).json({
-            success: false,
-            error: "new List name and ids are required",
-            message: "Please provide valid name and list ID"
-        });
+        next(new HttpError(400, "new List name and ids are required"));
         return;
     }
 
     try {
         const editedList = await editList(listId, userId, name);
         if (!editedList) {
-            res.status(404).json({ success: false, error: "List not found" });
+            next(new HttpError(404, "List not found"))
             return;
         }
         res.status(200).json({ success: true, list: editedList });
@@ -50,14 +47,14 @@ export const deleteListController: RequestHandler = async (req: Request, res: Re
     const listId = Number(req.params.listId);
 
     if (!userId || isNaN(listId)) {
-        res.status(400).json({ success: false, error: "List and user id are required" });
+        next(new HttpError(400, "List and user id are required"));
         return;
     }
 
     try {
         const deletedList = await deleteList(listId, userId);
         if (!deletedList) {
-            res.status(404).json({ success: false, error: "List not found" });
+            next(new HttpError(404, "List not found"));
             return;
         }
         res.status(200).json({ success: true, list: deletedList });
@@ -75,12 +72,12 @@ export const getListController: RequestHandler = async (req: Request, res: Respo
     if (!userId || isNaN(listId)) {
         res.status(400).json({ success: false, error: "List and user id are required" });
         return;
-    };
+    }
 
     try {
         const list = await getList(listId, userId);
         if (!list) {
-            res.status(404).json({ success: false, error: "List not found" });
+            next(new HttpError(400, "List and user id are required"));
             return;
         }
         res.status(200).json({ success: true, list: list });
@@ -96,9 +93,9 @@ export const getAllListsController: RequestHandler = async (req: Request, res: R
     const userId = (req as any).user?.id;
 
     if (!userId) {
-        res.status(400).json({ success: false, error: " user id is required" });
+        next(new HttpError(400, " user id is required"));
         return;
-    };
+    }
     try {
         const lists = await getAllLists(userId)
         res.status(200).json({ success: true, list: lists });

@@ -7,6 +7,7 @@ process.env.TZ = "UTC";
 import authRoutes from "./routes/authRoutes.js";
 import listRoutes from "./routes/listRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
 dotenv.config();
 
 const app = express();
@@ -22,6 +23,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/lists", listRoutes);
 app.use("/api", taskRoutes);
 
+app.use(errorHandler);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
