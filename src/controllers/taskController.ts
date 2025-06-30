@@ -1,5 +1,5 @@
 import type { RequestHandler, Request, Response } from "express"
-import { completeTask, createTask, deleteTask, duplicateTask, editTask, getAllTasks, getTask } from "../services/Tasks/tasksService.js";
+import { completeTask, createTask, deleteTask, duplicateTask, editTask, getAllTasks, getTask, setTaskPending } from "../services/Tasks/tasksService.js";
 
 export const createTaskController: RequestHandler = async (req: Request, res: Response) => {
     const { description, dueDate } = req.body
@@ -68,6 +68,29 @@ export const completeTaskController: RequestHandler = async (req: Request, res: 
     } catch (err) {
         console.error("failed to complete task:", err);
         res.status(500).json({ success: false, error: "server error while completing task" });
+        return;
+    }
+};
+export const setTaskPendingController: RequestHandler = async (req: Request, res: Response) => {
+    const taskId = parseInt(req.params.taskId);
+    if (!taskId) {
+        res.status(400).json({ success: false, error: "task id required" });
+        return;
+
+    }
+    try {
+        const pending = await setTaskPending(taskId);
+        if (!pending) {
+            res.status(404).json({ success: false, error: "Task not found" });
+            return;
+        }
+        res.status(200).json({ success: true, task: pending });
+        return;
+
+
+    } catch (err) {
+        console.error("failed to set task pending:", err);
+        res.status(500).json({ success: false, error: "server error while setting task pending" });
         return;
     }
 };

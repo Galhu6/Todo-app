@@ -50,7 +50,16 @@ export async function completeTask(taskId: number) {
     );
     return result.rows[0];
 
-}
+};
+export async function setTaskPending(taskId: number) {
+    const result = await pool.query(
+        `
+        UPDATE tasks SET status = 'pending' WHERE id = $1 RETURNING *;
+        `, [taskId]
+    );
+    return result.rows[0];
+
+};
 
 export async function deleteTask(taskId: number) {
     const result = await pool.query(

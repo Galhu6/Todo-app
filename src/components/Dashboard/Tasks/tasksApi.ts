@@ -71,6 +71,17 @@ export const completeTask = async (listId: number, taskId: number) => await fetc
     }
 }).then(res => res.json()).then(data => data.task);
 
+export const setTaskPending = async (listId: number, taskId: number) => await fetch(`${server}/api/lists/${listId}/tasks/${taskId}/set-pending`, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "X-User-ID": `${localStorage.getItem("userId")}`
+
+
+    }
+}).then(res => res.json()).then(data => data.task);
+
 export const duplicateTask = async (listId: number, taskId: number) => await fetch(`${server}/api/lists/${listId}/tasks/${taskId}/duplicate`, {
     method: "POST",
     headers: {

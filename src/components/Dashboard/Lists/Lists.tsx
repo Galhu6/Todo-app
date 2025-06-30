@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { createList, editList, deleteList, selectedList, allLists } from "./listsApi.js";
+import { createList, editList, deleteList, allLists } from "./listsApi.js";
 
-import { Tasks } from "../Tasks/Tasks";
 
 export type List = {
     id: number;
@@ -14,7 +13,7 @@ export type List = {
 
 
 type ListsProps = {
-    onSelectList: (id: number) => void;
+    onSelectList: (id: number, name: string) => void;
 };
 
 export const Lists = ({ onSelectList }: ListsProps) => {
@@ -22,7 +21,6 @@ export const Lists = ({ onSelectList }: ListsProps) => {
     const [selectedListId, setSelectedListId] = useState<number | null>(null);
     const [newListName, setNewListName] = useState("");
     const [editName, setEditName] = useState("");
-    const [selectedListDetails, setSelectedListDetails] = useState<List | null>(null)
     const [error, setError] = useState<string | null>(null);
 
     // fetch all lists once on mount
@@ -44,20 +42,18 @@ export const Lists = ({ onSelectList }: ListsProps) => {
     // automatically select the first list if non is selected
     useEffect(() => {
         if (!selectedListId && lists.length > 0) {
-            const firstId = lists[0].id;
-            setSelectedListId(firstId);
-            onSelectList(firstId);
+            const first = lists[0];
+            setSelectedListId(first.id);
+            onSelectList(first.id, first.name);
         }
     }, [lists]);
 
 
 
-    const handleSelect = async (listId: number) => {
-        setSelectedListId(listId);
+    const handleSelect = async (list: List) => {
+        setSelectedListId(list.id);
         setEditName("");
-        onSelectList(listId);
-        const list = await selectedList(listId);
-        setSelectedListDetails(list)
+        onSelectList(list.id, list.name);
 
     };
 
@@ -65,7 +61,6 @@ export const Lists = ({ onSelectList }: ListsProps) => {
         if (!selectedListId || !editName.trim()) return;
         const updated = await editList(selectedListId, editName)
         setLists(lists.map(list => list.id === selectedListId ? updated : list));
-        setSelectedListDetails(updated);
         setEditName("");
 
 
@@ -98,7 +93,7 @@ export const Lists = ({ onSelectList }: ListsProps) => {
                         key={list.id}
                         className={`flex justify-between items-center rounded px-2 py-1 transition hover:bg-gray-700/50 ${list.id === selectedListId ? 'font-bold' : ''}`}
                     >
-                        <span onClick={() => handleSelect(list.id)} className="cursor-pointer flex-grow">
+                        <span onClick={() => handleSelect(list)} className="cursor-pointer flex-grow">
                             {list.name}
                         </span>
                         <button onClick={() => handleDelete(list.id)} className="text-sm hover:text-indigo-400">
@@ -147,12 +142,6 @@ export const Lists = ({ onSelectList }: ListsProps) => {
                 <h3 className="text-center text-gray-400">create a new list to add tasks!</h3>
             )}
 
-            {lists.length > 0 && selectedListId && (
-                <div className="mt-4">
-                    <h2 className="mb-2 text-lg font-semibold">{selectedListDetails?.name}</h2>
-                    <Tasks listId={selectedListId!} />
-                </div>
-            )}
         </div>
     );
 }
