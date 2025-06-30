@@ -2,3 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+    .carousel {
+        @apply relative w-full h-64 overflow-hidden rounded-lg;
+    }
+
+    .carousel-img {
+        @apply w-full h-full object-cover transition-opacity duration-700;
+    }
+
+    .logo-grid {
+        @apply overflow-hidden w-full py-4;
+    }
+
+    .logo.track {
+        @apply flex gap-8 animate-logo-scroll;
+    }
+
+    .logo-item {
+        @apply h-16 w-16 object-contain;
+    }
+}
+
+@keyframes logo-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+.animate-logo-scroll {
+    animation: logo-scroll 15s linear infinite;
+}

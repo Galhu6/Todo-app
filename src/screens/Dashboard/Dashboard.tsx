@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Lists } from "./Lists/Lists.js";
-import { Navbar } from "../Navbar/Navbar.js";
-import { Footer } from "../Footer/Footer.js";
+import { Lists } from "../../components/Dashboard/Lists/Lists.js";
+import { Navbar } from "../../components/Navbar/Navbar.js";
+import { Footer } from "../../components/Footer/Footer.js";
 
 export const Dashboard = () => {
     const [selectedListId, setSelectedListId] = useState(0);
@@ -15,7 +15,7 @@ export const Dashboard = () => {
                 <Lists onSelectList={(id: number) => setSelectedListId(id)} />
             </div>
 
-            <Footer />
+            {/* <Footer /> */}
         </>
     );
 }

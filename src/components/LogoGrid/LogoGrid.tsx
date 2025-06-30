@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 const logos = [
     "https://user-images.githubusercontent.com/12243763/33518868-6e2595c4-d76a-11e7-8260-31b4e8110c93.png",
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlGmKtrnxElpqw3AExKXPWWBulcwjlvDJa1Q&s",
@@ -10,25 +9,18 @@ const logos = [
 ]
 
 export const LogoGrid = () => {
-    const [counter, setCounter] = useState(0)
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCounter((prev) => prev + 1);
-        }, 10000);
-        return () => clearInterval(interval);
-    }, [])
 
     const logoArr: string[] = logos //import later from a different file
-    const visibleLogoIndex = counter % logoArr.length;
+    const movingLogos = [...logoArr, ...logoArr]
     return (
 
         <div className="logo-grid" id="logoGrid">
-            {logoArr.length > 0 && (
-                <img src={
-                    logoArr[visibleLogoIndex]}
-                    alt={`Logo ${visibleLogoIndex + 1}`}
-                    className="logo-img" />
-            )}
+            <div className="logo-track">
+                {movingLogos.map((src, idx) => (
+                    <img key={idx} src={src} alt={`logo ${idx + 1}`} className="logo-item" />
+                ))}
+
+            </div>
 
         </div>
     )

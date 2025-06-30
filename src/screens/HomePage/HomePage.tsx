@@ -6,9 +6,9 @@ import { ImageCarousell } from "../../components/ImageCarousell/ImageCarousell.j
 export const HomePage = () => {
 
     return (
-        <>
+        <div className="flex flex-col min-h-screen">
             <Navbar />
-            <main className="flex flex-col items-center gap-16 p-8 bg-gray-950 min-h-screen">
+            <main className="flex-grow flex flex-col items-center gap-16 p-8 bg-gray-950">
                 <section className="w-full max-w-3xl">
                     <ImageCarousell />
                 </section>
@@ -29,6 +29,6 @@ export const HomePage = () => {
             </main>
             <Footer />
 
-        </>
+        </div>
     )
 }

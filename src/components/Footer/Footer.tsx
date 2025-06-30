@@ -1,24 +1,9 @@
-import { useState, useEffect } from "react";
-
 import { LogoGrid } from "../LogoGrid/LogoGrid.js";
 
 export const Footer = () => {
-    const [isScrollOverLimit, setIScrollOverLimit] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight;
-            setIScrollOverLimit(nearBottom);
-        };
-
-        handleScroll();
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-
     return (
-        <div
-            className={`fixed bottom-0 left-0 w-full flex flex-col justify-between gap-8 p-8 backdrop-blur-lg bg-gray-900/80 text-gray-300 transition-all duration-700 md:flex-row ${isScrollOverLimit ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+        <footer
+            className="w-full flex flex-col justify-between gap-8 p-8 h-48 bg-gray-900/80 bacdrop-blur-lg text-gray-300 md:flex-row"
         >
             <div>
                 <ul className="space-y-2 text-sm">
@@ -60,7 +45,7 @@ export const Footer = () => {
                     <img src="??" alt="a logo or avatar" />
                 </a>
             </div>
-        </div>
+        </footer>
     );
 }
 

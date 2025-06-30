@@ -39,9 +39,12 @@ type TasksProps = {
 export const Tasks = ({ listId }: TasksProps) => {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [newDescription, setNewDescription] = useState("");
+    const [descriptionEdit, setdescriptionEdit] = useState("")
     const [showEdit, setShowEdit] = useState(false);
     const [selectedTaskId, setSelectedTaskId] = useState<number>(0);
     const [newDueDate, setNewDueDate] = useState<Date>(new Date());
+    const [editDueDate, seteditDueDate] = useState<Date>(new Date());
+
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -94,10 +97,10 @@ export const Tasks = ({ listId }: TasksProps) => {
     };
     const handleEdit = async (taskId: number) => {
         const updates: any = {}
-        if (!newDescription.trim() && !newDueDate) return;
+        if (!descriptionEdit.trim() && !editDueDate) return;
 
-        if (newDescription.trim()) updates.description = newDescription;
-        if (newDueDate) updates.due_date = newDueDate;
+        if (descriptionEdit.trim()) updates.description = descriptionEdit;
+        if (editDueDate) updates.due_date = editDueDate;
         const updated = await editTask(listId, taskId, updates);
         setTasks(tasks.map(task => task.id === taskId ? updated : task))
         setShowEdit(false)
@@ -144,15 +147,15 @@ export const Tasks = ({ listId }: TasksProps) => {
                             {(showEdit) && <div className="flex flex-col gap-2 rounded bg-gray-800 p-4">
                                 <input
                                     type="text"
-                                    value={newDescription}
-                                    onChange={(e) => setNewDescription(e.target.value)}
+                                    value={descriptionEdit}
+                                    onChange={(e) => setdescriptionEdit(e.target.value)}
                                     placeholder="edit task description"
                                     className="flex-grow rounded bg-gray-700 p-2 text-ehite focus:outline-none focus:ring focus:rig-indigo-500"
                                 />
                                 <input
                                     type="date"
-                                    value={newDueDate.toISOString().split("T")[0]}
-                                    onChange={(e) => setNewDueDate(new Date(e.target.value))}
+                                    value={editDueDate.toISOString().split("T")[0]}
+                                    onChange={(e) => seteditDueDate(new Date(e.target.value))}
                                     placeholder="edit task description"
                                     className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
                                 />
