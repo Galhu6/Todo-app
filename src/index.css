@@ -15,7 +15,7 @@
         @apply overflow-hidden w-full py-4;
     }
 
-    .logo.track {
+    .logo-track {
         @apply flex gap-8 animate-logo-scroll;
     }
 

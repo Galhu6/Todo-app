@@ -70,11 +70,14 @@ export const Tasks = ({ listId }: TasksProps) => {
         const handleClickOutside = (e: MouseEvent) => {
             if (editFormRef.current && !editFormRef.current.contains(e.target as Node)) {
                 setEditTaskId(null);
-            };
-            document.addEventListener('mousedown', handleClickOutside);
-            return () => document.removeEventListener('mousedown', handleClickOutside);
-        }
-    }, [])
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        };
+
+    }, []);
 
     const formatTimeLeft = (dueDate: Date) => {
         const now = new Date();
