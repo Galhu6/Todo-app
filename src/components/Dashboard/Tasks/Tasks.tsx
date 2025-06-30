@@ -178,7 +178,7 @@ export const Tasks = ({ listId }: TasksProps) => {
                             <button onClick={() => handleDelete(task.id)} className="text-xs hover:text-red-400">
                                 delete
                             </button>
-                            {(editTaskId === task.id) && <div className="flex flex-col gap-2 rounded bg-gray-800 p-4">
+                            {(editTaskId === task.id) && (<div ref={editFormRef} className="flex flex-col gap-2 rounded bg-gray-800 p-4">
                                 <input
                                     type="text"
                                     ref={editInputRef}
@@ -199,7 +199,7 @@ export const Tasks = ({ listId }: TasksProps) => {
                                 >
                                     Submit Changes
                                 </button>
-                            </div>}
+                            </div>)}
                         </li>
                     ))}
                 </ul>
