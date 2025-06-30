@@ -1,10 +1,15 @@
 import { pool } from "../../db.js";
 
+function toUtcTimestamp(date: Date) {
+    return new Date(date).toISOString().replace('T', ' ').replace('Z', '');
+}
+
 export async function createTask(description: string, listId: number, dueDate: Date) {
+    const utcDate = toUtcTimestamp(dueDate);
     const result = await pool.query(
         `
         INSERT INTO tasks (description, list_id, due_date) VALUES ($1, $2, $3) RETURNING *;
-        `, [description, listId, dueDate]
+        `, [description, listId, utcDate]
     );
     return result.rows[0];
 };
@@ -20,7 +25,7 @@ export async function editTask(taskId: number, listId: number, newDesc?: string,
     }
     if (newDueDate !== undefined) {
         updates.push(`due_date = $${values.length + 1}`);
-        values.push(newDueDate)
+        values.push(toUtcTimestamp(newDueDate))
 
     }
 
@@ -82,7 +87,7 @@ export async function duplicateTask(listId: number, taskId: number) {
         description,
         list_id,
         due_date) VALUES ($1, $2, $3) RETURNING *;
-        `, [currentTask.description, currentTask.list_id, currentTask.due_date]
+        `, [currentTask.description, currentTask.list_id, toUtcTimestamp(currentTask.due_date)]
 
     );
     return result.rows[0]

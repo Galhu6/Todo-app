@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 
+process.env.TZ = "UTC";
+
 import authRoutes from "./routes/authRoutes.js";
 import listRoutes from "./routes/listRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
