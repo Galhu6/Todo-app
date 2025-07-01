@@ -1,5 +1,5 @@
 import type { RequestHandler, Request, Response, NextFunction } from "express"
-import { completeTask, createTask, deleteTask, duplicateTask, editTask, getAllTasks, getTask, setTaskPending } from "../services/Tasks/tasksService.js";
+import { completeTask, createTask, deleteTask, duplicateTask, editTask, getAllTasks, getTask, setTaskPending, getDeletedTasks } from "../services/Tasks/tasksService.js";
 import { HttpError } from "../middlewares/errorHandler.js";
 
 export const createTaskController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
@@ -157,6 +157,24 @@ export const getAllTasksController: RequestHandler = async (req: Request, res: R
         return;
     }
 };
+
+export const getDeletedTasksController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+    const listId = parseInt(req.params.listId);
+    if (!listId) {
+        next(new HttpError(400, "list id is required"));
+        return;
+    }
+    try {
+        const taskArr = await getDeletedTasks(listId);
+        res.status(200).json({ success: true, task: taskArr });
+        return;
+    } catch (err) {
+        console.error("failed to get deleted tasks");
+        next(err);
+        return;
+
+    }
+}
 
 export const duplicateTaskController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const listId = parseInt(req.params.listId);

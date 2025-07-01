@@ -8,6 +8,7 @@ import {
     getTasksController,
     duplicateTaskController,
     setTaskPendingController,
+    getDeletedTasksController
 } from "../controllers/taskController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { verifyListOwnership, verifyTaskOwnership } from "../middlewares/verifyOwnerships.js";
@@ -17,6 +18,7 @@ const router = Router();
 router.use(authMiddleware);
 
 router.get("/lists/:listId/tasks/", verifyListOwnership, getAllTasksController);
+router.get("/lists/:listId/tasks/trash", verifyListOwnership, getDeletedTasksController);
 router.get("/lists/:listId/tasks/:taskId", verifyListOwnership, getTasksController);
 router.post("/lists/:listId/new-task", verifyListOwnership, createTaskController);
 router.patch("/lists/:listId/tasks/:taskId", verifyTaskOwnership, editTaskController);

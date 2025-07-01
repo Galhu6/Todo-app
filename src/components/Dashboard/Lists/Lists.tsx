@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createList, editList, deleteList, allLists } from "./listsApi.js";
+import { createList, editList, deleteList, allLists, deletedLists } from "./listsApi.js";
 
 
 export type List = {
@@ -19,6 +19,8 @@ type ListsProps = {
 export const Lists = ({ onSelectList }: ListsProps) => {
     const [lists, setLists] = useState<List[]>([]);
     const [selectedListId, setSelectedListId] = useState<number | null>(null);
+    const [trash, setTrash] = useState<List[]>([]);
+    const [showTrash, setShowTrash] = useState(false);
     const [newListName, setNewListName] = useState("");
     const [editName, setEditName] = useState("");
     const [error, setError] = useState<string | null>(null);
@@ -72,6 +74,14 @@ export const Lists = ({ onSelectList }: ListsProps) => {
 
     };
 
+    const toggleTrash = async () => {
+        if (!showTrash) {
+            const deleted = await deletedLists();
+            setTrash(deleted);
+        }
+        setShowTrash(!showTrash)
+    }
+
     const handleCreate = async () => {
         if (!newListName.trim()) return;
         const created = await createList(newListName);
@@ -83,10 +93,16 @@ export const Lists = ({ onSelectList }: ListsProps) => {
 
     return (
         <div className="space-y-4 rounded bg-gray-800/50 p-4 shadow-lg max-w-md w-full">
-            <h2 className="text-lg font-semibold">My Lists</h2>
+            <div className="flex justify-between items-center">
+                <h2 className="text-lg font-semibold">My Lists</h2>
+                <button onClick={toggleTrash} className="text-sm hover:text-indigo-400">
+                    {showTrash ? 'Hide Trash' : 'Show Trash'}
+                </button>
+            </div>
             {error &&
                 <p className="text-red-400">{error}</p>
             }
+
             <ul className="space-y-2">
                 {Array.isArray(lists) && lists.map((list) => (
                     <li
@@ -102,7 +118,26 @@ export const Lists = ({ onSelectList }: ListsProps) => {
                     </li>
                 ))}
             </ul>
+            {
+                showTrash && (
+                    <div className="mt-4">
+                        <h3 className="text-sm text-gray mb-1">
+                            Trash
+                        </h3>
+                        <ul className="space-y-1">
+                            {trash.map(list => (
+                                <li key={list.id} className="rounded bg-gray-700 px-2 text-sm">
+                                    {list.name}
+                                </li>
+                            ))}
+                            {trash.length === 0 &&
+                                <li className="text-xs text-gray-500">No Deleted Lists</li>
+                            }
+                        </ul>
 
+                    </div>
+                )
+            }
             <div className="flex gap-2">
                 <input
                     type="text"

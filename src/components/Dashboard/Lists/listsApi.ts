@@ -6,9 +6,9 @@ export const allLists = async () => {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
             "X-User-ID": `${localStorage.getItem("userId")}`
-        }
+        },
+        credentials: "include"
     });
     if (!res.ok) {
         throw new Error(`failed to fetch lists: ${res.statusText}`)
@@ -17,26 +17,28 @@ export const allLists = async () => {
     return data.list;
 };
 
-export const createList = async (newListName: string) => await fetch(`${server}/api/lists/new-list`, {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "X-User-ID": `${localStorage.getItem("userId")}`
+export const createList = async (newListName: string) =>
+    await fetch(`${server}/api/lists/new-list`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-User-ID": `${localStorage.getItem("userId")}`
 
-    },
-    body: JSON.stringify({ name: newListName })
-}).then(res => res.json()).then(data => data.list);
+        },
+        credentials: "include",
+        body: JSON.stringify({ name: newListName })
+    }).then(res => res.json()).then(data => data.list);
 
-export const selectedList = async (selectedListId: number) => await fetch(`${server}/api/lists/${selectedListId}`, {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "X-User-ID": `${localStorage.getItem("userId")}`
+export const selectedList = async (selectedListId: number) =>
+    await fetch(`${server}/api/lists/${selectedListId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "X-User-ID": `${localStorage.getItem("userId")}`
 
-    }
-}).then(res => res.json()).then(data => data.list);
+        },
+        credentials: "include",
+    }).then(res => res.json()).then(data => data.list);
 
 
 export const deleteList = async (selectedListId: number) => await fetch(`${server}/api/lists/${selectedListId}`, {
@@ -45,16 +47,32 @@ export const deleteList = async (selectedListId: number) => await fetch(`${serve
         Authorization: `Bearer ${localStorage.getItem("token")}`,
         "X-User-ID": `${localStorage.getItem("userId")}`
 
-    }
+    },
+    credentials: "include"
 });
 
 export const editList = async (selectedListId: number, editName: string) => await fetch(`${server}/api/lists/${selectedListId}`, {
     method: "PATCH",
     headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
         "X-User-ID": `${localStorage.getItem("userId")}`
-
     },
+    credentials: "include",
     body: JSON.stringify({ name: editName }),
 }).then(res => res.json()).then(data => data.list);
+
+export const deletedLists = async () => {
+    const res = await fetch(`${server}/api/lists/trash`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "X-User-ID": `${localStorage.getItem("userId")}`
+        },
+        credentials: "include"
+    });
+    if (!res.ok) {
+        throw new Error(`failed to fetch trash: ${res.statusText}`)
+    };
+    const data = await res.json();
+    return data.list;
+};

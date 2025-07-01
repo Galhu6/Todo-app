@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { createTask, allTasks, /*selectedTask,*/ completeTask, editTask, deleteTask, duplicateTask, setTaskPending } from "./tasksApi.js";
+import { createTask, allTasks, deletedTasks, completeTask, editTask, deleteTask, duplicateTask, setTaskPending } from "./tasksApi.js";
 
 
 export class Task {
@@ -38,6 +38,8 @@ type TasksProps = {
 
 export const Tasks = ({ listId }: TasksProps) => {
     const [tasks, setTasks] = useState<Task[]>([]);
+    const [trash, setTrash] = useState<Task[]>([]);
+    const [showTrash, setShowTrash] = useState(false);
     const [newDescription, setNewDescription] = useState("");
     const [descriptionEdit, setdescriptionEdit] = useState("");
     const [editTaskId, setEditTaskId] = useState<number | null>(null)
@@ -147,10 +149,24 @@ export const Tasks = ({ listId }: TasksProps) => {
         const duplicated = await duplicateTask(listId, taskId);
         setTasks([...tasks, duplicated])
 
+    };
+
+    const toggleTrash = async () => {
+        if (!showTrash) {
+            const deleted = await deletedTasks(listId);
+            setTrash(deleted);
+
+        };
+        setShowTrash(!showTrash)
     }
 
     return (
         <div className="space-y-4">
+            <div className="flex justify-end">
+                <button onClick={toggleTrash} className="text-xs hover:text-indigo-400">
+                    {showTrash ? 'Hide Trash' : "View Trash"}
+                </button>
+            </div>
             <div>
                 <ul className="space-y-2 divide-y divide-gray-700">
                     {tasks.map((task) => (
@@ -205,6 +221,19 @@ export const Tasks = ({ listId }: TasksProps) => {
                 </ul>
             </div>
 
+            {showTrash && (
+                <div className="mt-4">
+                    <h3 className="text-sm text-gray-400 mb-1">Trash</h3>
+                    <ul className="space-y-1 divide-t divide-gray-700">
+                        {trash.map(task => (
+                            <li key={task.id} className="px-2 py-1 text-sm bg-gray-700 rounded">
+                                {task.description}
+                            </li>
+                        ))}
+                        {trash.length === 0} && <li className="text-xs text-gray-500">No deleted tasks</li>
+                    </ul>
+                </div>
+            )}
             <div className="flex flex-col items-stretch gap-2 rounded bg-gray-900 p-4 sm:flex-row sm:items-end">
                 <input
                     type="text"

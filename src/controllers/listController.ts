@@ -1,5 +1,5 @@
 import type { RequestHandler, Request, Response, NextFunction } from "express"
-import { createList, deleteList, editList, getAllLists, getList } from "../services/Lists/listService.js";
+import { createList, deleteList, editList, getAllLists, getList, getDeletedLists } from "../services/Lists/listService.js";
 import { HttpError } from "../middlewares/errorHandler.js";
 
 export const createListController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
@@ -106,3 +106,18 @@ export const getAllListsController: RequestHandler = async (req: Request, res: R
 
     }
 };
+
+export const getDeletedListController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+        next(new HttpError(400, "user id is required"));
+        return;
+    }
+    try {
+        const lists = await getDeletedLists(userId);
+        res.status(200).json({ success: true, list: lists });
+        return;
+    } catch (err) {
+        next(err);
+    }
+}

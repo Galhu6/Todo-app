@@ -87,6 +87,14 @@ export async function getAllTasks(listId: number) {
     );
     return result.rows;
 };
+export async function getDeletedTasks(listId: number) {
+    const result = await pool.query(
+        `
+        SELECT * FROM tasks WHERE list_id = $1 and isdeleted = true;
+        `, [listId]
+    );
+    return result.rows;
+};
 
 export async function duplicateTask(listId: number, taskId: number) {
     const currentTask = await getTask(listId, taskId)

@@ -13,7 +13,7 @@ export const Navbar = () => {
             try {
                 const decoded: any = jwtDecode(token);
                 if (decoded.username) {
-                    setUserName(decoded.username);
+                    setUserName(decoded.name);
                     setIsLoggedIn(true);
                 }
             } catch (err) {

@@ -46,3 +46,11 @@ export async function getAllLists(userId: number) {
     );
     return result.rows;
 };
+export async function getDeletedLists(userId: number) {
+    const result = await pool.query(
+        `
+        SELECT * FROM Lists WHERE user_id = $1 and isdeleted = true;
+        `, [userId]
+    );
+    return result.rows;
+};
