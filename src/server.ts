@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import morgan from "morgan";
 
 process.env.TZ = "UTC";
 
@@ -13,9 +14,11 @@ dotenv.config();
 
 const app = express();
 
+app.use(morgan("dev"));
+
 app.use(cors({
-    origin: process.env.VITE_FRONTEND_URL, // אפשר גם '*' בזמן פיתוח
-    credentials: true // אם אתה משתמש ב-cookie או header עם credentials
+    origin: process.env.VITE_FRONTEND_URL,
+    credentials: true
 }));
 
 app.use(express.json())

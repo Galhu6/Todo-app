@@ -3,6 +3,7 @@ import { Lists } from "../../components/Dashboard/Lists/Lists.js";
 import { Tasks } from "../../components/Dashboard/Tasks/Tasks.js";
 import { Navbar } from "../../components/Navbar/Navbar.js";
 import { Footer } from "../../components/Footer/Footer.js";
+import { Chat } from "../../components/Chat/Chat.js";
 
 export const Dashboard = () => {
     const [selectedListId, setSelectedListId] = useState<number | null>(null);
@@ -24,7 +25,7 @@ export const Dashboard = () => {
                     )}
                 </div>
             </div>
-
+            <Chat />
             <Footer />
         </>
     );

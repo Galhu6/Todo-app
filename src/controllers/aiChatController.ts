@@ -1,8 +1,8 @@
 import type { RequestHandler, Request, Response, NextFunction } from "express";
 import { OpenAI } from "openai";
 import { getChatContext, saveChatContext } from "../services/Chat/chatService.js";
-import { getAllLists } from "../services/Lists/listService";
-import { getAllTasks } from "../services/Tasks/tasksService";
+import { getAllLists } from "../services/Lists/listService.js";
+import { getAllTasks } from "../services/Tasks/tasksService.js";
 import { HttpError } from "../middlewares/errorHandler.js";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
