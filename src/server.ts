@@ -7,6 +7,7 @@ process.env.TZ = "UTC";
 import authRoutes from "./routes/authRoutes.js";
 import listRoutes from "./routes/listRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(express.json())
 app.use("/api/auth", authRoutes);
 app.use("/api/lists", listRoutes);
 app.use("/api", taskRoutes);
+app.use("/api/ai", aiRoutes);
 
 app.use(errorHandler);
 const PORT = process.env.PORT || 3000;

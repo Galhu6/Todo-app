@@ -97,6 +97,40 @@ ALTER SEQUENCE public.tasks_id_seq OWNER TO postgres;
 
 ALTER SEQUENCE public.tasks_id_seq OWNED BY public.tasks.id;
 
+--
+-- Name: chat_contexts; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.chat_contexts (
+    id integer NOT NULL,
+    user_id integer,
+    context text,
+    updated_at timestamp without time zone DEFAULT now()
+);
+
+
+ALTER TABLE public.chat_contexts OWNER TO postgres;
+
+--
+-- Name: chat_contexts_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.chat_contexts_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.chat_contexts_id_seq OWNER TO postgres;
+
+--
+-- Name: chat_contexts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.chat_contexts_id_seq OWNED BY public.chat_contexts.id;
 
 --
 -- Name: users; Type: TABLE; Schema: public; Owner: postgres
@@ -156,6 +190,11 @@ ALTER TABLE ONLY public.tasks ALTER COLUMN id SET DEFAULT nextval('public.tasks_
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
 
+--
+-- Name: chat_contexts id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.chat_contexts ALTER COLUMN id SET DEFAULT nextval('public.chat_contexts_id_seq'::regclass);
 
 --
 -- Data for Name: lists; Type: TABLE DATA; Schema: public; Owner: postgres
@@ -239,6 +278,19 @@ ALTER TABLE ONLY public.lists
 ALTER TABLE ONLY public.tasks
     ADD CONSTRAINT tasks_pkey PRIMARY KEY (id);
 
+--
+-- Name: chat_contexts chat_contexts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.chat_contexts
+    ADD CONSTRAINT chat_contexts_pkey PRIMARY KEY (id);
+
+--
+-- Name: chat_contexts chat_contexts_user_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.chat_contexts
+    ADD CONSTRAINT chat_contexts_user_id_key UNIQUE (user_id);
 
 --
 -- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
@@ -271,6 +323,12 @@ ALTER TABLE ONLY public.lists
 ALTER TABLE ONLY public.tasks
     ADD CONSTRAINT tasks_list_id_fkey FOREIGN KEY (list_id) REFERENCES public.lists(id);
 
+--
+-- Name: chat_contexts chat_contexts_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.chat_contexts
+    ADD CONSTRAINT chat_contexts_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 --
 -- PostgreSQL database dump complete
