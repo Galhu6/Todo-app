@@ -33,7 +33,7 @@ export class Task {
 }
 
 export const Tasks = () => {
-    const { selectedListId } = useAppContext();
+    const { selectedListId, tasksRefreshToken } = useAppContext();
     const [tasks, setTasks] = useState<Task[]>([]);
     const [trash, setTrash] = useState<Task[]>([]);
     const [showTrash, setShowTrash] = useState(false);
@@ -49,7 +49,7 @@ export const Tasks = () => {
         const fetchTasks = async () => {
             if (!selectedListId) return;
             try {
-                const data = await allTasks(selectedListId)
+                const data = await allTasks(selectedListId);
                 setTasks(data);
             } catch (error) {
                 console.error("error fetching tasks:", error);
@@ -58,7 +58,7 @@ export const Tasks = () => {
         };
 
         fetchTasks();
-    }, [selectedListId]);
+    }, [selectedListId, tasksRefreshToken]);
 
     useEffect(() => {
         if (editTaskId !== null) {

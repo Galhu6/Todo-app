@@ -12,10 +12,13 @@ interface AppContextValue {
     selectedListId: number | null;
     selectedListName: string;
     selectedListGoal: string;
+    tasksRefreshToken: number;
     setLists: React.Dispatch<React.SetStateAction<List[]>>;
     setSelectedListId: React.Dispatch<React.SetStateAction<number | null>>;
     setSelectedListName: React.Dispatch<React.SetStateAction<string>>;
     setSelectedListGoal: React.Dispatch<React.SetStateAction<string>>;
+    refreshLists: () => Promise<void>;
+    refreshTasks: () => void;
 };
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
@@ -26,7 +29,18 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const [selectedListId, setSelectedListId] = useState<number | null>(null);
     const [selectedListName, setSelectedListName] = useState("");
     const [selectedListGoal, setSelectedListGoal] = useState("")
+    const [tasksRefreshToken, setTaskRefreshToken] = useState(0);
 
+    const refreshTasks = () => setTaskRefreshToken((t) => t + 1);
+
+    const refreshLists = async () => {
+        try {
+            const fetched = await allLists();
+            setLists(fetched);
+        } catch {
+            setLists([])
+        }
+    }
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -44,15 +58,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     useEffect(() => {
-        const fetchLists = async () => {
-            try {
-                const fetched = await allLists();
-                setLists(fetched);
-            } catch {
-                setLists([]);
-            }
-        };
-        fetchLists();
+        refreshLists();
     }, []);
 
     useEffect(() => {
@@ -69,10 +75,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         selectedListId,
         selectedListName,
         selectedListGoal,
+        tasksRefreshToken,
         setLists,
         setSelectedListId,
         setSelectedListName,
-        setSelectedListGoal
+        setSelectedListGoal,
+        refreshLists,
+        refreshTasks
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>

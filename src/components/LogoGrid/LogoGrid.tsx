@@ -4,7 +4,9 @@ const logos = [
     "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Vitejs-logo.svg/1039px-Vitejs-logo.svg.png",
     "https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg",
     "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Tailwind_CSS_Logo.svg/2560px-Tailwind_CSS_Logo.svg.png",
-    "https://www.postgresql.org/media/img/about/press/elephant.png"
+    "https://www.postgresql.org/media/img/about/press/elephant.png",
+    "https://www.figma.com/community/resource/9043ad92-248b-4d9c-8fb9-22d27a474316/thumbnail",
+
 
 ]
 
@@ -14,10 +16,10 @@ export const LogoGrid = () => {
     const movingLogos = [...logoArr, ...logoArr]
     return (
 
-        <div className="logo-grid" id="logoGrid">
-            <div className="logo-track">
+        <div className="logo-grid overflow-hidden py-4">
+            <div className="logo-track flex mx-6 w-max animate-logo-scroll">
                 {movingLogos.map((src, idx) => (
-                    <img key={idx} src={src} alt={`logo ${idx + 1}`} className="logo-item" />
+                    <img key={idx} src={src} alt={`logo ${idx + 1}`} className="logo-item h-16 object-contain" />
                 ))}
 
             </div>

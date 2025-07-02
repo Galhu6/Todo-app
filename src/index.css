@@ -16,11 +16,12 @@
     }
 
     .logo-track {
-        @apply flex gap-8 animate-logo-scroll;
+        @apply flex mx-4;
+        animation: logo-scroll 20s linear infinite;
     }
 
     .logo-item {
-        @apply h-16 w-16 object-contain;
+        @apply h-16 w-16 object-contain mx-4;
     }
 }
 
@@ -35,5 +36,5 @@
 }
 
 .animate-logo-scroll {
-    animation: logo-scroll 15s linear infinite;
+    animation: logo-scroll 20s linear infinite;
 }
