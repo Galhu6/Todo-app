@@ -11,9 +11,11 @@ interface AppContextValue {
     lists: List[];
     selectedListId: number | null;
     selectedListName: string;
+    selectedListGoal: string;
     setLists: React.Dispatch<React.SetStateAction<List[]>>;
     setSelectedListId: React.Dispatch<React.SetStateAction<number | null>>;
-    setSelectedListName: React.Dispatch<React.SetStateAction<string>>
+    setSelectedListName: React.Dispatch<React.SetStateAction<string>>;
+    setSelectedListGoal: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
@@ -23,6 +25,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const [lists, setLists] = useState<List[]>([]);
     const [selectedListId, setSelectedListId] = useState<number | null>(null);
     const [selectedListName, setSelectedListName] = useState("");
+    const [selectedListGoal, setSelectedListGoal] = useState("")
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -56,7 +59,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         if (!selectedListId && lists.length > 0) {
             setSelectedListId(lists[0].id);
             setSelectedListName(lists[0].name);
-
+            setSelectedListGoal(lists[0].overall_goal || "");
         }
     }, [lists]);
 
@@ -65,9 +68,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         lists,
         selectedListId,
         selectedListName,
+        selectedListGoal,
         setLists,
         setSelectedListId,
         setSelectedListName,
+        setSelectedListGoal
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>

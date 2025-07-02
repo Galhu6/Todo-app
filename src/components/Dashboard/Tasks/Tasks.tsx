@@ -77,7 +77,7 @@ export const Tasks = () => {
             document.removeEventListener('mousedown', handleClickOutside)
         };
 
-    }, []);
+    }, [tasks]);
 
     const formatTimeLeft = (dueDate: Date) => {
         const now = new Date();

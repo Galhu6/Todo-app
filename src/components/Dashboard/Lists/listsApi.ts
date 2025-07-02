@@ -19,7 +19,7 @@ export const allLists = async () => {
     return data.list;
 };
 
-export const createList = async (newListName: string) =>
+export const createList = async (newListName: string, overallGoal: string) =>
     await fetch(`${server}/api/lists/new-list`, {
         method: "POST",
         headers: {
@@ -30,7 +30,7 @@ export const createList = async (newListName: string) =>
 
         },
         credentials: "include",
-        body: JSON.stringify({ name: newListName })
+        body: JSON.stringify({ name: newListName, overallGoal })
     }).then(res => res.json()).then(data => data.list);
 
 export const selectedList = async (selectedListId: number) =>
@@ -57,7 +57,7 @@ export const deleteList = async (selectedListId: number) => await fetch(`${serve
     credentials: "include"
 });
 
-export const editList = async (selectedListId: number, editName: string) => await fetch(`${server}/api/lists/${selectedListId}`, {
+export const editList = async (selectedListId: number, editName: string, overallGoal?: string) => await fetch(`${server}/api/lists/${selectedListId}`, {
     method: "PATCH",
     headers: {
         "Content-Type": "application/json",
@@ -65,7 +65,7 @@ export const editList = async (selectedListId: number, editName: string) => awai
         "X-User-ID": `${localStorage.getItem("userId")}`
     },
     credentials: "include",
-    body: JSON.stringify({ name: editName }),
+    body: JSON.stringify({ name: editName, overallGoal }),
 }).then(res => res.json()).then(data => data.list);
 
 export const deletedLists = async () => {

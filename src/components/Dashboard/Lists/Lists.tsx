@@ -8,16 +8,18 @@ export type List = {
     user_id: number;
     created_at?: Date;
     name: string;
+    overall_goal?: string;
     isdeleted?: boolean;
 };
 
 
 
 export const Lists = () => {
-    const { lists, setLists, selectedListId, setSelectedListId, setSelectedListName } = useAppContext()
+    const { lists, setLists, selectedListId, setSelectedListId, setSelectedListName, setSelectedListGoal } = useAppContext()
     const [trash, setTrash] = useState<List[]>([]);
     const [showTrash, setShowTrash] = useState(false);
     const [newListName, setNewListName] = useState("");
+    const [newListGoal, setNewListGoal] = useState("")
     const [editName, setEditName] = useState("");
     const [error, setError] = useState<string | null>(null);
 
@@ -26,6 +28,7 @@ export const Lists = () => {
     const handleSelect = async (list: List) => {
         setSelectedListId(list.id);
         setSelectedListName(list.name)
+        setSelectedListGoal(list.overall_goal || '');
         setEditName("");
 
     };
@@ -55,9 +58,10 @@ export const Lists = () => {
 
     const handleCreate = async () => {
         if (!newListName.trim()) return;
-        const created = await createList(newListName);
+        const created = await createList(newListName, newListGoal);
         setLists([...lists, created]);
         setNewListName("");
+        setNewListGoal("")
     };
 
 
@@ -109,7 +113,7 @@ export const Lists = () => {
                     </div>
                 )
             }
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2">
                 <input
                     type="text"
                     value={newListName}
@@ -117,6 +121,10 @@ export const Lists = () => {
                     placeholder="New list name"
                     className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
                 />
+                <input type="text" value={newListGoal}
+                    onChange={(e) => setNewListGoal(e.target.value)}
+                    placeholder="Overall Goal"
+                    className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500" />
                 <button
                     onClick={handleCreate}
                     className="rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"

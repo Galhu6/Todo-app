@@ -6,7 +6,7 @@ import { Chat } from "../../components/Chat/Chat.js";
 import { useAppContext } from "../../context/AppContext.js";
 
 export const Dashboard = () => {
-    const { selectedListId, selectedListName } = useAppContext()
+    const { selectedListId, selectedListName, selectedListGoal } = useAppContext()
 
     return (
         <>
@@ -19,6 +19,9 @@ export const Dashboard = () => {
                     {selectedListId && (
                         <>
                             <h2 className="mb-2 text-lg font-semibold">{selectedListName}</h2>
+                            {selectedListGoal && (
+                                <p className="mb-2 text-sm text-gray-300">Goal: {selectedListGoal}</p>
+                            )}
                             <Tasks />
                         </>
                     )}

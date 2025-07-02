@@ -45,7 +45,7 @@ export const chatWithAi: RequestHandler = async (req: Request, res: Response, ne
             {
                 type: 'function',
                 function: {
-                    name: 'addtask',
+                    name: 'addTask',
                     description: 'Create a new task in a list',
                     parameters: {
                         type: 'object',
@@ -80,7 +80,7 @@ export const chatWithAi: RequestHandler = async (req: Request, res: Response, ne
                 const args = JSON.parse(call.function.arguments || '{}');
                 if (call.function.name === 'addList') {
                     const newList = await createList(args.name, userId, args.overallGoal);
-                    reply = `craeted list "${newList.name}".`;
+                    reply = `created list "${newList.name}".`;
                 } else if (call.function.name === 'addTask') {
                     const due = new Date(args.dueDate);
                     const listId = parseInt(args.listId);
@@ -93,10 +93,10 @@ export const chatWithAi: RequestHandler = async (req: Request, res: Response, ne
                         return;
                     }
                     const newTask = await createTask(args.description, listId, due);
-                    reply = `Created tasl "${newTask.description} in list ${newTask.listId}`
+                    reply = `Created task "${newTask.description}" in list ${newTask.listId}`;
                 }
             } catch (err) {
-                reply = `sorry' i could not process that command`;
+                reply = `sorry, I could not process that command`;
             }
         }
         await saveChatContext(userId, context + "\nUser: " + message + "\nAI: " + reply);
