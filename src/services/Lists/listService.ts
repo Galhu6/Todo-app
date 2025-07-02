@@ -26,6 +26,7 @@ export async function editList(listId: number, userId: number, newName: string, 
     const query = `
     UPDATE List SET ${updates.join(', ')} WHERE user_id = $1 AND id = $2 RETURNING *;`;
     const result = await pool.query(query, values)
+    return result.rows[0];
 
 };
 

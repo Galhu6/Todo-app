@@ -17,6 +17,7 @@ Environment variables are expected in a `.env` file and include:
 - `DATABASE_URL` – connection string for PostgreSQL
 - `JWT_SECRET` – secret used to sign authentication tokens
 - `CLIENT_ID` – Google OAuth client id (for social login)
+- `OPENAI_API_KEY` – API key for OpenAI requests
 
 ## Project Structure
 

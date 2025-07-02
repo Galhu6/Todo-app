@@ -1,5 +1,6 @@
 import type { RequestHandler, Request, Response, NextFunction } from "express";
 import { OpenAI } from "openai";
+import type { ChatCompletionTool } from "openai/resources";
 import { getChatContext, saveChatContext } from "../services/Chat/chatService.js";
 import { getAllLists, createList } from "../services/Lists/listService.js";
 import { getAllTasks, createTask } from "../services/Tasks/tasksService.js";
@@ -23,7 +24,7 @@ export const chatWithAi: RequestHandler = async (req: Request, res: Response, ne
 
         const systemPrompt = `you are a helpful assistant for a TODO app. Each list has an overall_goal to guide its tasks. The user has these lists: ${JSON.stringify(lists)} and tasks: ${JSON.stringify(tasks)}. Conversation context: ${context}`;
 
-        const tools = [
+        const tools: ChatCompletionTool[] = [
             {
                 type: 'function',
                 function: {
@@ -43,7 +44,7 @@ export const chatWithAi: RequestHandler = async (req: Request, res: Response, ne
             },
             {
                 type: 'function',
-                fucntion: {
+                function: {
                     name: 'addtask',
                     description: 'Create a new task in a list',
                     parameters: {
@@ -82,7 +83,16 @@ export const chatWithAi: RequestHandler = async (req: Request, res: Response, ne
                     reply = `craeted list "${newList.name}".`;
                 } else if (call.function.name === 'addTask') {
                     const due = new Date(args.dueDate);
-                    const newTask = await createTask(args.description, args.listId, due);
+                    const listId = parseInt(args.listId);
+                    if (isNaN(due.getTime())) {
+                        next(new HttpError(400, "invalid due date"));
+                        return;
+                    }
+                    if (!listId || !lists.some((l: any) => l.id === listId)) {
+                        next(new HttpError(403, "list does not belong to user"));
+                        return;
+                    }
+                    const newTask = await createTask(args.description, listId, due);
                     reply = `Created tasl "${newTask.description} in list ${newTask.listId}`
                 }
             } catch (err) {
