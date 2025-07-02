@@ -2,7 +2,7 @@ import { pool } from "../../db.js";
 
 export async function getChatContext(userId: number) {
     const result = await pool.query(
-        `SELECT context FROM chat_context WHERE user_id= $1`,
+        `SELECT context FROM chat_contexts WHERE user_id= $1`,
         [userId]
     );
     return result.rows[0]?.context || "";

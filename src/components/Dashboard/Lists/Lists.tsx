@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { createList, editList, deleteList, allLists, deletedLists } from "./listsApi.js";
+import { useState } from "react";
+import { createList, editList, deleteList, deletedLists } from "./listsApi.js";
+import { useAppContext } from "../../../context/AppContext.js";
 
 
 export type List = {
@@ -12,50 +13,20 @@ export type List = {
 
 
 
-type ListsProps = {
-    onSelectList: (id: number, name: string) => void;
-};
-
-export const Lists = ({ onSelectList }: ListsProps) => {
-    const [lists, setLists] = useState<List[]>([]);
-    const [selectedListId, setSelectedListId] = useState<number | null>(null);
+export const Lists = () => {
+    const { lists, setLists, selectedListId, setSelectedListId, setSelectedListName } = useAppContext()
     const [trash, setTrash] = useState<List[]>([]);
     const [showTrash, setShowTrash] = useState(false);
     const [newListName, setNewListName] = useState("");
     const [editName, setEditName] = useState("");
     const [error, setError] = useState<string | null>(null);
 
-    // fetch all lists once on mount
-    useEffect(() => {
-        const fetchAllLists = async () => {
-            try {
-                const fetchedLists = await allLists();
-                setLists(fetchedLists)
-            } catch (err) {
-                setLists([]);
-                setError('failed to fetch lists')
-            }
-        };
-
-        fetchAllLists();
-
-    }, []);
-
-    // automatically select the first list if non is selected
-    useEffect(() => {
-        if (!selectedListId && lists.length > 0) {
-            const first = lists[0];
-            setSelectedListId(first.id);
-            onSelectList(first.id, first.name);
-        }
-    }, [lists]);
-
 
 
     const handleSelect = async (list: List) => {
         setSelectedListId(list.id);
+        setSelectedListName(list.name)
         setEditName("");
-        onSelectList(list.id, list.name);
 
     };
 

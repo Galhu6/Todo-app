@@ -5,6 +5,7 @@ export const sendChatMessage = async (message: string) => {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
             "X-User-ID": `${localStorage.getItem("userId")}`
         },
         credentials: "include",

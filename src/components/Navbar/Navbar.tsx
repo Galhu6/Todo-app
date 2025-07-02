@@ -1,28 +1,9 @@
 import { useEffect, useState } from "react";
-
-import { jwtDecode } from "jwt-decode";
+import { useAppContext } from "../../context/AppContext";
 
 export const Navbar = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userName, setUserName] = useState("");
+    const { user } = useAppContext();
     const [scrolled, setScrolled] = useState(false);
-
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            try {
-                const decoded: any = jwtDecode(token);
-                if (decoded.username) {
-                    setUserName(decoded.name);
-                    setIsLoggedIn(true);
-                }
-            } catch (err) {
-                console.error("failed to decode token", err);
-                setIsLoggedIn(false);
-
-            }
-        }
-    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -53,9 +34,9 @@ export const Navbar = () => {
             </div>
 
             <div className="text-sm">
-                {isLoggedIn ? (
+                {user ? (
                     <a href="/dashboard" className="hover:text-indigo-400">
-                        Hello {userName}, to Dashboard
+                        Hello {user.name}, to Dashboard
                     </a>
                 ) : (
                     <a href="/auth" className="hover:text-indigo-400">

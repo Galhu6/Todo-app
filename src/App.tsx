@@ -3,22 +3,25 @@ import { HomePage } from './screens/HomePage/HomePage.js'
 import { DashboardProtection } from './components/DashboardProtection/DashboardProtection.js'
 import { Dashboard } from './screens/Dashboard/Dashboard.js';
 import { AuthScreen } from "./screens/AuthScreen/AuthScreen.js";
+import { AppProvider } from './context/AppContext.js'
 
 function App() {
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/auth" element={<AuthScreen />} />
-        <Route path="/dashboard" element={
-          <DashboardProtection>
-            <Dashboard />
+    <AppProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/auth" element={<AuthScreen />} />
+          <Route path="/dashboard" element={
+            <DashboardProtection>
+              <Dashboard />
 
-          </DashboardProtection>
-        } />
-      </Routes>
-    </Router>
+            </DashboardProtection>
+          } />
+        </Routes>
+      </Router>
+    </AppProvider>
   )
 }
 

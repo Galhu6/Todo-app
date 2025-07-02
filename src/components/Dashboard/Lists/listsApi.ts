@@ -6,6 +6,8 @@ export const allLists = async () => {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+
             "X-User-ID": `${localStorage.getItem("userId")}`
         },
         credentials: "include"
@@ -22,6 +24,8 @@ export const createList = async (newListName: string) =>
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+
             "X-User-ID": `${localStorage.getItem("userId")}`
 
         },
@@ -34,6 +38,8 @@ export const selectedList = async (selectedListId: number) =>
         method: "GET",
         headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+
             "X-User-ID": `${localStorage.getItem("userId")}`
 
         },
@@ -55,6 +61,7 @@ export const editList = async (selectedListId: number, editName: string) => awai
     method: "PATCH",
     headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
         "X-User-ID": `${localStorage.getItem("userId")}`
     },
     credentials: "include",
@@ -66,6 +73,8 @@ export const deletedLists = async () => {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+
             "X-User-ID": `${localStorage.getItem("userId")}`
         },
         credentials: "include"

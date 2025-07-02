@@ -5,6 +5,8 @@ export const allTasks = async (listId: number) => await fetch(`${server}/api/lis
     method: "GET",
     headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+
         "X-User-ID": `${localStorage.getItem("userId")}`
     },
     credentials: "include"
@@ -14,6 +16,8 @@ export const deletedTasks = async (listId: number) => await fetch(`${server}/api
     method: "GET",
     headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+
         "X-User-ID": `${localStorage.getItem("userId")}`
     },
     credentials: "include"
@@ -24,6 +28,8 @@ export const selectedTask = async (listId: number, taskId: number) =>
         method: 'GET',
         headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+
             "X-User-ID": `${localStorage.getItem("userId")}`
 
         },
@@ -36,6 +42,8 @@ export const createTask = async (listId: number, task: { description: string, du
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+
             "X-User-ID": `${localStorage.getItem("userId")}`
 
         },
@@ -52,6 +60,8 @@ export const editTask = async (
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+
             "X-User-ID": `${localStorage.getItem("userId")}`
 
         },
@@ -65,6 +75,8 @@ export const deleteTask = async (listId: number, taskId: number) =>
         {
             method: "DELETE",
             headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+
                 "X-User-ID": `${localStorage.getItem("userId")}`
 
             },
@@ -76,6 +88,8 @@ export const completeTask = async (listId: number, taskId: number) =>
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+
             "X-User-ID": `${localStorage.getItem("userId")}`
 
 
@@ -87,6 +101,8 @@ export const setTaskPending = async (listId: number, taskId: number) => await fe
     method: "POST",
     headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+
         "X-User-ID": `${localStorage.getItem("userId")}`
 
 
@@ -98,6 +114,8 @@ export const duplicateTask = async (listId: number, taskId: number) => await fet
     method: "POST",
     headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+
         "X-User-ID": `${localStorage.getItem("userId")}`
     },
     credentials: "include"
