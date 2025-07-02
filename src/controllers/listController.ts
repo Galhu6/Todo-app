@@ -3,7 +3,7 @@ import { createList, deleteList, editList, getAllLists, getList, getDeletedLists
 import { HttpError } from "../middlewares/errorHandler.js";
 
 export const createListController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
-    const { name } = req.body;
+    const { name, overallGoal } = req.body;
     const userId = (req as any).user?.id;
 
     if (!name || !userId) {
@@ -11,7 +11,7 @@ export const createListController: RequestHandler = async (req: Request, res: Re
         return;
     }
     try {
-        const newList = await createList(name, userId);
+        const newList = await createList(name, userId, overallGoal);
         res.status(201).json({ success: true, list: newList });
         return;
     } catch (err) {
@@ -20,17 +20,17 @@ export const createListController: RequestHandler = async (req: Request, res: Re
 };
 
 export const editListController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
-    const { name } = req.body;
+    const { name, overallGoal } = req.body;
     const listId = Number(req.params.listId);
     const userId = (req as any).user?.id;
 
-    if (isNaN(listId) || !userId || !name) {
-        next(new HttpError(400, "new List name and ids are required"));
+    if (isNaN(listId) || !userId || (!name && !overallGoal)) {
+        next(new HttpError(400, "new List values are required"));
         return;
     }
 
     try {
-        const editedList = await editList(listId, userId, name);
+        const editedList = await editList(listId, userId, name, overallGoal);
         if (!editedList) {
             next(new HttpError(404, "List not found"))
             return;

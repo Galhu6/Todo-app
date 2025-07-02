@@ -30,6 +30,7 @@ CREATE TABLE public.lists (
     user_id integer,
     created_at timestamp without time zone DEFAULT now(),
     name character varying(100) NOT NULL,
+    overall_goal text,
     isdeleted boolean DEFAULT false
 );
 

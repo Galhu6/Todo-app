@@ -1,22 +1,31 @@
 import { pool } from "../../db.js";
 
-export async function createList(name: string, userId: number) {
+export async function createList(name: string, userId: number, overallGoal?: string) {
     const result = await pool.query(
         `
-        INSERT INTO Lists (name, user_id) VALUES ($1, $2) RETURNING *;
-        `, [name, userId]
+        INSERT INTO Lists (name, user_id, overall_goal) VALUES ($1, $2, $3) RETURNING *;
+        `, [name, userId, overallGoal]
     );
     return result.rows[0];
 };
 
-export async function editList(listId: number, userId: number, newName: string) {
+export async function editList(listId: number, userId: number, newName: string, newGoal?: string) {
 
-    const result = await pool.query(
-        `
-        UPDATE Lists SET name = $3 WHERE user_id = $1 AND id = $2 RETURNING *;
-        `, [userId, listId, newName]
-    );
-    return result.rows[0];
+    const updates: string[] = [];
+    const values: any[] = [userId, listId];
+    if (newName !== undefined) {
+        updates.push(`name = $${values.length + 1}`);
+        values.push(newName);
+    };
+    if (newGoal !== undefined) {
+        updates.push(`overall_goal = $${values.length + 1}`);
+        values.push(newGoal);
+    };
+    if (updates.length === 0) return null;
+
+    const query = `
+    UPDATE List SET ${updates.join(', ')} WHERE user_id = $1 AND id = $2 RETURNING *;`;
+    const result = await pool.query(query, values)
 
 };
 

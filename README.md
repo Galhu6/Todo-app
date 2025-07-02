@@ -59,6 +59,10 @@ Data fetching happens in small API wrappers (`listsApi.ts` and `tasksApi.ts`) wh
 
 A basic schema for users, lists and tasks is expected (see `schema.sql`). `db.ts` exposes a single `Pool` instance used by the service layer. Each service (e.g. `listService.ts` or `tasksService.ts`) performs parameterised queries and returns plain JavaScript objects to the controllers.
 
+### AI Chat
+
+The `/api/ai/chat` endpoint exposes a simple AI assistant powered by OpenAI. Lists now include an `overall_goal` field which the assistant uses to recommend and evaluate tasks. The chat can also create new lists or tasks when asked, storing them via the backend services.
+
 ## Testing
 
 Unit tests can be executed with:
