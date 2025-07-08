@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppContext } from "../../context/AppContext";
+import { ThemeToggle } from "../ThemeToggle/ThemeToggle.js"
 
 export const Navbar = () => {
     const { user } = useAppContext();
@@ -15,7 +16,7 @@ export const Navbar = () => {
 
     return (
         <nav
-            className={`sticky top-0 z-50 flex items-center justify-between px-6 py-4 transition-colors ${scrolled ? 'bg-gray-900/80 shadow-lg' : 'bg-gray-900/60'}`}
+            className={`sticky top-0 z-50 flex items-center justify-between px-6 py-4 transition-colors ${scrolled ? 'bg-white/800 dark:bg-gray-900/80 shadow-lg' : 'bg-white/60 dark:bg-gray-900/60'}`}
         >
             <a href="#home" className="text-lg font-bold text-indigo-400">
                 Todo.io
@@ -33,7 +34,7 @@ export const Navbar = () => {
                 </a>
             </div>
 
-            <div className="text-sm">
+            <div className="flex-items-center text-sm">
                 {user ? (
                     <a href="/dashboard" className="hover:text-indigo-400">
                         Hello {user.name}, to Dashboard
@@ -43,6 +44,7 @@ export const Navbar = () => {
                         Login / Sign-Up
                     </a>
                 )}
+                <ThemeToggle />
             </div>
         </nav>
     );

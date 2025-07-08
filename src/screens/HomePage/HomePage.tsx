@@ -8,7 +8,7 @@ export const HomePage = () => {
     return (
         <div className="flex flex-col min-h-screen">
             <Navbar />
-            <main className="flex-grow flex flex-col items-center gap-16 p-8 bg-gray-950">
+            <main className="flex-grow flex flex-col items-center gap-16 p-8 bg-gray-100 dark:bg-gray-950">
                 <section className="w-full max-w-3xl">
                     <ImageCarousell />
                 </section>

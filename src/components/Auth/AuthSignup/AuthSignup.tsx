@@ -96,7 +96,7 @@ export const AuthSignup = () => {
                     placeholder="name"
                     value={signupName}
                     onChange={(e) => setSignupName(e.target.value)}
-                    className="w-full rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                    className="w-full rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
                 />
                 <p className="text-sm" style={{ color: handleName() ? 'green' : 'red' }}>
                     Name must be more than 2 letters
@@ -107,7 +107,7 @@ export const AuthSignup = () => {
                     placeholder="email"
                     value={signupEmail}
                     onChange={(e) => setSignupEmail(e.target.value)}
-                    className="w-full rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                    className="w-full rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
                 />
                 <p className="text-sm" style={{ color: handleEmail() ? 'green' : 'red' }}>
                     Email must be in right format

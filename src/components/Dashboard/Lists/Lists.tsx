@@ -67,7 +67,7 @@ export const Lists = () => {
 
 
     return (
-        <div className="space-y-4 rounded bg-gray-800/50 p-4 shadow-lg max-w-md w-full">
+        <div className="space-y-4 rounded bg-white dark:bg-gray-800/50 p-4 shadow-lg max-w-md w-full">
             <div className="flex justify-between items-center">
                 <h2 className="text-lg font-semibold">My Lists</h2>
                 <button onClick={toggleTrash} className="text-sm hover:text-indigo-400">
@@ -82,7 +82,7 @@ export const Lists = () => {
                 {Array.isArray(lists) && lists.map((list) => (
                     <li
                         key={list.id}
-                        className={`flex justify-between items-center rounded px-2 py-1 transition hover:bg-gray-700/50 ${list.id === selectedListId ? 'font-bold' : ''}`}
+                        className={`flex justify-between items-center rounded px-2 py-1 transition ${list.id === selectedListId ? 'font-bold' : ''} hover:bg-gray-100 dark:hover:bg-gray-700/50 `}
                     >
                         <span onClick={() => handleSelect(list)} className="cursor-pointer flex-grow">
                             {list.name}
@@ -101,7 +101,7 @@ export const Lists = () => {
                         </h3>
                         <ul className="space-y-1">
                             {trash.map(list => (
-                                <li key={list.id} className="rounded bg-gray-700 px-2 text-sm">
+                                <li key={list.id} className="rounded bg-gray-200 dark:bg-gray-700 px-2 text-sm dark:text-white">
                                     {list.name}
                                 </li>
                             ))}
@@ -119,12 +119,12 @@ export const Lists = () => {
                     value={newListName}
                     onChange={(e) => setNewListName(e.target.value)}
                     placeholder="New list name"
-                    className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                    className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
                 />
                 <input type="text" value={newListGoal}
                     onChange={(e) => setNewListGoal(e.target.value)}
                     placeholder="Overall Goal"
-                    className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500" />
+                    className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500" />
                 <button
                     onClick={handleCreate}
                     className="rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
@@ -140,7 +140,7 @@ export const Lists = () => {
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
                         placeholder="edit list name"
-                        className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                        className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
                     />
 
                     <button

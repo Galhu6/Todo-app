@@ -61,7 +61,7 @@ export const PasswordValidation = ({
                     placeholder="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                    className="w-full rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
                 />
                 {password.length > 0 && (
                     <ul className="mt-2 space-y-1 text-sm">
@@ -79,7 +79,7 @@ export const PasswordValidation = ({
                     placeholder="confirm-password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                    className="w-full rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
                 />
                 {confirmPassword.length > 0 && (
                     <p className="mt-1 text-sm" style={{ color: password === confirmPassword ? 'green' : 'red' }}>

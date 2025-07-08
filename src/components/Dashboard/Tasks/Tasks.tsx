@@ -174,11 +174,11 @@ export const Tasks = () => {
                 </button>
             </div>
             <div>
-                <ul className="space-y-2 divide-y divide-gray-700">
+                <ul className="space-y-2 divide-y divide-gray-200 dark:divide-gray-700">
                     {tasks.map((task) => (
                         <li
                             key={task.id}
-                            className={`flex items-center gap-2 rounded px-2 py-1 transition hover:shadow ${task.status === 'completed' ? 'bg-green-900 line-through' : 'bg-gray-800 hover:bg-gray-700'}`}
+                            className={`flex items-center gap-2 rounded px-2 py-1 transition hover:shadow ${task.status === 'completed' ? 'bg-green-200 dark:bg-green-900 line-through' : 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                         >
                             <span className="flex-grow text-sm">
                                 {task.description} - {task.status === 'completed' ? 'Completed' : formatTimeLeft(task.due_date)}
@@ -200,20 +200,20 @@ export const Tasks = () => {
                             <button onClick={() => handleDelete(task.id)} className="text-xs hover:text-red-400">
                                 delete
                             </button>
-                            {(editTaskId === task.id) && (<div ref={editFormRef} className="flex flex-col gap-2 rounded bg-gray-800 p-4">
+                            {(editTaskId === task.id) && (<div ref={editFormRef} className="flex flex-col gap-2 rounded bg-white dark:bg-gray-800 p-4">
                                 <input
                                     type="text"
                                     ref={editInputRef}
                                     value={descriptionEdit}
                                     onChange={(e) => setdescriptionEdit(e.target.value)}
                                     placeholder="edit task description"
-                                    className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                                    className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
                                 />
                                 <input
                                     type="datetime-local"
                                     onChange={(e) => seteditDueDate(new Date(e.target.value))}
                                     placeholder="edit task dueDate"
-                                    className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                                    className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
                                 />
                                 <button onClick={() => handleEdit(task.id)}
                                     className="self-start rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500"
@@ -231,7 +231,7 @@ export const Tasks = () => {
                     <h3 className="text-sm text-gray-400 mb-1">Trash</h3>
                     <ul className="space-y-1 divide-t divide-gray-700">
                         {trash.map(task => (
-                            <li key={task.id} className="px-2 py-1 text-sm bg-gray-700 rounded">
+                            <li key={task.id} className="px-2 py-1 text-sm bg-gray-200 dark:bg-gray-700 rounded dark:text-white">
                                 {task.description}
                             </li>
                         ))}
@@ -239,18 +239,18 @@ export const Tasks = () => {
                     </ul>
                 </div>
             )}
-            <div className="flex flex-col items-stretch gap-2 rounded bg-gray-900 p-4 sm:flex-row sm:items-end">
+            <div className="flex flex-col items-stretch gap-2 rounded bg-gray-100 dark:bg-gray-900 p-4 sm:flex-row sm:items-end">
                 <input
                     type="text"
                     placeholder="Description"
                     value={newDescription}
                     onChange={(e) => setNewDescription(e.target.value)}
-                    className="flex-grow rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                    className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
                 />
                 <input
                     type="datetime-local"
                     onChange={(e) => setNewDueDate(new Date(e.target.value))}
-                    className="rounded bg-gray-700 p-2 text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                    className="rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
                 />
                 <button
                     onClick={handleCreate}

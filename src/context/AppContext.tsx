@@ -13,6 +13,8 @@ interface AppContextValue {
     selectedListName: string;
     selectedListGoal: string;
     tasksRefreshToken: number;
+    theme: 'light' | 'dark';
+    toggleTheme: () => void;
     setLists: React.Dispatch<React.SetStateAction<List[]>>;
     setSelectedListId: React.Dispatch<React.SetStateAction<number | null>>;
     setSelectedListName: React.Dispatch<React.SetStateAction<string>>;
@@ -30,8 +32,22 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const [selectedListName, setSelectedListName] = useState("");
     const [selectedListGoal, setSelectedListGoal] = useState("")
     const [tasksRefreshToken, setTaskRefreshToken] = useState(0);
+    const [theme, setTheme] = useState<'light' | 'dark'>(() =>
+        (localStorage.getItem('theme') as 'light' | 'dark' || 'dark')
+    );
 
     const refreshTasks = () => setTaskRefreshToken((t) => t + 1);
+
+    useEffect(() => {
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => setTheme(t => (t === 'light' ? 'dark' : 'light'));
 
     const refreshLists = async () => {
         try {
@@ -76,6 +92,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         selectedListName,
         selectedListGoal,
         tasksRefreshToken,
+        theme,
+        toggleTheme,
         setLists,
         setSelectedListId,
         setSelectedListName,

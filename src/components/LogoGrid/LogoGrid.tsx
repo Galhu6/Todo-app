@@ -13,7 +13,7 @@ const logos = [
 export const LogoGrid = () => {
 
     const logoArr: string[] = logos //import later from a different file
-    const movingLogos = [...logoArr, ...logoArr]
+    const movingLogos = [...logoArr, ...logoArr, ...logoArr]
     return (
 
         <div className="logo-grid overflow-hidden py-4">

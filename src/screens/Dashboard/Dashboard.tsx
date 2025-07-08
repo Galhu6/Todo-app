@@ -20,7 +20,7 @@ export const Dashboard = () => {
                         <>
                             <h2 className="mb-2 text-lg font-semibold">{selectedListName}</h2>
                             {selectedListGoal && (
-                                <p className="mb-2 text-sm text-gray-300">Goal: {selectedListGoal}</p>
+                                <p className="mb-2 text-sm text-gray-500 dark:text-gray-300">Goal: {selectedListGoal}</p>
                             )}
                             <Tasks />
                         </>
