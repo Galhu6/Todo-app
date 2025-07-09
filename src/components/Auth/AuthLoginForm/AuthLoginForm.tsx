@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../../context/AppContext";
 
 
 const server = import.meta.env.VITE_SERVER_URL
 export const AuthLoginForm = () => {
     const navigate = useNavigate();
+    const { setUser, refreshLists } = useAppContext();
     const [loginEmail, setLoginEmail] = useState("");
     const [loginPassword, setLoginPassword] = useState("");
 
@@ -31,6 +33,10 @@ export const AuthLoginForm = () => {
                 if (data.user?.id) {
                     localStorage.setItem("userId", String(data.user.id))
                 }
+                if (data.user?.id && data.user?.name) {
+                    setUser({ id: data.user.id, name: data.user.name });
+                }
+                await refreshLists();
                 navigate('/dashboard')
 
             }

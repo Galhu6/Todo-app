@@ -15,6 +15,7 @@ interface AppContextValue {
     tasksRefreshToken: number;
     theme: 'light' | 'dark';
     toggleTheme: () => void;
+    setUser: (user: User) => void;
     setLists: React.Dispatch<React.SetStateAction<List[]>>;
     setSelectedListId: React.Dispatch<React.SetStateAction<number | null>>;
     setSelectedListName: React.Dispatch<React.SetStateAction<string>>;
@@ -94,6 +95,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         tasksRefreshToken,
         theme,
         toggleTheme,
+        setUser,
         setLists,
         setSelectedListId,
         setSelectedListName,

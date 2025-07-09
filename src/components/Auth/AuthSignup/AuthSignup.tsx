@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PasswordValidation } from "./PasswordValidation.js";
+import { useAppContext } from "../../../context/AppContext.js";
 
 const server = import.meta.env.VITE_SERVER_URL
 export const AuthSignup = () => {
 
     const navigate = useNavigate();
+    const { setUser, refreshLists } = useAppContext();
 
     const [signupName, setSignupName] = useState("");
     const [signupEmail, setSignupEmail] = useState("");
@@ -77,6 +79,9 @@ export const AuthSignup = () => {
                 console.log("navigating to dashboard");
                 if (data.user?.id) {
                     localStorage.setItem("userId", String(data.user.id))
+                }
+                if (data.user?.id && data.user?.name) {
+                    setUser({ id: data.user.id, name: data.user.name });
                 }
                 navigate('/dashboard')
 

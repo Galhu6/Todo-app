@@ -37,10 +37,10 @@ export const Footer = () => {
                 </div>
                 <div className="text-center md:text-right space-y-2">
                     <h3 >
-                        To see more projects <br /> go to my portofolio!
+                        To see more projects <br /> go to my resume!
                     </h3>
-                    <a href="linktoportofolio">
-                        <img src="??" alt="a logo or avatar" className="mx-auto md:ml-auto" />
+                    <a href="linktoportoresumePDF">
+                        <img src="../../../public/avatarfooter.png" alt="a logo or avatar" className="mx-auto md:ml-auto w-16 h-16" />
                     </a>
                 </div>
             </div>
