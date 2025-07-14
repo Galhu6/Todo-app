@@ -3,6 +3,21 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 
+const ACCESS_EXPIRES_IN = "30m";
+const REFRESH_EXPIRES_IN = "30d";
+
+function signTokens(user: { id: number; email: string; name: string }) {
+    const token = jwt.sign({ id: user.id, email: user.email, name: user.name }, process.env.JWT_SECRET!, { expiresIn: ACCESS_EXPIRES_IN });
+    const refreshToken = jwt.sign({ if: user.id, email: user.email, name: user.name }, process.env.JWT_SECRET!, { expiresIn: REFRESH_EXPIRES_IN });
+    return { token, refreshToken };
+}
+
+export function refreshAuthToken(refreshToken: string) {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET!) as jwt.JwtPayload & { id: number, email: string, name: string };
+    const user = { id: decoded.id, email: decoded.email!, name: decoded.name! };
+    return { ...signTokens(user), user };
+}
+
 dotenv.config();
 
 export async function registerUser(email: string, password: string, name: string) {
@@ -25,8 +40,8 @@ export async function registerUser(email: string, password: string, name: string
         );
         const user = result.rows[0];
 
-        const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET!, { expiresIn: "30m" });
-        return { success: true, token, user }
+        const { token, refreshToken } = signTokens(user);
+        return { success: true, token, refreshToken, user }
     } catch (err) {
         console.error("falied with err: ", err);
 
@@ -47,15 +62,12 @@ export async function loginUser(email: string, password: string) {
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) throw new Error("incorrect password");
 
-    const token = jwt.sign(
-        { id: user.id, email: user.email },
-        process.env.JWT_SECRET!,
-        { expiresIn: "30m" }
-    );
+    const { token, refreshToken } = signTokens({ id: user.id, email: user.email, name: user.name });
 
     return {
         success: true,
         token,
+        refreshToken,
         user: {
             id: user.id,
             email: user.email,

@@ -75,6 +75,7 @@ export const AuthSignup = () => {
             } else {
                 const data = await response.json();
                 localStorage.setItem("token", data.token)
+                localStorage.setItem("refreshToken", data.refreshToken);
                 console.log("Signup success:", data);
                 console.log("navigating to dashboard");
                 if (data.user?.id) {

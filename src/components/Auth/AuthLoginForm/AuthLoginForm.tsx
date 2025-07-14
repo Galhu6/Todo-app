@@ -29,6 +29,7 @@ export const AuthLoginForm = () => {
             } else {
                 const data = await response.json();
                 console.log("Login success:", data);
+                localStorage.setItem("refreshToken", data.refreshToken);
                 localStorage.setItem("token", data.token);
                 if (data.user?.id) {
                     localStorage.setItem("userId", String(data.user.id))

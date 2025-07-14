@@ -4,7 +4,7 @@ import { useAppContext } from "../../context/AppContext";
 import { ThemeToggle } from "../ThemeToggle/ThemeToggle.js"
 
 export const Navbar = () => {
-    const { user } = useAppContext();
+    const { user, logout } = useAppContext();
     const location = useLocation();
     const [scrolled, setScrolled] = useState(false);
 
@@ -42,11 +42,16 @@ export const Navbar = () => {
                 )}
             </div>
 
-            <div className="flex items-center text-sm">
+            <div className="flex items-center gap-4 text-sm">
                 {user ? (
-                    <a href="/dashboard" className="hover:text-indigo-400">
-                        Hello {user.name}, to Dashboard
-                    </a>
+                    <>
+                        <a href="/dashboard" className="hover:text-indigo-400">
+                            Hello {user.name}, to Dashboard
+                        </a>
+                        <button onClick={logout} className="hover:text-indigo-400">
+                            Logout
+                        </button>
+                    </>
                 ) : (
                     <a href="/auth" className="hover:text-indigo-400">
                         Login / Sign-Up

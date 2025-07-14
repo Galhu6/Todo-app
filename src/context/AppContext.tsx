@@ -22,6 +22,7 @@ interface AppContextValue {
     setSelectedListGoal: React.Dispatch<React.SetStateAction<string>>;
     refreshLists: () => Promise<void>;
     refreshTasks: () => void;
+    logout: () => void;
 };
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
@@ -57,7 +58,15 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         } catch {
             setLists([])
         }
-    }
+    };
+
+    const logout = () => {
+        setUser(null);
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('userId');
+    };
+
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -101,7 +110,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         setSelectedListName,
         setSelectedListGoal,
         refreshLists,
-        refreshTasks
+        refreshTasks,
+        logout
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>

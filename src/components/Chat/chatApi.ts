@@ -1,14 +1,9 @@
 const server = import.meta.env.VITE_SERVER_URL;
+import { authFetch } from "../../utils/authFetch.js";
 
 export const sendChatMessage = async (message: string) => {
-    const res = await fetch(`${server}/api/ai/chat`, {
+    const res = authFetch(`${server}/api/ai/chat`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "X-User-ID": `${localStorage.getItem("userId")}`
-        },
-        credentials: "include",
         body: JSON.stringify({ message })
     });
     if (!res.ok) {
