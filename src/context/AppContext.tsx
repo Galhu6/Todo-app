@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useCallback, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { jwtDecode } from "jwt-decode";
 import type { List } from "../components/Dashboard/Lists/Lists";
@@ -52,7 +52,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         localStorage.setItem('theme', theme);
     }, [theme]);
 
-    const toggleTheme = () => setTheme(t => (t === 'light' ? 'dark' : 'light'));
+    const toggleTheme = useCallback(() => setTheme((t) => (t === 'light' ? 'dark' : 'light')), []);
 
     useEffect(() => {
         const handleKey = (e: KeyboardEvent) => {
@@ -61,6 +61,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
             }
         };
         window.addEventListener('keydown', handleKey);
+        return () => window.removeEventListener('keydown', handleKey);
     }, [toggleTheme]);
     const refreshLists = async () => {
         try {

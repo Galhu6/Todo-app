@@ -7,6 +7,9 @@ export const authFetch = async (input: RequestInfo | URL, init: RequestInit = {}
     const token = localStorage.getItem('token');
     if (token) headers['Authorization'] = `Bearer ${token}`;
     headers['X-User-ID'] = `${localStorage.getItem('userId')}`;
+    if (init.body && !headers['Content-Type']) {
+        headers['Content-Type'] = 'application/json'
+    }
     const opts: RequestInit = {
         ...init, headers, credentials: 'include'
     };
