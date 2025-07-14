@@ -9,7 +9,7 @@ export async function createList(name: string, userId: number, overallGoal?: str
     return result.rows[0];
 };
 
-export async function editList(listId: number, userId: number, newName: string, newGoal?: string) {
+export async function editList(listId: number, userId: number, newName?: string, newGoal?: string, parentListId?: number) {
 
     const updates: string[] = [];
     const values: any[] = [userId, listId];
@@ -21,6 +21,10 @@ export async function editList(listId: number, userId: number, newName: string, 
         updates.push(`overall_goal = $${values.length + 1}`);
         values.push(newGoal);
     };
+    if (parentListId !== undefined) {
+        updates.push(`parent_list_id =$${values.length + 1}`);
+        values.push(parentListId);
+    }
     if (updates.length === 0) return null;
 
     const query = `

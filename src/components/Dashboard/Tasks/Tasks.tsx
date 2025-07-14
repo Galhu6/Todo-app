@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { createTask, allTasks, deletedTasks, completeTask, editTask, deleteTask, duplicateTask, setTaskPending } from "./tasksApi.js";
 import { createList, subLists } from "../Lists/listsApi.js";
+import type { MicroTask } from "./MicroTasks.js";
+import { MicroTasks } from "./MicroTasks.js";
 import type { List } from "../Lists/Lists.js";
 import { useAppContext } from "../../../context/AppContext.js";
 
@@ -46,6 +48,9 @@ export const Tasks = ({ listId }: { listId: number }) => {
     const [newDueDate, setNewDueDate] = useState<Date>(new Date());
     const [editDueDate, seteditDueDate] = useState<Date>(new Date());
     const [newSubListName, setNewSubListName] = useState("");
+    const [draggingTaskId, setDraggingTaskId] = useState<number | null>(null);
+    const [microTasksMap, setMicroTasksMap] = useState<Record<number, MicroTask[]>>({});
+    const [activeMicroParent, setActiveMicroParent] = useState<number | null>(null);
     const [newSubListGoal, setNewSubListGoal] = useState("");
     const editInputRef = useRef<HTMLInputElement>(null);
     const editFormRef = useRef<HTMLDivElement>(null);
@@ -66,6 +71,10 @@ export const Tasks = ({ listId }: { listId: number }) => {
 
         fetchTasks();
     }, [listId, tasksRefreshToken]);
+
+    useEffect(() => {
+        setActiveMicroParent(null);
+    }, [listId]);
 
     useEffect(() => {
         if (editTaskId !== null) {
@@ -178,6 +187,23 @@ export const Tasks = ({ listId }: { listId: number }) => {
 
     };
 
+    const openMicroTasks = (taskId: number) => {
+        setActiveMicroParent(taskId);
+        if (!microTasksMap[taskId]) {
+            setMicroTasksMap({ ...microTasksMap, [taskId]: [] });
+        }
+    };
+
+    const handleDropReorder = (targetIndex: number) => {
+        if (draggingTaskId === null) return;
+        const draggedIndex = tasks.findIndex(t => t.id === draggingTaskId);
+        if (draggedIndex === -1) return;
+        const updated = [...tasks];
+        const [removed] = updated.splice(draggedIndex, 1);
+        setTasks(updated);
+        setDraggingTaskId(null);
+    };
+
     const toggleTrash = async () => {
         if (!showTrash) {
             if (!listId) return;
@@ -209,9 +235,13 @@ export const Tasks = ({ listId }: { listId: number }) => {
             )}
             <div>
                 <ul className="space-y-2 divide-y divide-gray-200 dark:divide-gray-700">
-                    {tasks.map((task) => (
+                    {tasks.map((task, idx) => (
                         <li
                             key={task.id}
+                            draggable
+                            onDragStart={() => setDraggingTaskId(task.id)}
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={() => handleDropReorder(idx)}
                             className={`flex items-center gap-2 rounded px-2 py-1 transition hover:shadow ${task.status === 'completed' ? 'bg-green-200 dark:bg-green-900 line-through' : 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                         >
                             <span className="flex-grow text-sm">
@@ -230,6 +260,9 @@ export const Tasks = ({ listId }: { listId: number }) => {
                                 </button>)}
                             <button onClick={() => handleTaskDuplicate(task.id)} className="text-xs hover:text-indigo-400">
                                 duplicate
+                            </button>
+                            <button onClick={() => openMicroTasks(task.id)} className="text-xs hover:text-indigo-400">
+                                subtasks
                             </button>
                             <button onClick={() => handleDelete(task.id)} className="text-xs hover:text-red-400">
                                 delete
@@ -309,6 +342,13 @@ export const Tasks = ({ listId }: { listId: number }) => {
                     Add Sub List
                 </button>
             </div>
+            {activeMicroParent !== null && (
+                <MicroTasks parentId={activeMicroParent}
+                    tasks={microTasksMap[activeMicroParent] || []}
+                    setTasks={(t) => setMicroTasksMap({ ...microTasksMap, [activeMicroParent]: t })}
+                    onClose={() => setActiveMicroParent(null)}
+                />
+            )}
         </div>
     );
 }

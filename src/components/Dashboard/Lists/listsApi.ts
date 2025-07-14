@@ -27,9 +27,9 @@ export const deleteList = async (selectedListId: number) => authFetch(`${server}
     method: "DELETE",
 });
 
-export const editList = async (selectedListId: number, editName: string, overallGoal?: string) => authFetch(`${server}/api/lists/${selectedListId}`, {
+export const editList = async (selectedListId: number, editName?: string, overallGoal?: string, parentListId?: number) => authFetch(`${server}/api/lists/${selectedListId}`, {
     method: "PATCH",
-    body: JSON.stringify({ name: editName, overallGoal }),
+    body: JSON.stringify({ name: editName, overallGoal, parentListId }),
 }).then(res => res.json()).then(data => data.list);
 
 export const deletedLists = async () => {

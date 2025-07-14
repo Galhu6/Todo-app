@@ -20,17 +20,17 @@ export const createListController: RequestHandler = async (req: Request, res: Re
 };
 
 export const editListController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
-    const { name, overallGoal } = req.body;
+    const { name, overallGoal, parentListId } = req.body;
     const listId = Number(req.params.listId);
     const userId = (req as any).user?.id;
 
-    if (isNaN(listId) || !userId || (!name && !overallGoal)) {
+    if (isNaN(listId) || !userId || (!name && !overallGoal && parentListId === undefined)) {
         next(new HttpError(400, "new List values are required"));
         return;
     }
 
     try {
-        const editedList = await editList(listId, userId, name, overallGoal);
+        const editedList = await editList(listId, userId, name, overallGoal, parentListId);
         if (!editedList) {
             next(new HttpError(404, "List not found"))
             return;
