@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createTask, allTasks, deletedTasks, completeTask, editTask, deleteTask, duplicateTask, setTaskPending } from "./tasksApi.js";
+import { createList, subLists } from "../Lists/listsApi.js";
+import type { List } from "../Lists/Lists.js";
 import { useAppContext } from "../../../context/AppContext.js";
 
 export class Task {
@@ -33,15 +35,18 @@ export class Task {
 }
 
 export const Tasks = ({ listId }: { listId: number }) => {
-    const { tasksRefreshToken } = useAppContext();
+    const { tasksRefreshToken, selectedListId } = useAppContext();
     const [tasks, setTasks] = useState<Task[]>([]);
     const [trash, setTrash] = useState<Task[]>([]);
     const [showTrash, setShowTrash] = useState(false);
+    const [subListsState, setSubListsState] = useState<List[]>([])
     const [newDescription, setNewDescription] = useState("");
     const [descriptionEdit, setdescriptionEdit] = useState("");
     const [editTaskId, setEditTaskId] = useState<number | null>(null)
     const [newDueDate, setNewDueDate] = useState<Date>(new Date());
     const [editDueDate, seteditDueDate] = useState<Date>(new Date());
+    const [newSubListName, setNewSubListName] = useState("");
+    const [newSubListGoal, setNewSubListGoal] = useState("");
     const editInputRef = useRef<HTMLInputElement>(null);
     const editFormRef = useRef<HTMLDivElement>(null);
 
@@ -51,6 +56,8 @@ export const Tasks = ({ listId }: { listId: number }) => {
             try {
                 const data = await allTasks(listId);
                 setTasks(data);
+                const sub = await subLists(selectedListId!);
+                setSubListsState(sub);
             } catch (error) {
                 console.error("error fetching tasks:", error);
 
@@ -118,6 +125,15 @@ export const Tasks = ({ listId }: { listId: number }) => {
 
 
     };
+
+    const handleSubListCreate = async () => {
+        if (!selectedListId || !newSubListName.trim()) return;
+        const created = await createList(newSubListName, newSubListGoal, selectedListId);
+        setSubListsState([...subListsState, created]);
+        setNewSubListName("");
+        setNewSubListGoal("");
+    };
+
     const handleDelete = async (taskId: number) => {
         if (!listId) return;
         await deleteTask(listId, taskId);
@@ -173,6 +189,18 @@ export const Tasks = ({ listId }: { listId: number }) => {
                     {showTrash ? 'Hide Trash' : "View Trash"}
                 </button>
             </div>
+            {subListsState.length > 0 && (
+                <div>
+                    <h3 className="text-sm font-semibold mb-1">Sub Lists</h3>
+                    <ul className="space-y-1 mb-4">
+                        {subListsState.map(list => (
+                            <li key={list.id} className="rounded bg-gray-100 dark:bg-gray-700 px-2py-1 text-sm dark:text-white">
+                                {list.name}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
             <div>
                 <ul className="space-y-2 divide-y divide-gray-200 dark:divide-gray-700">
                     {tasks.map((task) => (
@@ -257,6 +285,22 @@ export const Tasks = ({ listId }: { listId: number }) => {
                     className="rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
                 >
                     Add Task
+                </button>
+            </div>
+            <div className="flex flex-col items-stretch gap-2 rounded bg-gray-100 dark:bg-gray-900 p-4 mt-4 sm:flex-row sm:items-end">
+                <input type="text"
+                    placeholder="sub list name"
+                    value={newSubListName}
+                    onChange={(e) => setNewSubListName(e.target.value)}
+                    className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500" />
+                <input type="text"
+                    placeholder="sub list goal"
+                    value={newSubListGoal}
+                    onChange={(e) => setNewSubListGoal(e.target.value)}
+                    className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500" />
+                <button onClick={handleSubListCreate}
+                    className="rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500">
+                    Add Sub List
                 </button>
             </div>
         </div>

@@ -2,7 +2,7 @@ import type { RequestHandler, Request, Response, NextFunction } from "express";
 import { OpenAI } from "openai";
 import type { ChatCompletionTool } from "openai/resources";
 import { getChatContext, saveChatContext } from "../services/Chat/chatService.js";
-import { getAllLists, createList } from "../services/Lists/listService.js";
+import { getUserLists, createList } from "../services/Lists/listService.js";
 import { getAllTasks, createTask } from "../services/Tasks/tasksService.js";
 import { HttpError } from "../middlewares/errorHandler.js";
 
@@ -17,7 +17,7 @@ export const chatWithAi: RequestHandler = async (req: Request, res: Response, ne
     }
     try {
         const context = await getChatContext(userId);
-        const lists = await getAllLists(userId);
+        const lists = await getUserLists(userId);
         const tasksPromises = lists.map((l: any) => getAllTasks(l.id));
         const tasksArrays = await Promise.all(tasksPromises);
         const tasks = tasksArrays.flat();
@@ -104,4 +104,18 @@ export const chatWithAi: RequestHandler = async (req: Request, res: Response, ne
     } catch (err) {
         next(err);
     }
-}
+};
+
+export const getChatHistory: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+        next(new HttpError(401, "user id required"));
+        return;
+    }
+    try {
+        const context = await getChatContext(userId);
+        res.json({ context });
+    } catch (err) {
+        next(err);
+    }
+};

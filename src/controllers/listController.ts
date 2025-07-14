@@ -1,9 +1,9 @@
 import type { RequestHandler, Request, Response, NextFunction } from "express"
-import { createList, deleteList, editList, getAllLists, getList, getDeletedLists } from "../services/Lists/listService.js";
+import { createList, deleteList, editList, getAllLists, getList, getDeletedLists, getSubLists } from "../services/Lists/listService.js";
 import { HttpError } from "../middlewares/errorHandler.js";
 
 export const createListController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
-    const { name, overallGoal } = req.body;
+    const { name, overallGoal, parentListId } = req.body;
     const userId = (req as any).user?.id;
 
     if (!name || !userId) {
@@ -11,7 +11,7 @@ export const createListController: RequestHandler = async (req: Request, res: Re
         return;
     }
     try {
-        const newList = await createList(name, userId, overallGoal);
+        const newList = await createList(name, userId, overallGoal, parentListId);
         res.status(201).json({ success: true, list: newList });
         return;
     } catch (err) {
@@ -120,4 +120,20 @@ export const getDeletedListController: RequestHandler = async (req: Request, res
     } catch (err) {
         next(err);
     }
-}
+};
+
+export const getSubListsController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).user?.id;
+    const listId = Number(req.params.listId);
+    if (!userId || isNaN(listId)) {
+        next(new HttpError(400, "list id and user id required"));
+        return;
+    }
+    try {
+        const lists = await getSubLists(userId, listId);
+        res.status(200).json({ success: true, list: lists });
+        return;
+    } catch (err) {
+        next(err)
+    }
+};

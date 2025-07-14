@@ -12,10 +12,10 @@ export const allLists = async () => {
     return data.list;
 };
 
-export const createList = async (newListName: string, overallGoal: string) =>
+export const createList = async (newListName: string, overallGoal: string, parentListId?: number) =>
     authFetch(`${server}/api/lists/new-list`, {
         method: "POST",
-        body: JSON.stringify({ name: newListName, overallGoal })
+        body: JSON.stringify({ name: newListName, overallGoal, parentListId })
     }).then(res => res.json()).then(data => data.list);
 
 export const selectedList = async (selectedListId: number) =>
@@ -42,3 +42,8 @@ export const deletedLists = async () => {
     const data = await res.json();
     return data.list;
 };
+
+export const subLists = async (listId: number) =>
+    authFetch(`${server}/api/lists/${listId}`, {
+        method: "GET"
+    }).then(res => res.json()).then(data => data.list);

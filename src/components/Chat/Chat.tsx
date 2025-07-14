@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { sendChatMessage } from "./chatApi.js";
+import { useState, useEffect } from "react";
+import { sendChatMessage, fetchChatHistory } from "./chatApi.js";
 import { useAppContext } from "../../context/AppContext.js";
 
 interface Message {
@@ -29,13 +29,37 @@ export const Chat = () => {
         }
     };
 
+    const parseContext = (context: string): Message[] => {
+        return context.split("\n").map((l) => l.trim()).filter(Boolean)
+            .map((line) => {
+                if (line.startsWith("User: ")) {
+                    return { sender: "user", text: line.slice(6) } as Message;
+                }
+                if (line.startsWith("AI: ")) {
+                    return { sender: "ai", text: line.slice(4) }
+                }
+                return null;
+            })
+            .filter(Boolean) as Message[];
+    };
+
+    useEffect(() => {
+        if (open && messages.length === 0) {
+            fetchChatHistory().then((data) => {
+                const parsed = parseContext(data.context);
+                if (parsed.length) setMessages(parsed)
+            })
+                .catch((err: any) => console.error(err));
+        }
+    }, [open])
+
     return (
         <div className="fixed bottom-4 right-4 z-50">
             {open ? (
                 <div className="w-80 h-96 flex flex-col rounded shadow-lg bg-white dark:bg-gray-800">
                     <div className="flex justify-between items-center bg-indigo-600 text-white p-2 rounded-t">
                         <span>Assistant</span>
-                        <button onClick={() => setOpen(false)} className="text-sm"></button>
+                        <button onClick={() => setOpen(false)} className="text-sm">X</button>
                     </div>
                     <div className="flex-1 overflow-y-auto p-2 space-y-2">
                         {messages.map((m, idx) => (

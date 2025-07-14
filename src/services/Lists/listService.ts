@@ -1,10 +1,10 @@
 import { pool } from "../../db.js";
 
-export async function createList(name: string, userId: number, overallGoal?: string) {
+export async function createList(name: string, userId: number, overallGoal?: string, parentListId?: number) {
     const result = await pool.query(
         `
-        INSERT INTO Lists (name, user_id, overall_goal) VALUES ($1, $2, $3) RETURNING *;
-        `, [name, userId, overallGoal]
+        INSERT INTO Lists (name, user_id, overall_goal, parent_list_id) VALUES ($1, $2, $3, $4) RETURNING *;
+        `, [name, userId, overallGoal, parentListId]
     );
     return result.rows[0];
 };
@@ -51,11 +51,28 @@ export async function getList(listId: number, userId: number) {
 export async function getAllLists(userId: number) {
     const result = await pool.query(
         `
-        SELECT * FROM Lists WHERE user_id = $1 and isdeleted = false;
+        SELECT * FROM Lists WHERE user_id = $1 and parent_list_id IS NULL AND isdeleted = false;
         `, [userId]
     );
     return result.rows;
 };
+
+export async function getUserLists(userId: number) {
+    const result = await pool.query(
+        `SELECT * FROM Lists WHERE user_id=$1 AND isdeleted = false;`,
+        [userId]
+    );
+    return result.rows;
+};
+
+export async function getSubLists(userId: number, parentId: number) {
+    const result = await pool.query(
+        `SELECT *FROM Lists WHERE user_id = $1 AND parent_list_id = $2 AND isdeleted = false`,
+        [userId, parentId]
+    );
+    return result.rows;
+}
+
 export async function getDeletedLists(userId: number) {
     const result = await pool.query(
         `

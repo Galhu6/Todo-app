@@ -5,7 +5,8 @@ import {
     deleteListController,
     getListController,
     getAllListsController,
-    getDeletedListController
+    getDeletedListController,
+    getSubListsController
 } from "../controllers/listController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { verifyListOwnership } from "../middlewares/verifyOwnerships.js";
@@ -17,6 +18,7 @@ router.get("/", getAllListsController);
 router.get('/trash', getDeletedListController)
 router.get("/:listId", verifyListOwnership, getListController);
 router.post("/new-list", createListController);
+router.get("/:listId/sub-lists", verifyListOwnership, getSubListsController)
 router.patch("/:listId", verifyListOwnership, editListController);
 router.delete("/:listId", verifyListOwnership, deleteListController);
 

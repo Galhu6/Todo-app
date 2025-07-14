@@ -31,6 +31,7 @@ CREATE TABLE public.lists (
     created_at timestamp without time zone DEFAULT now(),
     name character varying(100) NOT NULL,
     overall_goal text,
+    parent_list_id integer,
     isdeleted boolean DEFAULT false
 );
 
@@ -316,7 +317,8 @@ ALTER TABLE ONLY public.users
 ALTER TABLE ONLY public.lists
     ADD CONSTRAINT lists_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
 
-
+ALTER TABLE ONLY public.lists
+    ADD CONSTRAINT lists_parent_list_id_fkey FOREIGN KEY (parent_list_id) REFERENCES public.lists(id);
 --
 -- Name: tasks tasks_list_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
