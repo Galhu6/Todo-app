@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../context/AppContext";
 import { ThemeToggle } from "../ThemeToggle/ThemeToggle.js"
 
 export const Navbar = () => {
     const { user, logout } = useAppContext();
     const location = useLocation();
+    const navigate = useNavigate();
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -18,48 +19,58 @@ export const Navbar = () => {
 
     return (
         <nav
-            className={`sticky top-0 z-50 flex items-center justify-between px-6 py-4 transition-colors ${scrolled ? 'bg-white/800 dark:bg-gray-900/80 shadow-lg' : 'bg-white/60 dark:bg-gray-900/60'}`}
+            className={`sticky top-0 z-50 flex items-center justify-between bg-gray-200 px-6 py-4 transition-colors ${scrolled ? 'bg-gray-200/40 dark:bg-gray-900/60 shadow-lg' : 'bg-gray-200/80 dark:bg-gray-900/80'}`}
         >
-            <a href="/" className="text-lg font-bold text-indigo-400">
+            <Link to="/" className="text-lg font-bold text-indigo-400">
                 Todo.io
-            </a>
+            </Link>
 
-            <div className="hidden gap-6 text-sm md:flex">
-                {location.pathname.startsWith('/dashboard') ? (
-                    <span className="text-indigo-400">{user ? `Hellos ${user.name}!` : 'Dashboard'}</span>
+            <div className="flex gap-6 text-sm md:flex">
+                {(location.pathname.startsWith('/dashboard') || location.pathname.startsWith('/auth')) ? (
+                    <span className="text-indigo-400 font-semibold">{user ? `Hello ${user.name}!` : 'To Dashboard'}</span>
                 ) : (
-                    <div>
-                        <a href="#about" className="hover:text-indigo-400">
+                    <>
+                        <Link to="/#about" className="text-gray-900 dark:text-gray-100 hover:text-indigo-400">
                             about
-                        </a>
-                        <a href="#programming" className="hover:text-indigo-400">
+                        </Link>
+                        <Link to="/#programming" className="text-gray-900 dark:text-gray-100 hover:text-indigo-400">
                             programming
-                        </a>
-                        <a href="#contact" className="hover:text-indigo-400">
+                        </Link>
+                        <Link to="/#contact" className="text-gray-900 dark:text-gray-100 hover:text-indigo-400">
                             contact us
-                        </a>
-                    </div>
+                        </Link>
+                    </>
                 )}
             </div>
 
-            <div className="flex items-center gap-4 text-sm">
-                {user ? (
+            <div className="flex items-center gap-6 text-sm">
+                {(location.pathname.startsWith('/dashboard')) ? (
+                    user ? (
+                        <>
+                            <button onClick={() => { logout(); navigate('/'); }} className="hover:text-indigo-400">
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <Link to="/auth" className="hover:text-indigo-400">Login / Sign-Up</Link>
+                    )
+                ) : user ? (
                     <>
-                        <a href="/dashboard" className="hover:text-indigo-400">
+                        <Link to="/dashboard" className="hover:text-indigo-400">
                             Hello {user.name}, to Dashboard
-                        </a>
-                        <button onClick={logout} className="hover:text-indigo-400">
+                        </Link>
+                        <button onClick={() => { logout(); navigate('/'); }} className="hover:text-indigo-400">
                             Logout
                         </button>
                     </>
                 ) : (
-                    <a href="/auth" className="hover:text-indigo-400">
+                    <Link to="/auth" className="hover:text-indigo-400">
                         Login / Sign-Up
-                    </a>
+                    </Link>
                 )}
                 <ThemeToggle />
             </div>
-        </nav>
+        </nav >
     );
 }
 

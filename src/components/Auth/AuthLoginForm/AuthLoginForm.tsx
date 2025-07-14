@@ -10,7 +10,8 @@ export const AuthLoginForm = () => {
     const [loginEmail, setLoginEmail] = useState("");
     const [loginPassword, setLoginPassword] = useState("");
 
-    const handleLogin = async () => {
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
         try {
             const response = await fetch(`${server}/api/auth/login`, {
                 method: "POST",
@@ -48,12 +49,12 @@ export const AuthLoginForm = () => {
 
     };
     return (
-        <div className="flex flex-col gap-3">
+        <form onSubmit={(e) => handleLogin(e)} className="flex flex-col gap-3">
             <input
                 type="email"
                 placeholder="email"
                 value={loginEmail}
-                onChange={(e) => setLoginEmail(e.target.value)}
+                onChange={(e) => setLoginEmail(e.target.value.toLowerCase())}
                 className="rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
             />
             <input
@@ -64,11 +65,11 @@ export const AuthLoginForm = () => {
                 className="rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
             />
             <button
-                onClick={handleLogin}
+                type="submit"
                 className="rounded bg-indigo-600 px-4 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
             >
                 Sign In
             </button>
-        </div>
+        </form>
     );
 }

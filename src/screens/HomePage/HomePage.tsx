@@ -1,9 +1,19 @@
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Navbar } from "../../components/Navbar/Navbar.js";
 import { Footer } from "../../components/Footer/Footer.js";
 import { ImageCarousell } from "../../components/ImageCarousell/ImageCarousell.js";
 
 
 export const HomePage = () => {
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.hash) {
+            const element = document.getElementById(location.hash.slice(1));
+            element?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [location]);
 
     return (
         <div className="flex flex-col min-h-screen">
