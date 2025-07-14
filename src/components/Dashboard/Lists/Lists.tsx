@@ -15,7 +15,7 @@ export type List = {
 
 
 export const Lists = () => {
-    const { lists, setLists, selectedListId, setSelectedListId, setSelectedListName, setSelectedListGoal } = useAppContext()
+    const { lists, setLists, selectedListId, setSelectedListId, secondSelectedListId, setSecondSelectedListId, setSelectedListName, setSelectedListGoal } = useAppContext()
     const [trash, setTrash] = useState<List[]>([]);
     const [showTrash, setShowTrash] = useState(false);
     const [newListName, setNewListName] = useState("");
@@ -26,10 +26,36 @@ export const Lists = () => {
 
 
     const handleSelect = async (list: List) => {
-        setSelectedListId(list.id);
-        setSelectedListName(list.name)
-        setSelectedListGoal(list.overall_goal || '');
-        setEditName("");
+        if (selectedListId === list.id) {
+            if (secondSelectedListId) {
+                const second = lists.find(l => l.id === secondSelectedListId);
+                setSelectedListId(secondSelectedListId);
+                setSelectedListName(second?.name || '');
+                setSelectedListGoal(second?.overall_goal || '');
+                setSecondSelectedListId(null);
+            } else {
+                setSelectedListId(null);
+                setSelectedListName('')
+                setSelectedListGoal('');
+            }
+            return;
+        }
+        if (secondSelectedListId === list.id) {
+            setSecondSelectedListId(null);
+            return;
+        }
+        if (!selectedListId) {
+            setSelectedListId(list.id);
+            setSelectedListName(list.name)
+            setSelectedListGoal(list.overall_goal || '');
+        } else if (!secondSelectedListId) {
+            setSecondSelectedListId(list.id);
+        } else {
+            setSelectedListId(list.id);
+            setSelectedListName(list.name);
+            setSelectedListGoal(list.overall_goal || '');
+        }
+        setEditName('')
 
     };
 
@@ -82,7 +108,7 @@ export const Lists = () => {
                 {Array.isArray(lists) && lists.map((list) => (
                     <li
                         key={list.id}
-                        className={`flex justify-between items-center rounded px-2 py-1 transition ${list.id === selectedListId ? 'font-bold' : ''} hover:bg-gray-100 dark:hover:bg-gray-700/50 `}
+                        className={`flex justify-between items-center rounded px-2 py-1 transition ${list.id === selectedListId || list.id === secondSelectedListId ? 'font-bold' : ''} hover:bg-gray-100 dark:hover:bg-gray-700/50 `}
                     >
                         <span onClick={() => handleSelect(list)} className="cursor-pointer flex-grow">
                             {list.name}

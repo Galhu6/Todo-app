@@ -6,7 +6,8 @@ import { Chat } from "../../components/Chat/Chat.js";
 import { useAppContext } from "../../context/AppContext.js";
 
 export const Dashboard = () => {
-    const { selectedListId, selectedListName, selectedListGoal } = useAppContext()
+    const { selectedListId, secondSelectedListId, selectedListName, selectedListGoal, lists } = useAppContext();
+    const secondList = lists.find(l => l.id === secondSelectedListId);
 
     return (
         <>
@@ -15,15 +16,24 @@ export const Dashboard = () => {
                 <div className="w-full md:w-1/3">
                     <Lists />
                 </div>
-                <div className="flex-1 w-full">
+                <div className="flex-1 w-full space-y-8">
                     {selectedListId && (
-                        <>
+                        <div>
                             <h2 className="mb-2 text-lg font-semibold">{selectedListName}</h2>
                             {selectedListGoal && (
                                 <p className="mb-2 text-sm text-gray-500 dark:text-gray-300">Goal: {selectedListGoal}</p>
                             )}
-                            <Tasks />
-                        </>
+                            <Tasks listId={selectedListId} />
+                        </div>
+                    )}
+                    {secondList && (
+                        <div>
+                            <h2 className="mb-2 text-lg font-semibold">{secondList.name}</h2>
+                            {secondList.overall_goal && (
+                                <p className="mb-2 text-sm text-gray-300"> Goal: {secondList.overall_goal}</p>
+                            )}
+                            <Tasks listId={secondList.id} />
+                        </div>
                     )}
                 </div>
             </div>

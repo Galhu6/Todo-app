@@ -32,8 +32,8 @@ export class Task {
 
 }
 
-export const Tasks = () => {
-    const { selectedListId, tasksRefreshToken } = useAppContext();
+export const Tasks = ({ listId }: { listId: number }) => {
+    const { tasksRefreshToken } = useAppContext();
     const [tasks, setTasks] = useState<Task[]>([]);
     const [trash, setTrash] = useState<Task[]>([]);
     const [showTrash, setShowTrash] = useState(false);
@@ -47,9 +47,9 @@ export const Tasks = () => {
 
     useEffect(() => {
         const fetchTasks = async () => {
-            if (!selectedListId) return;
+            if (!listId) return;
             try {
-                const data = await allTasks(selectedListId);
+                const data = await allTasks(listId);
                 setTasks(data);
             } catch (error) {
                 console.error("error fetching tasks:", error);
@@ -58,7 +58,7 @@ export const Tasks = () => {
         };
 
         fetchTasks();
-    }, [selectedListId, tasksRefreshToken]);
+    }, [listId, tasksRefreshToken]);
 
     useEffect(() => {
         if (editTaskId !== null) {
@@ -109,9 +109,9 @@ export const Tasks = () => {
 
     const handleCreate = async () => {
         if (!newDescription.trim() || !newDueDate) return;
-        if (!selectedListId) return;
+        if (!listId) return;
         const newTask = { description: newDescription, dueDate: newDueDate }
-        const created = await createTask(selectedListId, newTask);
+        const created = await createTask(listId, newTask);
         setTasks([...tasks, created])
         setNewDescription("");
         setNewDueDate(new Date());
@@ -119,47 +119,47 @@ export const Tasks = () => {
 
     };
     const handleDelete = async (taskId: number) => {
-        if (!selectedListId) return;
-        await deleteTask(selectedListId, taskId);
+        if (!listId) return;
+        await deleteTask(listId, taskId);
         setTasks(tasks.filter((task) => task.id !== taskId));
     };
     const handleEdit = async (taskId: number) => {
-        if (!selectedListId) return;
+        if (!listId) return;
         const updates: any = {}
         if (descriptionEdit.trim()) updates.newDescription = descriptionEdit;
         if (editDueDate) updates.newDueDate = editDueDate;
         if (Object.keys(updates).length === 0) return;
 
-        const updated = await editTask(selectedListId, taskId, updates);
+        const updated = await editTask(listId, taskId, updates);
         setTasks(tasks.map(task => task.id === taskId ? updated : task))
         setEditTaskId(null)
     };
 
     const handleTaskComplete = async (taskId: number) => {
-        if (!selectedListId) return;
-        const completed = await completeTask(selectedListId, taskId);
+        if (!listId) return;
+        const completed = await completeTask(listId, taskId);
         setTasks(tasks.map((task) => (task.id === taskId ? completed : task)))
 
     };
     const handleTaskPending = async (taskId: number) => {
-        if (!selectedListId) return;
-        const pending = await setTaskPending(selectedListId, taskId);
+        if (!listId) return;
+        const pending = await setTaskPending(listId, taskId);
         setTasks(tasks.map((task) => (task.id === taskId ? pending : task)))
 
 
     }
 
     const handleTaskDuplicate = async (taskId: number) => {
-        if (!selectedListId) return;
-        const duplicated = await duplicateTask(selectedListId, taskId);
+        if (!listId) return;
+        const duplicated = await duplicateTask(listId, taskId);
         setTasks([...tasks, duplicated])
 
     };
 
     const toggleTrash = async () => {
         if (!showTrash) {
-            if (!selectedListId) return;
-            const deleted = await deletedTasks(selectedListId);
+            if (!listId) return;
+            const deleted = await deletedTasks(listId);
             setTrash(deleted);
 
         };

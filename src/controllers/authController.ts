@@ -11,8 +11,6 @@ export const signUp: RequestHandler = async (req: Request, res: Response, next: 
         return;
     };
 
-
-
     try {
         const signup = await registerUser(email, password, name);
         if (!signup) {

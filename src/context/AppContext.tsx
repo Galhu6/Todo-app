@@ -10,6 +10,7 @@ interface AppContextValue {
     user: User;
     lists: List[];
     selectedListId: number | null;
+    secondSelectedListId: number | null;
     selectedListName: string;
     selectedListGoal: string;
     tasksRefreshToken: number;
@@ -18,6 +19,7 @@ interface AppContextValue {
     setUser: (user: User) => void;
     setLists: React.Dispatch<React.SetStateAction<List[]>>;
     setSelectedListId: React.Dispatch<React.SetStateAction<number | null>>;
+    setSecondSelectedListId: React.Dispatch<React.SetStateAction<number | null>>;
     setSelectedListName: React.Dispatch<React.SetStateAction<string>>;
     setSelectedListGoal: React.Dispatch<React.SetStateAction<string>>;
     refreshLists: () => Promise<void>;
@@ -31,6 +33,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User>(null);
     const [lists, setLists] = useState<List[]>([]);
     const [selectedListId, setSelectedListId] = useState<number | null>(null);
+    const [secondSelectedListId, setSecondSelectedListId] = useState<number | null>(null);
     const [selectedListName, setSelectedListName] = useState("");
     const [selectedListGoal, setSelectedListGoal] = useState("")
     const [tasksRefreshToken, setTaskRefreshToken] = useState(0);
@@ -99,6 +102,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         user,
         lists,
         selectedListId,
+        secondSelectedListId,
         selectedListName,
         selectedListGoal,
         tasksRefreshToken,
@@ -107,6 +111,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         setUser,
         setLists,
         setSelectedListId,
+        setSecondSelectedListId,
         setSelectedListName,
         setSelectedListGoal,
         refreshLists,
