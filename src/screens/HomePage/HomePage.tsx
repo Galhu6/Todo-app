@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Navbar } from "../../components/Navbar/Navbar.js";
 import { Footer } from "../../components/Footer/Footer.js";
-import { ImageCarousell } from "../../components/ImageCarousell/ImageCarousell.js";
 import { Hero } from "../../components/Hero/Hero.js";
 
 export const HomePage = () => {

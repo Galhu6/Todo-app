@@ -54,6 +54,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
     const toggleTheme = () => setTheme(t => (t === 'light' ? 'dark' : 'light'));
 
+    useEffect(() => {
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key === 'd' || e.key === 'D') {
+                toggleTheme();
+            }
+        };
+        window.addEventListener('keydown', handleKey);
+    }, [toggleTheme]);
     const refreshLists = async () => {
         try {
             const fetched = await allLists();

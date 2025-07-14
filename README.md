@@ -57,6 +57,8 @@ Screen components in `src/screens` assemble these pieces. The entry point `App.t
 
 Data fetching happens in small API wrappers (`listsApi.ts` and `tasksApi.ts`) which call the Express backend with the user token.
 
+The UI supports light and dark themes. Click the sun/moon button or press **D** at any time to toggle dark mode.
+
 ### Database
 
 A basic schema for users, lists and tasks is expected (see `schema.sql`). `db.ts` exposes a single `Pool` instance used by the service layer. Each service (e.g. `listService.ts` or `tasksService.ts`) performs parameterised queries and returns plain JavaScript objects to the controllers.
