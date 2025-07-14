@@ -19,7 +19,6 @@ export const signUp: RequestHandler = async (req: Request, res: Response, next: 
         }
         res.status(201).json({ success: true, message: "user registerd successfully", token: signup.token, refreshToken: signup.refreshToken, user: signup.user });
     } catch (err: any) {
-        console.error("Signup failed", err);
         if (err.message === "User already exists") {
             next(new HttpError(400, err.message)); ``
             return;

@@ -95,7 +95,7 @@ export const AuthSignup = () => {
     };
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 w-full">
             <form onSubmit={(e) => { e.preventDefault(); }} className="space-y-3">
                 <input
                     type="text"

@@ -44,7 +44,6 @@ export const editTaskController: RequestHandler = async (req: Request, res: Resp
         return;
 
     } catch (err) {
-        console.error("failed to edit task:", err);
         next(err);
         return;
     }
@@ -66,7 +65,6 @@ export const completeTaskController: RequestHandler = async (req: Request, res: 
         return;
 
     } catch (err) {
-        console.error("failed to complete task:", err);
         next(err);
         return;
     }
@@ -88,8 +86,7 @@ export const setTaskPendingController: RequestHandler = async (req: Request, res
 
 
     } catch (err) {
-        console.error("failed to set task pending:", err);
-        next(err)
+        next(err);
         return;
     }
 };
@@ -109,7 +106,6 @@ export const deleteTaskController: RequestHandler = async (req: Request, res: Re
         res.status(200).json({ success: true, task: deletedTask });
         return;
     } catch (err) {
-        console.error("failed to delete task:", err);
         next(err);
         return;
     }
@@ -133,7 +129,6 @@ export const getTasksController: RequestHandler = async (req: Request, res: Resp
 
 
     } catch (err) {
-        console.error("failed to get task:", err);
         next(err);
         return;
     }
@@ -152,7 +147,6 @@ export const getAllTasksController: RequestHandler = async (req: Request, res: R
 
 
     } catch (err) {
-        console.error("failed to get tasks:", err);
         next(err);
         return;
     }
@@ -169,7 +163,6 @@ export const getDeletedTasksController: RequestHandler = async (req: Request, re
         res.status(200).json({ success: true, task: taskArr });
         return;
     } catch (err) {
-        console.error("failed to get deleted tasks");
         next(err);
         return;
 
@@ -191,7 +184,6 @@ export const duplicateTaskController: RequestHandler = async (req: Request, res:
         return;
 
     } catch (err) {
-        console.error("failed to duplicate task");
-        next(err)
+        next(err);
     };
 };

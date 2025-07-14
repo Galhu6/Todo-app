@@ -35,7 +35,7 @@ export class Task {
 }
 
 export const Tasks = ({ listId }: { listId: number }) => {
-    const { tasksRefreshToken, selectedListId } = useAppContext();
+    const { tasksRefreshToken, selectedListId, setSelectedListId, setSelectedListName, setSelectedListGoal } = useAppContext();
     const [tasks, setTasks] = useState<Task[]>([]);
     const [trash, setTrash] = useState<Task[]>([]);
     const [showTrash, setShowTrash] = useState(false);
@@ -134,6 +134,12 @@ export const Tasks = ({ listId }: { listId: number }) => {
         setNewSubListGoal("");
     };
 
+    const handleSelectSubList = (list: List) => {
+        setSelectedListId(list.id);
+        setSelectedListName(list.name);
+        setSelectedListGoal(list.overall_goal || "");
+    };
+
     const handleDelete = async (taskId: number) => {
         if (!listId) return;
         await deleteTask(listId, taskId);
@@ -194,7 +200,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
                     <h3 className="text-sm font-semibold mb-1">Sub Lists</h3>
                     <ul className="space-y-1 mb-4">
                         {subListsState.map(list => (
-                            <li key={list.id} className="rounded bg-gray-100 dark:bg-gray-700 px-2py-1 text-sm dark:text-white">
+                            <li key={list.id} onClick={() => handleSelectSubList(list)} className="cursor-pointer rounded bg-gray-100 dark:bg-gray-700 px-2py-1 text-sm dark:text-white hover:bg-gary-200 dark:hover:bg-gray-600">
                                 {list.name}
                             </li>
                         ))}

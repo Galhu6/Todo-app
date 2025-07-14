@@ -9,6 +9,7 @@ export type List = {
     created_at?: Date;
     name: string;
     overall_goal?: string;
+    parent_list_id?: number;
     isdeleted?: boolean;
 };
 

@@ -44,6 +44,6 @@ export const deletedLists = async () => {
 };
 
 export const subLists = async (listId: number) =>
-    authFetch(`${server}/api/lists/${listId}`, {
+    authFetch(`${server}/api/lists/${listId}/sub-lists`, {
         method: "GET"
     }).then(res => res.json()).then(data => data.list);

@@ -15,7 +15,6 @@ export const LogoGrid = () => {
     const logoArr: string[] = logos //import later from a different file
     const movingLogos = [...logoArr, ...logoArr, ...logoArr]
     return (
-
         <div className="logo-grid overflow-hidden py-4">
             <div className="logo-track flex mx-6 w-max animate-logo-scroll">
                 {movingLogos.map((src, idx) => (

@@ -14,11 +14,11 @@ export const AuthLogin = () => {
 
 
     return (
-        <>
+        <div className="w-full max-w-sm mx-auto space-y-6">
             {toggleSignUp ? (
                 <AuthSignup />
             ) : (
-                <div className="flex flex-col gap-4 max-w-sm mx-auto">
+                <div className="flex flex-col gap-4">
                     <AuthLoginForm />
                     <div className="flex flex-col items-center gap-2 text-sm">
                         <hr className="w-full border-t border-indigo-600" />
@@ -42,8 +42,6 @@ export const AuthLogin = () => {
             <div className="text-center">
                 <GoogleLoginButton />
             </div>
-        </>
-
-
+        </div>
     );
 };

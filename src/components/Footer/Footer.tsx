@@ -1,9 +1,10 @@
+import { Link } from "react-router-dom";
 import { LogoGrid } from "../LogoGrid/LogoGrid.js";
 
 export const Footer = () => {
     return (
         <footer className="bg-gray-900/80 backdrop-blur-lg text-gray-300 mt-auto w-full">
-            <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+            <div className="max-w-6xl mx-auto px-4 py-8 grid gap-8 grid-cols-1 sm:grid-cols-2 md:flex-row md:grid-cols-3 items-start">
                 <div>
                     <ul className="space-y-2 text-sm">
                         <li>
@@ -22,7 +23,7 @@ export const Footer = () => {
                         </li>
                     </ul>
                 </div>
-                <div className="flex flex-col items-center text-center gap-4 md:flex-1">
+                <div className="flex flex-col items-center text-center gap-4">
                     <div>
                         <h2 className="text-xl font-semibold"> Lorem ipsum dolor sit.</h2>
                         <p>
@@ -35,13 +36,13 @@ export const Footer = () => {
                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores, suscipit?</p>
                     </div>
                 </div>
-                <div className="text-center md:text-right space-y-2">
+                <div className="text-center md:text-center space-y-2">
                     <h3 >
                         To see more projects <br /> go to my resume!
                     </h3>
-                    <a href="linktoportoresumePDF">
+                    <Link to="linktoportoresumePDF">
                         <img src="../../../public/avatarfooter.png" alt="a logo or avatar" className="mx-auto md:ml-auto w-16 h-16" />
-                    </a>
+                    </Link>
                 </div>
             </div>
         </footer>

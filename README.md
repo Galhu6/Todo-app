@@ -51,6 +51,7 @@ React components live in `src/components` and are grouped by feature:
 - **Dashboard** – lists and tasks management UI
 - **DashboardProtection** – redirects unauthenticated users
 - **Navbar**, **Footer**, **ImageCarousell** and **LogoGrid** – layout components
+  The LogoGrid arranges technology logos in a responsive grid that scales across screen sizes.
 
 Screen components in `src/screens` assemble these pieces. The entry point `App.tsx` defines routes using `react-router-dom`.
 

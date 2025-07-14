@@ -1,12 +1,13 @@
 import type { RequestHandler } from "express";
 import { pool } from "../db.js";
+import { HttpError } from "./errorHandler.js";
 
 export const verifyTaskOwnership: RequestHandler = async (req, res, next) => {
     const userId = (req as any).user?.id;
     const taskId = parseInt(req.params.taskId);
 
     if (!userId || isNaN(taskId)) {
-        res.status(400).json({ success: false, error: "Missing user or task id" });
+        next(new HttpError(400, "Missing user or task id"));
         return;
     }
 
@@ -18,8 +19,7 @@ export const verifyTaskOwnership: RequestHandler = async (req, res, next) => {
     );
 
     if (result.rows.length === 0) {
-        res.status(403).json({ success: false, error: "Not authorized for this task" })
-        return;
+        next(new HttpError(403, "Not authorized for this task")); return;
     }
 
     next();
@@ -30,7 +30,7 @@ export const verifyListOwnership: RequestHandler = async (req, res, next) => {
     const listId = parseInt(req.params.listId);
 
     if (!userId || isNaN(listId)) {
-        res.status(400).json({ success: false, error: "Missing user or list id" });
+        next(new HttpError(400, "Missing user or list id"))
         return;
     }
 
@@ -41,7 +41,7 @@ export const verifyListOwnership: RequestHandler = async (req, res, next) => {
         );
 
         if (result.rows.length === 0) {
-            res.status(403).json({ success: false, error: "Not authorized for this list" });
+            next(new HttpError(403, "Not authorized for this list"));
             return;
         }
 

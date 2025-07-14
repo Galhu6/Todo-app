@@ -8,7 +8,7 @@ const REFRESH_EXPIRES_IN = "30d";
 
 function signTokens(user: { id: number; email: string; name: string }) {
     const token = jwt.sign({ id: user.id, email: user.email.toLowerCase(), name: user.name }, process.env.JWT_SECRET!, { expiresIn: ACCESS_EXPIRES_IN });
-    const refreshToken = jwt.sign({ if: user.id, email: user.email.toLowerCase(), name: user.name }, process.env.JWT_SECRET!, { expiresIn: REFRESH_EXPIRES_IN });
+    const refreshToken = jwt.sign({ id: user.id, email: user.email.toLowerCase(), name: user.name }, process.env.JWT_SECRET!, { expiresIn: REFRESH_EXPIRES_IN });
     return { token, refreshToken };
 }
 

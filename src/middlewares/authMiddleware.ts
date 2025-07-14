@@ -1,13 +1,14 @@
 import type { Request, Response, NextFunction, RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { HttpError } from "./errorHandler";
 
 dotenv.config();
 
 export const authMiddleware: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
-    const authHeader = req.headers.authorization
+    const authHeader = req.headers.authorization;
     if (!authHeader?.includes("Bearer")) {
-        res.status(401).json({ success: false, error: "Unauthorized" });
+        next(new HttpError(401, "Unauthorized"));
         return;
     }
 
@@ -19,8 +20,7 @@ export const authMiddleware: RequestHandler = async (req: Request, res: Response
         (req as any).user = { ...decoded, id: (decoded as any).id ?? userIdFromHeader, };
         next();
     } catch (err) {
-        res.status(403).json({ success: false, error: "forbidden" })
-
+        next(new HttpError(403, 'forbidden', err))
     }
 
 };

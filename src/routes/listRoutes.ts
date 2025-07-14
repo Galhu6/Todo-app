@@ -15,7 +15,7 @@ const router = Router();
 router.use(authMiddleware);
 
 router.get("/", getAllListsController);
-router.get('/trash', getDeletedListController)
+router.get('/trash', getDeletedListController);
 router.get("/:listId", verifyListOwnership, getListController);
 router.post("/new-list", createListController);
 router.get("/:listId/sub-lists", verifyListOwnership, getSubListsController)
