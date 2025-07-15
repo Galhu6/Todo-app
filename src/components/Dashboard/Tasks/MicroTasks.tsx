@@ -7,11 +7,12 @@ export type MicroTask = {
     completed?: boolean;
 };
 
-export const MicroTasks = ({ parentId, tasks, setTasks, onClose }: {
+export const MicroTasks = ({ parentId, tasks, setTasks, onClose, onDragStart }: {
     parentId: number;
     tasks: MicroTask[];
     setTasks: (t: MicroTask[]) => void;
     onClose: () => void;
+    onDragStart?: (task: MicroTask) => void;
 }) => {
     const [newDesc, setNewDesc] = useState("");
     const addTask = () => {
@@ -38,7 +39,11 @@ export const MicroTasks = ({ parentId, tasks, setTasks, onClose }: {
             <button onClick={onClose} className="text-xs mb-2">close</button>
             <ul className="space-y-1">
                 {tasks.map(t => (
-                    <li key={t.id} className="flex items-center gap-2 bg-white dark:bg-gray-700 px-2 py-1 rounded">
+                    <li
+                        key={t.id}
+                        draggable
+                        onDragStart={() => onDragStart?.(t)}
+                        className="flex items-center gap-2 bg-white dark:bg-gray-700 px-2 py-1 rounded">
                         <input type="checkbox" checked={!!t.completed} onChange={() => toggle(t.id)} />
                         <span className={`flex-grow text-sm ${t.completed ? 'line-through' : ''}`}>{t.description}</span>
                         <button onClick={() => remove(t.id)} className="text-xs text-red-400">X</button>

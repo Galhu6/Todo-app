@@ -46,7 +46,7 @@ export const Footer = () => {
                         <img src="../../../public/avatarfooter.png" alt="a logo or avatar" className="mx-auto md:ml-auto w-16 h-16" />
                     </Link>
                 </div>
-                <div className="md:hidden sm:block col-span-full">
+                <div className="md:hidden order-last sm:block col-span-full">
                     <LogoGrid />
                 </div>
             </div>

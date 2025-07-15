@@ -5,6 +5,7 @@ import type { MicroTask } from "./MicroTasks.js";
 import { MicroTasks } from "./MicroTasks.js";
 import type { List } from "../Lists/Lists.js";
 import { useAppContext } from "../../../context/AppContext.js";
+import { Toolbar } from "../../Toolbar/";
 
 export class Task {
     id!: number;
@@ -51,6 +52,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
     const [draggingTaskId, setDraggingTaskId] = useState<number | null>(null);
     const [microTasksMap, setMicroTasksMap] = useState<Record<number, MicroTask[]>>({});
     const [activeMicroParent, setActiveMicroParent] = useState<number | null>(null);
+    const [draggingMicro, setDraggingMicro] = useState<{ taskId: number; micro: MicroTask } | null>(null);
     const [newSubListGoal, setNewSubListGoal] = useState("");
     const editInputRef = useRef<HTMLInputElement>(null);
     const editFormRef = useRef<HTMLDivElement>(null);
@@ -223,6 +225,16 @@ export const Tasks = ({ listId }: { listId: number }) => {
         setDraggingListId(null);
     };
 
+    const handleMicroDrop = (taskId: number) => {
+        if (!draggingMicro) return;
+        setMicroTasksMap(prev => {
+            const from = prev[draggingMicro.taskId]?.filter(m => m.id !== draggingMicro.micro.id || []);
+            const to = [...(prev[taskId] || []), { ...draggingMicro.micro, parentId: taskId }];
+            return { ...prev, [draggingMicro.taskId]: from, [taskId]: to };
+        });
+        setDraggingMicro(null);
+    };
+
     const toggleTrash = async () => {
         if (!showTrash) {
             if (!listId) return;
@@ -260,32 +272,25 @@ export const Tasks = ({ listId }: { listId: number }) => {
                             draggable
                             onDragStart={() => setDraggingTaskId(task.id)}
                             onDragOver={(e) => e.preventDefault()}
-                            onDrop={() => { handleDropReorder(); handleListDrop(task.id); }}
-                            className={`flex items-center gap-2 rounded px-2 py-1 transition hover:shadow ${task.status === 'completed' ? 'bg-green-200 dark:bg-green-900 line-through' : 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                            onDrop={() => { handleDropReorder(); handleListDrop(task.id); handleMicroDrop(task.id); }}
+                            className={` relative group flex items-center gap-2 rounded px-2 py-1 transition hover:shadow ${task.status === 'completed' ? 'bg-green-200 dark:bg-green-900 line-through' : 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                         >
                             <span className="flex-grow text-sm">
                                 {task.description} - {task.status === 'completed' ? 'Completed' : formatTimeLeft(task.due_date)}
                             </span>
-                            <button onClick={() => startEdit(task)} className="text-xs hover:text-indigo-400">
-                                edit
-                            </button>
 
-                            {(task.status === "completed") ? (<button onClick={() => handleTaskPending(task.id)} className="text-xs hover:text-indigo-400">
-                                set to pending
-                            </button>
-                            )
-                                : (<button onClick={() => handleTaskComplete(task.id)} className="text-xs hover:text-indigo-400">
-                                    complete
-                                </button>)}
-                            <button onClick={() => handleTaskDuplicate(task.id)} className="text-xs hover:text-indigo-400">
-                                duplicate
-                            </button>
-                            <button onClick={() => openMicroTasks(task.id)} className="text-xs hover:text-indigo-400">
-                                {activeMicroParent === task.id ? 'hide' : 'subtasks'}
-                            </button>
-                            <button onClick={() => handleDelete(task.id)} className="text-xs hover:text-red-400">
-                                delete
-                            </button>
+                            {(task.status === "completed" ? (
+                                <button onClick={() => handleTaskPending(task.id)} className="text-xs hover:text-indigo-400">set to pending</button>
+                            ) : (
+                                <button onClick={() => handleTaskComplete(task.id)} className="text-sx hover:text-indigo-400">complete</button>
+                            ))}
+                            <button onClick={() => handleTaskDuplicate(task.id)} className="text-sx hover:text-indigo-400">duplicate</button>
+                            <Toolbar
+                                onAdd={() => openMicroTasks(task.id)}
+                                onEdit={() => startEdit(task)}
+                                onDelete={() => handleDelete(task.id)}
+                            />
+
                             {(editTaskId === task.id) && (<div ref={editFormRef} className="flex flex-col gap-2 rounded bg-white dark:bg-gray-800 p-4">
                                 <input
                                     type="text"
@@ -314,6 +319,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
                                         tasks={microTasksMap[task.id] || []}
                                         setTasks={(t) => setMicroTasksMap({ ...microTasksMap, [task.id]: t })}
                                         onClose={() => setActiveMicroParent(null)}
+                                        onDragStart={(mt) => setDraggingMicro({ taskId: task.id, micro: mt })}
                                     />
                                 </div>
                             )}
