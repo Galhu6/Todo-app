@@ -213,7 +213,7 @@ export const Lists = () => {
             onDragOver={(e) => e.preventDefault()}
             onDrop={() => parentId ? undefined : handleDropParent(list.id)}
             onClick={() => toggleExpand(list.id)}
-            className={`relative group rounded px-2 py-1 transition hover:bg-gray-300 hover:text-gray-800 drak:hover:bg-gray-700/50 ${list.id === selectedListId || list.id === secondSelectedListId ? 'font-bold' : ''}`}>
+            className={`relative group rounded px-2 py-1 transition hover:bg-gray-300 hover:text-gray-800 dark:hover:bg-gray-700/50 dark:hover:text-white ${list.id === selectedListId || list.id === secondSelectedListId ? 'font-bold' : ''}`}>
             <div className="flex items-center gap-1">
                 <button onClick={(e) => { e.stopPropagation(); toggleExpand(list.id); }} className="text-sx w-4">
                     {expandedMap[list.id] ? '▼' : '▶'}

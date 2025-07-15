@@ -84,7 +84,8 @@ export const AuthSignup = () => {
                 if (data.user?.id && data.user?.name) {
                     setUser({ id: data.user.id, name: data.user.name });
                 }
-                navigate('/dashboard')
+                await refreshLists();
+                navigate('/dashboard');
 
             }
         } catch (err) {

@@ -252,6 +252,18 @@ export const Tasks = ({ listId }: { listId: number }) => {
         setDraggingMicro(null);
     };
 
+    const handleMicroRootDrop = async () => {
+        if (!draggingMicro || !listId) return;
+        const created = await createTask(listId, { description: draggingMicro.micro.description, dueDate: new Date() });
+        setTasks([...tasks, created]);
+        setMicroTasksMap(prev => {
+            const from = prev[draggingMicro.taskId]?.filter(m => m.id !== draggingMicro.micro.id);
+            return { ...prev, [draggingMicro.taskId]: from };
+        });
+        setDraggingMicro(null);
+        refreshTasks();
+    };
+
     const toggleTrash = async () => {
         if (!showTrash) {
             if (!listId) return;
@@ -274,7 +286,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
                     <h3 className="text-sm font-semibold mb-1">Sub Lists</h3>
                     <ul className="space-y-1 mb-4">
                         {subListsState.map(list => (
-                            <li key={list.id} onClick={() => handleSelectSubList(list)} className="cursor-pointer rounded bg-gray-100 dark:bg-gray-700 px-2py-1 text-sm dark:text-white hover:bg-gary-200 dark:hover:bg-gray-600">
+                            <li key={list.id} onClick={() => handleSelectSubList(list)} className="cursor-pointer rounded bg-gray-100 dark:bg-gray-700 px-2 py-1 text-sm dark:text-white hover:bg-gary-200 dark:hover:bg-gray-600">
                                 {list.name}
                             </li>
                         ))}
@@ -282,7 +294,9 @@ export const Tasks = ({ listId }: { listId: number }) => {
                 </div>
             )}
             <div>
-                <ul className="space-y-2 divide-y divide-gray-200 dark:divide-gray-700">
+                <ul className="space-y-2 divide-y divide-gray-200 dark:divide-gray-700"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={() => { handleMicroRootDrop(); }}>
                     {tasks.map((task, idx) => (
                         <li
                             key={task.id}
@@ -418,23 +432,6 @@ export const Tasks = ({ listId }: { listId: number }) => {
                         </button>
                     </div>
                 )}
-            </div>
-
-            <div className="flex flex-col items-stretch gap-2 rounded bg-gray-100 dark:bg-gray-900 p-4 mt-4 sm:flex-row sm:items-end">
-                <input type="text"
-                    placeholder="sub list name"
-                    value={newSubListName}
-                    onChange={(e) => setNewSubListName(e.target.value)}
-                    className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500" />
-                <input type="text"
-                    placeholder="sub list goal"
-                    value={newSubListGoal}
-                    onChange={(e) => setNewSubListGoal(e.target.value)}
-                    className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500" />
-                <button onClick={handleSubListCreate}
-                    className="rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500">
-                    Add Sub List
-                </button>
             </div>
         </div>
     );

@@ -59,7 +59,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         const handleKey = (e: KeyboardEvent) => {
-            if (e.key === 'd' || e.key === 'D') {
+            const active = document.activeElement as HTMLElement | null;
+            const isInput = active && (active.tagName === 'INPUT' ||
+                active.tagName === 'TEXTAREA' ||
+                active.getAttribute('contenteditable') === 'true'
+            );
+            if ((e.key === 'd' || e.key === 'D') && !isInput) {
                 toggleTheme();
             }
         };
