@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { JSX } from "react";
 import { createList, editList, deleteList, deletedLists, subLists } from "./listsApi.js";
 import { allTasks } from "../Tasks/tasksApi.js";
@@ -33,6 +33,9 @@ export const Lists = () => {
     const [editingListId, setEditingListId] = useState<number | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [progressMap, setProgressMap] = useState<Record<number, { completed: number; total: number }>>({});
+    const [showCreateList, setShowCreateList] = useState(false);
+    const createListRef = useRef<HTMLDivElement>(null)
+    const subListFormRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const ids = new Set<number>();
@@ -48,6 +51,18 @@ export const Lists = () => {
         });
     }, [lists, sublistMap, tasksRefreshToken])
 
+    useEffect(() => {
+        const handleClick = (e: MouseEvent) => {
+            if (showCreateList && createListRef.current && !createListRef.current?.contains(e.target as Node)) {
+                setShowCreateList(false);
+            }
+            if (subListParent !== null && subListFormRef.current && !subListFormRef.current.contains(e.target as Node)) {
+                setSubListParent(null);
+            }
+        };
+        document.addEventListener('mousedown', handleClick);
+        return () => document.removeEventListener('mousedown', handleClick)
+    }, [showCreateList, subListParent]);
 
     const handleSelect = async (list: List) => {
         if (selectedListId === list.id) {
@@ -98,6 +113,11 @@ export const Lists = () => {
             setSubListMap(prev => ({ ...prev, [parentId]: (prev[parentId] || []).filter(l => l.id !== listId) }))
         } else {
             setLists(lists.filter(list => list.id !== listId));
+            if (selectedListId === listId) {
+                setSelectedListId(null);
+                setSelectedListName('');
+                setSelectedListGoal('');
+            }
         }
         setProgressMap(prev => { const { [listId]: _removed, ...rest } = prev; return rest; });
     };
@@ -117,6 +137,7 @@ export const Lists = () => {
         setProgressMap(prev => ({ ...prev, [created.id]: { completed: 0, total: 0 } }));
         setNewListName("");
         setNewListGoal("")
+        setShowCreateList(false);
     };
 
     const handleDragStart = (id: number) => {
@@ -215,7 +236,7 @@ export const Lists = () => {
 
             </div>
             {subListParent === list.id && (
-                <div className="flex gap-1 mt-1 ml-4">
+                <div ref={subListFormRef} className="flex gap-1 mt-1 ml-4">
                     <input type="text"
                         value={subListName}
                         onChange={(e) => setSubListName(e.target.value)}
@@ -268,7 +289,7 @@ export const Lists = () => {
                 onDrop={() => {
                     if (draggingId !== null) {
                         handleDropReorder(lists.length);
-                        handleRootDrop
+                        handleRootDrop();
                     }
                 }}>
                 {Array.isArray(lists) && lists.map(list => renderListItem(list))}
@@ -293,24 +314,29 @@ export const Lists = () => {
                     </div>
                 )
             }
-            <div className="flex flex-col gap-2">
-                <input
-                    type="text"
-                    value={newListName}
-                    onChange={(e) => setNewListName(e.target.value)}
-                    placeholder="New list name"
-                    className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
-                />
-                <input type="text" value={newListGoal}
-                    onChange={(e) => setNewListGoal(e.target.value)}
-                    placeholder="Overall Goal"
-                    className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500" />
-                <button
-                    onClick={handleCreate}
-                    className="rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
-                >
-                    +
-                </button>
+            <div className="mt-4">
+                <button onClick={() => setShowCreateList(s => !s)} className="rounded bg-indigo-600 px-3 py-2 text-white text-sm mb-2">{showCreateList ? 'Close' : 'New List'}</button>
+                {showCreateList && (
+                    <div ref={createListRef} className="flex flex-col gap-2 mt-2">
+                        <input
+                            type="text"
+                            value={newListName}
+                            onChange={(e) => setNewListName(e.target.value)}
+                            placeholder="New list name"
+                            className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                        />
+                        <input type="text" value={newListGoal}
+                            onChange={(e) => setNewListGoal(e.target.value)}
+                            placeholder="Overall Goal"
+                            className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500" />
+                        <button
+                            onClick={handleCreate}
+                            className="rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
+                        >
+                            +
+                        </button>
+                    </div>
+                )}
             </div>
 
             {lists.length === 0 && (

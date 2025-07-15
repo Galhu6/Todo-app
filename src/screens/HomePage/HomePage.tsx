@@ -20,13 +20,7 @@ export const HomePage = () => {
             <main className="flex-grow flex flex-col items-center gap-20 p-8 bg-gray-100 dark:bg-gray-950">
                 <Hero />
                 <section className="w-full max-3xl bg-gray-800/50 rounded shadow-lg p-6 space-y-4 animate-fade-in id=about">
-
-                    {/* <section className="w-full max-w-3xl">
-                    <ImageCarousell />
-                </section> */}
-
-                    {/* <section className="w-full max-w-3xl bg-gray-800/50 rounded shadow-lg p-6" id="about"> */}
-                    <h2 className="mb-2 text-xl font-semibold">About Us</h2>
+                    <h2 className="mb-2 text-xl font-semibold" id="about" >About Us</h2>
                     <p>Our mission is to help you stay organized and productive. Todo.io was built to make task management simple while offering powerful features when you need them.</p>
                     <img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg" alt="Team" className="rounded" />
                 </section>

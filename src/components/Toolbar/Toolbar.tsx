@@ -5,9 +5,11 @@ interface ToolbarProps {
     onEdit?: () => void;
     onDelete?: () => void;
     onOpen?: () => void;
+    onDuplicate?: () => void;
+    onComplete?: () => void;
 }
 
-export const Toolbar: FC<ToolbarProps> = ({ onAdd, onEdit, onDelete, onOpen }) => (
+export const Toolbar: FC<ToolbarProps> = ({ onAdd, onEdit, onDelete, onOpen, onDuplicate, onComplete }) => (
     <div className='absolute right-1 top-1 hidden gap-1 rounded bg-gray-200 dark:bg-gray-700 p-1 shadow group-hover:flex'>
         {onAdd && (
             <button
@@ -21,6 +23,20 @@ export const Toolbar: FC<ToolbarProps> = ({ onAdd, onEdit, onDelete, onOpen }) =
                 onClick={(e) => { e.stopPropagation(); onEdit(); }}
                 className='text-sx hover:text-indigo-400'>
                 ✏️
+            </button>
+        )}
+        {onDuplicate && (
+            <button
+                onClick={(e) => { e.stopPropagation(); onDuplicate(); }}
+                className='text-sx hover:text-indigo-400'>
+                ⧉
+            </button>
+        )}
+        {onComplete && (
+            <button
+                onClick={(e) => { e.stopPropagation(); onComplete(); }}
+                className='text-sx hover:text-indigo-400'>
+                ✔
             </button>
         )}
         {onOpen && (

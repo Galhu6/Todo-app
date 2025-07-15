@@ -56,6 +56,10 @@ export const Tasks = ({ listId }: { listId: number }) => {
     const [newSubListGoal, setNewSubListGoal] = useState("");
     const editInputRef = useRef<HTMLInputElement>(null);
     const editFormRef = useRef<HTMLDivElement>(null);
+    const [showCreateTask, setShowCreateTask] = useState(false);
+    const [showCreateSubList, setShowCreateSubList] = useState(false);
+    const createTaskRef = useRef<HTMLDivElement>(null);
+    const createSubListRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -97,6 +101,19 @@ export const Tasks = ({ listId }: { listId: number }) => {
 
     }, [tasks]);
 
+    useEffect(() => {
+        const handleClick = (e: MouseEvent) => {
+            if (showCreateTask && createTaskRef.current && !createTaskRef.current.contains(e.target as Node)) {
+                setShowCreateTask(false);
+            }
+            if (showCreateSubList && createSubListRef.current && !createSubListRef.current.contains(e.target as Node)) {
+                setShowCreateSubList(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClick);
+        return () => document.removeEventListener('mousedown', handleClick);
+    }, [showCreateTask, showCreateSubList]);
+
     const formatTimeLeft = (dueDate: Date) => {
         const now = new Date();
         const due = new Date(dueDate);
@@ -133,8 +150,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
         setTasks([...tasks, created])
         setNewDescription("");
         setNewDueDate(new Date());
-
-
+        refreshTasks();
     };
 
     const handleSubListCreate = async () => {
@@ -157,6 +173,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
         if (!listId) return;
         await deleteTask(listId, taskId);
         setTasks(tasks.filter((task) => task.id !== taskId));
+        refreshTasks();
     };
     const handleEdit = async (taskId: number) => {
         if (!listId) return;
@@ -174,21 +191,21 @@ export const Tasks = ({ listId }: { listId: number }) => {
         if (!listId) return;
         const completed = await completeTask(listId, taskId);
         setTasks(tasks.map((task) => (task.id === taskId ? completed : task)))
-
+        refreshTasks();
     };
+
     const handleTaskPending = async (taskId: number) => {
         if (!listId) return;
         const pending = await setTaskPending(listId, taskId);
         setTasks(tasks.map((task) => (task.id === taskId ? pending : task)))
-
-
+        refreshTasks();
     }
 
     const handleTaskDuplicate = async (taskId: number) => {
         if (!listId) return;
         const duplicated = await duplicateTask(listId, taskId);
         setTasks([...tasks, duplicated])
-
+        refreshTasks();
     };
 
     const openMicroTasks = (taskId: number) => {
@@ -279,16 +296,18 @@ export const Tasks = ({ listId }: { listId: number }) => {
                                 {task.description} - {task.status === 'completed' ? 'Completed' : formatTimeLeft(task.due_date)}
                             </span>
 
-                            {(task.status === "completed" ? (
+                            {/* {(task.status === "completed" ? (
                                 <button onClick={() => handleTaskPending(task.id)} className="text-xs hover:text-indigo-400">set to pending</button>
                             ) : (
                                 <button onClick={() => handleTaskComplete(task.id)} className="text-sx hover:text-indigo-400">complete</button>
                             ))}
-                            <button onClick={() => handleTaskDuplicate(task.id)} className="text-sx hover:text-indigo-400">duplicate</button>
+                            <button onClick={() => handleTaskDuplicate(task.id)} className="text-sx hover:text-indigo-400">duplicate</button> */}
                             <Toolbar
                                 onAdd={() => openMicroTasks(task.id)}
                                 onEdit={() => startEdit(task)}
                                 onDelete={() => handleDelete(task.id)}
+                                onDuplicate={() => handleTaskDuplicate(task.id)}
+                                onComplete={() => task.status === 'completed' ? handleTaskPending : handleTaskComplete(task.id)}
                             />
 
                             {(editTaskId === task.id) && (<div ref={editFormRef} className="flex flex-col gap-2 rounded bg-white dark:bg-gray-800 p-4">
@@ -341,26 +360,66 @@ export const Tasks = ({ listId }: { listId: number }) => {
                     </ul>
                 </div>
             )}
-            <div className="flex flex-col items-stretch gap-2 rounded bg-gray-100 dark:bg-gray-900 p-4 sm:flex-row sm:items-end">
-                <input
-                    type="text"
-                    placeholder="Description"
-                    value={newDescription}
-                    onChange={(e) => setNewDescription(e.target.value)}
-                    className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
-                />
-                <input
-                    type="datetime-local"
-                    onChange={(e) => setNewDueDate(new Date(e.target.value))}
-                    className="rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
-                />
-                <button
-                    onClick={handleCreate}
-                    className="rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
-                >
-                    Add Task
+            <div className="mt-4">
+                <button onClick={() => setShowCreateTask(s => !s)}
+                    className="rounded bg-indigo-600 px-3 py-2 text-white text-sm mb-2">
+                    {showCreateTask ? 'Close' : 'Add Task'}
                 </button>
+                {showCreateTask && (
+                    <div ref={createTaskRef} className="flex flex-col items-stretch gap-2 rounded bg-gray-100 dark:bg-gray-900 p-4 sm:flex-row sm:items-end">
+                        <input
+                            type="text"
+                            placeholder="Description"
+                            value={newDescription}
+                            onChange={(e) => setNewDescription(e.target.value)}
+                            className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                        />
+                        <input
+                            type="datetime-local"
+                            onChange={(e) => setNewDueDate(new Date(e.target.value))}
+                            className="rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                        />
+                        <button
+                            onClick={handleCreate}
+                            className="rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
+                        >
+                            Add Task
+                        </button>
+                    </div>
+                )}
             </div>
+
+            <div className="mt-4">
+                <button onClick={() => setShowCreateSubList(s => !s)}
+                    className="rounded bg-indigo-600 px-3 py-2 text-white text-sm mb-2">
+                    {showCreateSubList ? 'Close' : 'Add Sub List'}
+                </button>
+                {showCreateSubList && (
+                    <div ref={createSubListRef} className="flex flex-col items-stretch gap-2 rounded bg-gray-100 dark:bg-gray-900 p-4 sm:flex-row sm:items-end">
+                        <input
+                            type="text"
+                            placeholder="sub list name"
+                            value={newSubListName}
+                            onChange={(e) => setNewSubListName(e.target.value)}
+                            className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                        />
+                        <input
+                            type="text"
+                            placeholder="sub list goal"
+                            value={newSubListGoal}
+                            onChange={(e) => setNewSubListGoal(e.target.value)}
+                            className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
+                        />
+                        <button
+                            onClick={handleSubListCreate}
+                            className="rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
+                        >
+                            Add
+                        </button>
+                    </div>
+                )}
+            </div>
+
             <div className="flex flex-col items-stretch gap-2 rounded bg-gray-100 dark:bg-gray-900 p-4 mt-4 sm:flex-row sm:items-end">
                 <input type="text"
                     placeholder="sub list name"
