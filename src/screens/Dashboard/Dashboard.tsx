@@ -12,11 +12,11 @@ export const Dashboard = () => {
     return (
         <>
             <Navbar />
-            <div className="flex flex-col gap-4 p-4 md:flex-row">
-                <div className="w-full md:w-1/3">
+            <div className="max-w-6xl mx-auto flex flex-col gap-4 p-4 md:flex-row">
+                <aside className="w-full md:w-1/3">
                     <Lists />
-                </div>
-                <div className="flex-1 w-full space-y-8">
+                </aside>
+                <main className="flex-1 w-full space-y-8">
                     {selectedListId && (
                         <div>
                             <h2 className="mb-2 text-lg font-semibold">{selectedListName}</h2>
@@ -35,7 +35,7 @@ export const Dashboard = () => {
                             <Tasks listId={secondList.id} />
                         </div>
                     )}
-                </div>
+                </main>
             </div>
             <Chat />
             <Footer />

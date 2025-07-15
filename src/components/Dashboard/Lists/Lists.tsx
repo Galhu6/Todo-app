@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { createList, editList, deleteList, deletedLists } from "./listsApi.js";
+import type { JSX } from "react";
+import { createList, editList, deleteList, deletedLists, subLists } from "./listsApi.js";
 import { useAppContext } from "../../../context/AppContext.js";
 
 
@@ -16,11 +17,13 @@ export type List = {
 
 
 export const Lists = () => {
-    const { lists, setLists, selectedListId, setSelectedListId, secondSelectedListId, setSecondSelectedListId, setSelectedListName, setSelectedListGoal } = useAppContext();
+    const { lists, setLists, selectedListId, setSelectedListId, secondSelectedListId, setSecondSelectedListId, setSelectedListName, setSelectedListGoal, refreshTasks } = useAppContext();
     const [draggingId, setDraggingId] = useState<number | null>(null);
     const [subListParent, setSubListParent] = useState<number | null>(null);
     const [trash, setTrash] = useState<List[]>([]);
     const [showTrash, setShowTrash] = useState(false);
+    const [expandedMap, setExpandedMap] = useState<Record<number, boolean>>({});
+    const [sublistMap, setSubListMap] = useState<Record<number, List[]>>({});
     const [newListName, setNewListName] = useState("");
     const [newListGoal, setNewListGoal] = useState("");
     const [subListName, setSubListName] = useState("");
@@ -73,10 +76,13 @@ export const Lists = () => {
 
     };
 
-    const handleDelete = async (listId: number) => {
+    const handleDelete = async (listId: number, parentId?: number) => {
         await deleteList(listId);
-        setLists(lists.filter(list => list.id !== listId));
-
+        if (parentId) {
+            setSubListMap(prev => ({ ...prev, [parentId]: (prev[parentId] || []).filter(l => l.id !== listId) }))
+        } else {
+            setLists(lists.filter(list => list.id !== listId));
+        }
     };
 
     const toggleTrash = async () => {
@@ -112,7 +118,7 @@ export const Lists = () => {
 
     const handleDropParent = async (targetId: number) => {
         if (draggingId === null || draggingId === targetId) return;
-        const updated = await editList(draggingId, undefined, undefined, targetId);
+        await editList(draggingId, undefined, undefined, targetId);
         setLists(lists.filter(l => l.id !== draggingId));
         setDraggingId(null);
     };
@@ -120,14 +126,71 @@ export const Lists = () => {
     const handleAddSubList = async (parentId: number) => {
         if (!subListName.trim()) return;
         const created = await createList(subListName, subListGoal, parentId);
-        setLists([...lists, created]);
+        setSubListMap(prev => ({ ...prev, [parentId]: [...(prev[parentId] || []), created] }));
+        setExpandedMap(prev => ({ ...prev, [parentId]: true }));
         setSubListName("");
         setSubListGoal("");
         setSubListParent(null);
+        refreshTasks();
     };
 
+    const toggleExpand = async (id: number) => {
+        const newVal = !expandedMap[id];
+        setExpandedMap({ ...expandedMap, [id]: newVal });
+        if (newVal && !sublistMap[id]) {
+            try {
+                const subs = await subLists(id);
+                setSubListMap(prev => ({ ...prev, [id]: subs }))
+            } catch (err) {
+                console.error('failed to fetch sub lists', err);
+            }
+        }
+    };
+
+    const renderListItem = (list: List, parentId?: number): JSX.Element => (
+        <li key={list.id}
+            draggable
+            onDragStart={() => handleDragStart(list.id)}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={() => parentId ? undefined : handleDropParent(list.id)}
+            className={`rounded px-2 py-1 transition hover:bg-gray-300 hover:text-gray-800 drak:hover:bg-gray-700/50 ${list.id === selectedListId || list.id === secondSelectedListId ? 'font-bold' : ''}`}>
+            <div className="flex items-center gap-1">
+                <button onClick={() => toggleExpand(list.id)} className="text-sx w-4">
+                    {expandedMap[list.id] ? '▼' : '▶'}
+                </button>
+                <span onClick={() => handleSelect(list)} className="cursor-pointer flex-grow">
+                    {list.name}
+                </span>
+                <button onClick={() => handleDelete(list.id, parentId)} className="text-xs hover:text-indigo-400">🗑</button>
+            </div>
+            {subListParent === list.id && (
+                <div className="flex gap-1 mt-1 ml-4">
+                    <input type="text"
+                        value={subListName}
+                        onChange={(e) => setSubListName(e.target.value)}
+                        placeholder="Sub list name"
+                        className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-1 text-sm dark:text-white"
+                    />
+                    <input
+                        type="text"
+                        value={subListGoal}
+                        onChange={(e) => setSubListGoal(e.target.value)}
+                        placeholder="Goal"
+                        className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-1 text-sm dark:text-white"
+                    />
+                    <button onClick={() => handleAddSubList(list.id)} className="rounded bg-indigo-600 px-2 text-white text-sm">Add</button>
+                </div>
+            )}
+            {expandedMap[list.id] && sublistMap[list.id] && (
+                <ul className="ml-4 mt-1 space-y-1">
+                    {sublistMap[list.id].map(sub => renderListItem(sub, list.id))}
+                </ul>
+            )}
+        </li>
+    );
+
     return (
-        <div className="space-y-4 rounded bg-white dark:bg-gray-800/50 p-4 shadow-lg max-w-md w-full">
+        <div className="space-y-4 rounded bg-gray-100 dark:bg-gray-800/50 p-4 shadow-lg md:max-w-md w-full mx-auto">
             <div className="flex justify-between items-center">
                 <h2 className="text-lg font-semibold">My Lists</h2>
                 <button onClick={toggleTrash} className="text-sm hover:text-indigo-400">
@@ -145,44 +208,7 @@ export const Lists = () => {
                         handleDropReorder(lists.length);
                     }
                 }}>
-                {Array.isArray(lists) && lists.map((list) => (
-                    <li
-                        key={list.id}
-                        draggable
-                        onDragStart={() => handleDragStart(list.id)}
-                        onDragOver={(e) => e.preventDefault()}
-                        onDrop={() => handleDropParent(list.id)}
-                        className={`flex justify-between items-center rounded px-2 py-1 transition ${list.id === selectedListId || list.id === secondSelectedListId ? 'font-bold' : ''} hover:bg-gray-100 dark:hover:bg-gray-700/50 `}
-                    >
-                        <div className="flex justify-between items-center">
-                            <span onClick={() => handleSelect(list)} className="cursor-pointer flex-grow">
-                                {list.name}
-                            </span>
-                            <div className="flex gap-1">
-                                <button onClick={() => handleDelete(list.id)} className="text-sm hover:text-indigo-400">
-                                    🗑
-                                </button>
-                            </div>
-                            {subListParent === list.id && (
-                                <div className="flex gap-1 mt-1">
-                                    <input type="text"
-                                        value={subListName}
-                                        onChange={(e) => setSubListName(e.target.value)}
-                                        placeholder="Sub list name"
-                                        className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-1 text-sm dark:text-white"
-                                    />
-                                    <input type="text"
-                                        value={subListGoal}
-                                        onChange={(e) => setSubListGoal(e.target.value)}
-                                        placeholder="Goal"
-                                        className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-1 text-sm dark:text-white"
-                                    />
-                                    <button onClick={() => handleAddSubList(list.id)} className="rounded bg-indigo-600 px-2 text-white text-sm">Add</button>
-                                </div>
-                            )}
-                        </div>
-                    </li>
-                ))}
+                {Array.isArray(lists) && lists.map(list => renderListItem(list))}
             </ul>
             {
                 showTrash && (

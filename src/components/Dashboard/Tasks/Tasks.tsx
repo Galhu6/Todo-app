@@ -37,7 +37,7 @@ export class Task {
 }
 
 export const Tasks = ({ listId }: { listId: number }) => {
-    const { tasksRefreshToken, selectedListId, setSelectedListId, setSelectedListName, setSelectedListGoal } = useAppContext();
+    const { tasksRefreshToken, selectedListId, setSelectedListId, setSelectedListName, setSelectedListGoal, lists, setLists, refreshTasks } = useAppContext();
     const [tasks, setTasks] = useState<Task[]>([]);
     const [trash, setTrash] = useState<Task[]>([]);
     const [showTrash, setShowTrash] = useState(false);
@@ -139,6 +139,8 @@ export const Tasks = ({ listId }: { listId: number }) => {
         if (!selectedListId || !newSubListName.trim()) return;
         const created = await createList(newSubListName, newSubListGoal, selectedListId);
         setSubListsState([...subListsState, created]);
+        setLists([...lists, created]);
+        refreshTasks();
         setNewSubListName("");
         setNewSubListGoal("");
     };
@@ -188,18 +190,19 @@ export const Tasks = ({ listId }: { listId: number }) => {
     };
 
     const openMicroTasks = (taskId: number) => {
-        setActiveMicroParent(taskId);
-        if (!microTasksMap[taskId]) {
-            setMicroTasksMap({ ...microTasksMap, [taskId]: [] });
+        const newId = activeMicroParent === taskId ? null : taskId;
+        setActiveMicroParent(newId);
+        if (newId !== null && !microTasksMap[newId]) {
+            setMicroTasksMap({ ...microTasksMap, [newId]: [] });
         }
     };
 
-    const handleDropReorder = (targetIndex: number) => {
+    const handleDropReorder = () => {
         if (draggingTaskId === null) return;
         const draggedIndex = tasks.findIndex(t => t.id === draggingTaskId);
         if (draggedIndex === -1) return;
         const updated = [...tasks];
-        const [removed] = updated.splice(draggedIndex, 1);
+        updated.splice(draggedIndex, 1);
         setTasks(updated);
         setDraggingTaskId(null);
     };
@@ -241,7 +244,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
                             draggable
                             onDragStart={() => setDraggingTaskId(task.id)}
                             onDragOver={(e) => e.preventDefault()}
-                            onDrop={() => handleDropReorder(idx)}
+                            onDrop={() => handleDropReorder()}
                             className={`flex items-center gap-2 rounded px-2 py-1 transition hover:shadow ${task.status === 'completed' ? 'bg-green-200 dark:bg-green-900 line-through' : 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                         >
                             <span className="flex-grow text-sm">
@@ -262,7 +265,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
                                 duplicate
                             </button>
                             <button onClick={() => openMicroTasks(task.id)} className="text-xs hover:text-indigo-400">
-                                subtasks
+                                {activeMicroParent === task.id ? 'hide' : 'subtasks'}
                             </button>
                             <button onClick={() => handleDelete(task.id)} className="text-xs hover:text-red-400">
                                 delete
@@ -288,6 +291,16 @@ export const Tasks = ({ listId }: { listId: number }) => {
                                     Submit Changes
                                 </button>
                             </div>)}
+                            {activeMicroParent === task.id && (
+                                <div className="w-full ml-4 mt-2">
+                                    <MicroTasks
+                                        parentId={task.id}
+                                        tasks={microTasksMap[task.id] || []}
+                                        setTasks={(t) => setMicroTasksMap({ ...microTasksMap, [task.id]: t })}
+                                        onClose={() => setActiveMicroParent(null)}
+                                    />
+                                </div>
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -342,13 +355,6 @@ export const Tasks = ({ listId }: { listId: number }) => {
                     Add Sub List
                 </button>
             </div>
-            {activeMicroParent !== null && (
-                <MicroTasks parentId={activeMicroParent}
-                    tasks={microTasksMap[activeMicroParent] || []}
-                    setTasks={(t) => setMicroTasksMap({ ...microTasksMap, [activeMicroParent]: t })}
-                    onClose={() => setActiveMicroParent(null)}
-                />
-            )}
         </div>
     );
 }
