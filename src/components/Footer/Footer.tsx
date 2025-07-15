@@ -31,7 +31,9 @@ export const Footer = () => {
                             voluptatum quos provident.
                         </p>
                     </div>
-                    <LogoGrid />
+                    <div className="hidden sm:hidden md:block w-full">
+                        <LogoGrid />
+                    </div>
                     <div>
                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores, suscipit?</p>
                     </div>
@@ -43,6 +45,9 @@ export const Footer = () => {
                     <Link to="linktoportoresumePDF">
                         <img src="../../../public/avatarfooter.png" alt="a logo or avatar" className="mx-auto md:ml-auto w-16 h-16" />
                     </Link>
+                </div>
+                <div className="md:hidden sm:block col-span-full">
+                    <LogoGrid />
                 </div>
             </div>
         </footer>

@@ -37,7 +37,7 @@ export class Task {
 }
 
 export const Tasks = ({ listId }: { listId: number }) => {
-    const { tasksRefreshToken, selectedListId, setSelectedListId, setSelectedListName, setSelectedListGoal, lists, setLists, refreshTasks } = useAppContext();
+    const { tasksRefreshToken, selectedListId, setSelectedListId, setSelectedListName, setSelectedListGoal, lists, setLists, refreshTasks, draggingListId, setDraggingListId } = useAppContext();
     const [tasks, setTasks] = useState<Task[]>([]);
     const [trash, setTrash] = useState<Task[]>([]);
     const [showTrash, setShowTrash] = useState(false);
@@ -207,6 +207,22 @@ export const Tasks = ({ listId }: { listId: number }) => {
         setDraggingTaskId(null);
     };
 
+    const handleListDrop = (taskId: number) => {
+        if (draggingListId === null) return;
+        const list = lists.find(l => l.id === draggingListId);
+        if (!list) return;
+        const micro: MicroTask = {
+            id: Date.now(),
+            parentId: taskId,
+            description: list.name,
+        }
+        setMicroTasksMap(prev => ({
+            ...prev,
+            [taskId]: [...(prev[taskId] || []), micro],
+        }));
+        setDraggingListId(null);
+    };
+
     const toggleTrash = async () => {
         if (!showTrash) {
             if (!listId) return;
@@ -244,7 +260,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
                             draggable
                             onDragStart={() => setDraggingTaskId(task.id)}
                             onDragOver={(e) => e.preventDefault()}
-                            onDrop={() => handleDropReorder()}
+                            onDrop={() => { handleDropReorder(); handleListDrop(task.id); }}
                             className={`flex items-center gap-2 rounded px-2 py-1 transition hover:shadow ${task.status === 'completed' ? 'bg-green-200 dark:bg-green-900 line-through' : 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                         >
                             <span className="flex-grow text-sm">

@@ -17,7 +17,7 @@ export type List = {
 
 
 export const Lists = () => {
-    const { lists, setLists, selectedListId, setSelectedListId, secondSelectedListId, setSecondSelectedListId, setSelectedListName, setSelectedListGoal, refreshTasks } = useAppContext();
+    const { lists, setLists, selectedListId, setSelectedListId, secondSelectedListId, setSecondSelectedListId, setSelectedListName, setSelectedListGoal, refreshTasks, setDraggingListId } = useAppContext();
     const [draggingId, setDraggingId] = useState<number | null>(null);
     const [subListParent, setSubListParent] = useState<number | null>(null);
     const [trash, setTrash] = useState<List[]>([]);
@@ -64,6 +64,7 @@ export const Lists = () => {
             setSelectedListGoal(list.overall_goal || '');
         }
         setEditName('')
+        toggleExpand(list.id);
 
     };
 
@@ -103,6 +104,12 @@ export const Lists = () => {
 
     const handleDragStart = (id: number) => {
         setDraggingId(id);
+        setDraggingListId(id);
+    };
+
+    const handleDragEnd = () => {
+        setDraggingId(null);
+        setDraggingListId(null);
     };
 
     const handleDropReorder = (targetIndex: number) => {
@@ -137,6 +144,11 @@ export const Lists = () => {
     const toggleExpand = async (id: number) => {
         const newVal = !expandedMap[id];
         setExpandedMap({ ...expandedMap, [id]: newVal });
+        if (newVal) {
+            setSubListParent(id);
+        } else {
+            setSubListParent(null);
+        }
         if (newVal && !sublistMap[id]) {
             try {
                 const subs = await subLists(id);
@@ -151,17 +163,19 @@ export const Lists = () => {
         <li key={list.id}
             draggable
             onDragStart={() => handleDragStart(list.id)}
+            onDragEnd={handleDragEnd}
             onDragOver={(e) => e.preventDefault()}
             onDrop={() => parentId ? undefined : handleDropParent(list.id)}
+            onClick={() => toggleExpand(list.id)}
             className={`rounded px-2 py-1 transition hover:bg-gray-300 hover:text-gray-800 drak:hover:bg-gray-700/50 ${list.id === selectedListId || list.id === secondSelectedListId ? 'font-bold' : ''}`}>
             <div className="flex items-center gap-1">
-                <button onClick={() => toggleExpand(list.id)} className="text-sx w-4">
+                <button onClick={(e) => { e.stopPropagation(); toggleExpand(list.id) }} className="text-sx w-4">
                     {expandedMap[list.id] ? '▼' : '▶'}
                 </button>
-                <span onClick={() => handleSelect(list)} className="cursor-pointer flex-grow">
+                <span onClick={(e) => { e.stopPropagation; handleSelect(list) }} className="cursor-pointer flex-grow">
                     {list.name}
                 </span>
-                <button onClick={() => handleDelete(list.id, parentId)} className="text-xs hover:text-indigo-400">🗑</button>
+                <button onClick={(e) => { e.stopPropagation; handleDelete(list.id, parentId) }} className="text-xs hover:text-indigo-400">🗑</button>
             </div>
             {subListParent === list.id && (
                 <div className="flex gap-1 mt-1 ml-4">

@@ -1,4 +1,4 @@
-import { createContext, useContext, useCallback, useEffect, useState } from "react";
+import React, { createContext, useContext, useCallback, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { jwtDecode } from "jwt-decode";
 import type { List } from "../components/Dashboard/Lists/Lists";
@@ -15,6 +15,7 @@ interface AppContextValue {
     selectedListGoal: string;
     tasksRefreshToken: number;
     theme: 'light' | 'dark';
+    draggingListId: number | null;
     toggleTheme: () => void;
     setUser: (user: User) => void;
     setLists: React.Dispatch<React.SetStateAction<List[]>>;
@@ -24,6 +25,7 @@ interface AppContextValue {
     setSelectedListGoal: React.Dispatch<React.SetStateAction<string>>;
     refreshLists: () => Promise<void>;
     refreshTasks: () => void;
+    setDraggingListId: React.Dispatch<React.SetStateAction<number | null>>
     logout: () => void;
 };
 
@@ -37,6 +39,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const [selectedListName, setSelectedListName] = useState("");
     const [selectedListGoal, setSelectedListGoal] = useState("")
     const [tasksRefreshToken, setTaskRefreshToken] = useState(0);
+    const [draggingListId, setDraggingListId] = useState<number | null>(null)
     const [theme, setTheme] = useState<'light' | 'dark'>(() =>
         (localStorage.getItem('theme') as 'light' | 'dark' || 'dark')
     );
@@ -116,6 +119,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         selectedListGoal,
         tasksRefreshToken,
         theme,
+        draggingListId,
         toggleTheme,
         setUser,
         setLists,
@@ -125,6 +129,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         setSelectedListGoal,
         refreshLists,
         refreshTasks,
+        setDraggingListId,
         logout
     };
 
