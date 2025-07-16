@@ -164,8 +164,9 @@ export const Lists = () => {
     const handleDropParent = async (targetId: number) => {
         if (draggingId === null || draggingId === targetId) return;
         await editList(draggingId, undefined, undefined, targetId);
-        setLists(lists.filter(l => l.id !== draggingId));
+        // setLists(lists.filter(l => l.id !== draggingId));
         setDraggingId(null);
+        refreshLists();
     };
 
     const handleRootDrop = async () => {
@@ -211,11 +212,11 @@ export const Lists = () => {
             onDragStart={() => handleDragStart(list.id)}
             onDragEnd={handleDragEnd}
             onDragOver={(e) => e.preventDefault()}
-            onDrop={() => parentId ? undefined : handleDropParent(list.id)}
+            onDrop={() => handleDropParent(list.id)}
             onClick={() => toggleExpand(list.id)}
             className={`relative group rounded px-2 py-1 transition hover:bg-gray-300 hover:text-gray-800 dark:hover:bg-gray-700/50 dark:hover:text-white ${list.id === selectedListId || list.id === secondSelectedListId ? 'font-bold' : ''}`}>
             <div className="flex items-center gap-1">
-                <button onClick={(e) => { e.stopPropagation(); toggleExpand(list.id); }} className="text-sx w-4">
+                <button onClick={(e) => { e.stopPropagation(); toggleExpand(list.id); }} className="text-xs w-4">
                     {expandedMap[list.id] ? '▼' : '▶'}
                 </button>
                 <span onClick={(e) => { e.stopPropagation(); handleSelect(list); }} className="cursor-pointer flex-grow">
@@ -251,6 +252,7 @@ export const Lists = () => {
                         className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-1 text-sm dark:text-white"
                     />
                     <button onClick={() => handleAddSubList(list.id)} className="rounded bg-indigo-600 px-2 text-white text-sm">Add</button>
+                    <button onClick={() => setSubListParent(null)} className="rounded bg-gray-500 px-2 text-white tex-sm">Cancel</button>
                 </div>
             )}
             {expandedMap[list.id] && sublistMap[list.id] && (
@@ -335,6 +337,7 @@ export const Lists = () => {
                         >
                             +
                         </button>
+                        <button onClick={() => setShowCreateList(false)} className="rounded bg-gray-500 px-3 py-2 text-white">Cancel</button>
                     </div>
                 )}
             </div>

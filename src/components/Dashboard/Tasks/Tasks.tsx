@@ -309,13 +309,6 @@ export const Tasks = ({ listId }: { listId: number }) => {
                             <span className="flex-grow text-sm">
                                 {task.description} - {task.status === 'completed' ? 'Completed' : formatTimeLeft(task.due_date)}
                             </span>
-
-                            {/* {(task.status === "completed" ? (
-                                <button onClick={() => handleTaskPending(task.id)} className="text-xs hover:text-indigo-400">set to pending</button>
-                            ) : (
-                                <button onClick={() => handleTaskComplete(task.id)} className="text-sx hover:text-indigo-400">complete</button>
-                            ))}
-                            <button onClick={() => handleTaskDuplicate(task.id)} className="text-sx hover:text-indigo-400">duplicate</button> */}
                             <Toolbar
                                 onAdd={() => openMicroTasks(task.id)}
                                 onEdit={() => startEdit(task)}
@@ -376,8 +369,8 @@ export const Tasks = ({ listId }: { listId: number }) => {
             )}
             <div className="mt-4">
                 <button onClick={() => setShowCreateTask(s => !s)}
-                    className="rounded bg-indigo-600 px-3 py-2 text-white text-sm mb-2">
-                    {showCreateTask ? 'Close' : 'Add Task'}
+                    className={`rounded bg-indigo-600 px-3 py-2 text-white text-sm mb-2 ${showCreateTask ? 'hidden' : ''}`}>
+                    {showCreateTask ? '' : 'Add Task'}
                 </button>
                 {showCreateTask && (
                     <div ref={createTaskRef} className="flex flex-col items-stretch gap-2 rounded bg-gray-100 dark:bg-gray-900 p-4 sm:flex-row sm:items-end">
@@ -399,14 +392,17 @@ export const Tasks = ({ listId }: { listId: number }) => {
                         >
                             Add Task
                         </button>
+                        <button onClick={() => setShowCreateTask(false)} className="rounded bg-gray- px-3 py-2 text-white">
+                            Cancel
+                        </button>
                     </div>
                 )}
             </div>
 
             <div className="mt-4">
                 <button onClick={() => setShowCreateSubList(s => !s)}
-                    className="rounded bg-indigo-600 px-3 py-2 text-white text-sm mb-2">
-                    {showCreateSubList ? 'Close' : 'Add Sub List'}
+                    className={`rounded bg-indigo-600 px-3 py-2 text-white text-sm mb-2  ${showCreateSubList ? 'hidden' : ''}`}>
+                    {showCreateSubList ? '' : 'Add Sub List'}
                 </button>
                 {showCreateSubList && (
                     <div ref={createSubListRef} className="flex flex-col items-stretch gap-2 rounded bg-gray-100 dark:bg-gray-900 p-4 sm:flex-row sm:items-end">
@@ -430,6 +426,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
                         >
                             Add
                         </button>
+                        <button onClick={() => setShowCreateSubList(false)} className="rounded bg-gray- px-3 py-2 text-white">Cancel</button>
                     </div>
                 )}
             </div>
