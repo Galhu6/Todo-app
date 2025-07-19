@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createTask, allTasks, deletedTasks, completeTask, editTask, deleteTask, duplicateTask, setTaskPending } from "./tasksApi.js";
 import { createList, subLists } from "../Lists/listsApi.js";
+import { fetchMicroTasks, createMicroTask as apiCreateMicroTask, updateMicroTask as apiUpdateMicroTask, deleteMicroTask as apiDeleteMicroTask } from './microTasksApi.js';
 import type { MicroTask } from "./MicroTasks.js";
 import { MicroTasks } from "./MicroTasks.js";
 import type { List } from "../Lists/Lists.js";
@@ -227,11 +228,17 @@ export const Tasks = ({ listId }: { listId: number }) => {
         refreshTasks();
     };
 
-    const openMicroTasks = (taskId: number) => {
+    const openMicroTasks = async (taskId: number) => {
         const newId = activeMicroParent === taskId ? null : taskId;
         setActiveMicroParent(newId);
         if (newId !== null && !microTasksMap[newId]) {
-            setMicroTasksMap({ ...microTasksMap, [newId]: [] });
+            try {
+                const mts = await fetchMicroTasks(taskId);
+                setMicroTasksMap({ ...microTasksMap, [newId]: mts });
+            } catch (e) {
+                console.error("failed to fetch micro tasks");
+                setMicroTasksMap({ ...microTasksMap, [newId]: [] });
+            }
         }
     };
 
@@ -245,15 +252,11 @@ export const Tasks = ({ listId }: { listId: number }) => {
         setDraggingTaskId(null);
     };
 
-    const handleListDrop = (taskId: number) => {
+    const handleListDrop = async (taskId: number) => {
         if (draggingListId === null) return;
         const list = lists.find(l => l.id === draggingListId);
         if (!list) return;
-        const micro: MicroTask = {
-            id: Date.now(),
-            parentId: taskId,
-            description: list.name,
-        }
+        const micro = await apiCreateMicroTask(taskId, list.name);
         setMicroTasksMap(prev => ({
             ...prev,
             [taskId]: [...(prev[taskId] || []), micro],
@@ -261,8 +264,9 @@ export const Tasks = ({ listId }: { listId: number }) => {
         setDraggingListId(null);
     };
 
-    const handleMicroDrop = (taskId: number) => {
+    const handleMicroDrop = async (taskId: number) => {
         if (!draggingMicro) return;
+        await apiUpdateMicroTask(draggingMicro.micro.id, { parentId: taskId });
         setMicroTasksMap(prev => {
             const from = prev[draggingMicro.taskId]?.filter(m => m.id !== draggingMicro.micro.id || []);
             const to = [...(prev[taskId] || []), { ...draggingMicro.micro, parentId: taskId }];
@@ -274,6 +278,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
     const handleMicroRootDrop = async () => {
         if (!draggingMicro || !listId) return;
         const created = await createTask(listId, { description: draggingMicro.micro.description, dueDate: new Date() });
+        await apiDeleteMicroTask(draggingMicro.micro.id);
         setTasks([...tasks, created]);
         setMicroTasksMap(prev => {
             const from = prev[draggingMicro.taskId]?.filter(m => m.id !== draggingMicro.micro.id);

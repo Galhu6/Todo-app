@@ -16,6 +16,29 @@ export async function getMicroTasks(taskId: number) {
     return result.rows;
 }
 
+export async function updateMicroTask(id: number, updates: { completed?: boolean; parentId?: number; description?: string; }) {
+    const fields: string[] = [];
+    const values: any[] = [id];
+    if (updates.completed !== undefined) {
+        fields.push(`completed =$${values.length + 1}`);
+        values.push(updates.completed);
+    }
+    if (updates.parentId !== undefined) {
+        fields.push(`task_id =$${values.length + 1}`);
+        values.push(updates.parentId);
+    }
+    if (updates.description !== undefined) {
+        fields.push(`description = $${values.length + 1}`);
+        values.push(updates.description);
+    }
+    if (fields.length === 0) return null;
+    const res = await pool.query(
+        `UPDATE micro_tasks SET ${fields.join(', ')} WHERE id = $1 RETURNING *;`,
+        [values]
+    );
+    return res.rows[0];
+}
+
 export async function completeMicroTask(id: number) {
     const result = await pool.query(
         `UPDATE micro_tasks SET is_complete = true WHERE id = $1 RETURNING *;`,

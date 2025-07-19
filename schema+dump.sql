@@ -96,6 +96,43 @@ ALTER SEQUENCE public.lists_id_seq OWNED BY public.lists.id;
 
 
 --
+-- Name: micro_tasks; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.micro_tasks (
+    id integer NOT NULL,
+    task_id integer NOT NULL,
+    description text NOT NULL,
+    completed boolean DEFAULT false,
+    created_at timestamp without time zone DEFAULT now()
+);
+
+
+ALTER TABLE public.micro_tasks OWNER TO postgres;
+
+--
+-- Name: micro_tasks_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.micro_tasks_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.micro_tasks_id_seq OWNER TO postgres;
+
+--
+-- Name: micro_tasks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.micro_tasks_id_seq OWNED BY public.micro_tasks.id;
+
+
+--
 -- Name: tasks; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -188,6 +225,13 @@ ALTER TABLE ONLY public.lists ALTER COLUMN id SET DEFAULT nextval('public.lists_
 
 
 --
+-- Name: micro_tasks id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.micro_tasks ALTER COLUMN id SET DEFAULT nextval('public.micro_tasks_id_seq'::regclass);
+
+
+--
 -- Name: tasks id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -231,6 +275,14 @@ COPY public.lists (id, user_id, created_at, name, isdeleted, overall_goal) FROM 
 14	1	2025-07-02 13:23:58.775638	dates	f	\N
 16	1	2025-07-08 21:53:01.812541	Funny Buisness	f	have fun
 15	1	2025-07-02 13:49:11.759055	Funny Business	t	\N
+\.
+
+
+--
+-- Data for Name: micro_tasks; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.micro_tasks (id, task_id, description, completed, created_at) FROM stdin;
 \.
 
 
@@ -299,14 +351,21 @@ SELECT pg_catalog.setval('public.chat_contexts_id_seq', 11, true);
 -- Name: lists_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.lists_id_seq', 16, true);
+SELECT pg_catalog.setval('public.lists_id_seq', 8, true);
+
+
+--
+-- Name: micro_tasks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.micro_tasks_id_seq', 1, false);
 
 
 --
 -- Name: tasks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.tasks_id_seq', 31, true);
+SELECT pg_catalog.setval('public.tasks_id_seq', 7, true);
 
 
 --
@@ -338,6 +397,14 @@ ALTER TABLE ONLY public.chat_contexts
 
 ALTER TABLE ONLY public.lists
     ADD CONSTRAINT lists_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: micro_tasks micro_tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.micro_tasks
+    ADD CONSTRAINT micro_tasks_pkey PRIMARY KEY (id);
 
 
 --
@@ -378,6 +445,14 @@ ALTER TABLE ONLY public.chat_contexts
 
 ALTER TABLE ONLY public.lists
     ADD CONSTRAINT lists_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: micro_tasks micro_tasks_task_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.micro_tasks
+    ADD CONSTRAINT micro_tasks_task_id_fkey FOREIGN KEY (task_id) REFERENCES public.tasks(id) ON DELETE CASCADE;
 
 
 --

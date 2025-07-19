@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useAppContext } from "../../../context/AppContext";
+import { createMicroTask, deleteMicroTask, updateMicroTask } from "../../../services/MicroTasks/microTaskService";
 import type { JSX } from "react";
+
 export type MicroTask = {
     id: number;
     parentId: number;
@@ -22,10 +24,10 @@ export const MicroTasks = ({ parentId, tasks, setTasks, onClose, onDragStart }: 
     const [newDesc, setNewDesc] = useState("");
     const [expandedMap, setExpandedMap] = useState<Record<number, boolean>>({});
     const [subInputMap, setSubInputMap] = useState<Record<number, string>>({});
-    const addTask = () => {
+    const addTask = async () => {
         if (!newDesc.trim()) return;
-        const t: MicroTask = { id: Date.now(), parentId, description: newDesc, subTasks: [] };
-        setTasks([...tasks, t]);
+        const created = await createMicroTask(newDesc, parentId);
+        setTasks([...tasks, created]);
         setNewDesc("");
     };
 
@@ -37,11 +39,15 @@ export const MicroTasks = ({ parentId, tasks, setTasks, onClose, onDragStart }: 
         setExpandedMap(prev => ({ ...prev, [id]: true }));
     };
 
-    const toggle = (id: number) => {
-        setTasks(tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+    const toggle = async (id: number) => {
+        const current = tasks.find(t => t.id === id);
+        if (!current) return;
+        const updated = await updateMicroTask(id, { completed: !current.completed });
+        setTasks(tasks.map(t => t.id === id ? updated : t));
     };
 
-    const remove = (id: number) => {
+    const remove = async (id: number) => {
+        await deleteMicroTask(id);
         setTasks(tasks.filter(t => t.id !== id));
     };
 

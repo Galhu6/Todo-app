@@ -8,6 +8,7 @@ process.env.TZ = "UTC";
 import authRoutes from "./routes/authRoutes.js";
 import listRoutes from "./routes/listRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
+import microTaskRoutes from "./routes/microTasksRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
 import calendarRoutes from "./routes/calendarRoutes.js"
 import { errorHandler } from "./middlewares/errorHandler.js";
@@ -27,6 +28,7 @@ app.use(express.json())
 app.use("/api/auth", authRoutes);
 app.use("/api/lists", listRoutes);
 app.use("/api", taskRoutes);
+app.use("/api", microTaskRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/calendar", calendarRoutes)
 
