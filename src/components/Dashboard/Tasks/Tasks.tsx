@@ -321,7 +321,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
                 <ul className="space-y-2 divide-y divide-gray-200 dark:divide-gray-700"
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={() => { handleMicroRootDrop(); }}>
-                    {tasks.map((task, idx) => (
+                    {tasks.map((task) => (
                         <li
                             key={task.id}
                             draggable

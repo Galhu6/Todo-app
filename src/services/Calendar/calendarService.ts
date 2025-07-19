@@ -1,5 +1,4 @@
 import { google } from "googleapis";
-import { eventarc } from "googleapis/build/src/apis/eventarc";
 
 export interface CalendarEvent {
     summary: string;

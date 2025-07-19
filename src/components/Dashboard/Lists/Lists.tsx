@@ -31,7 +31,6 @@ export const Lists = () => {
     const [subListGoal, setSubListGoal] = useState("");
     const [editName, setEditName] = useState("");
     const [editingListId, setEditingListId] = useState<number | null>(null);
-    const [error, setError] = useState<string | null>(null);
     const [progressMap, setProgressMap] = useState<Record<number, { completed: number; total: number }>>({});
     const [showCreateList, setShowCreateList] = useState(false);
     const createListRef = useRef<HTMLDivElement>(null)
@@ -282,10 +281,6 @@ export const Lists = () => {
                     {showTrash ? 'Hide Trash' : 'Show Trash'}
                 </button>
             </div>
-            {error &&
-                <p className="text-red-400">{error}</p>
-            }
-
             <ul className="space-y-2"
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={() => {

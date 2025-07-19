@@ -5,7 +5,7 @@ import { HttpError } from "./errorHandler.js";
 
 dotenv.config();
 
-export const authMiddleware: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware: RequestHandler = async (req: Request, _res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
     if (!authHeader?.includes("Bearer")) {
         next(new HttpError(401, "Unauthorized"));

@@ -2,7 +2,7 @@ import type { RequestHandler } from "express";
 import { pool } from "../db.js";
 import { HttpError } from "./errorHandler.js";
 
-export const verifyTaskOwnership: RequestHandler = async (req, res, next) => {
+export const verifyTaskOwnership: RequestHandler = async (req, _res, next) => {
     const userId = (req as any).user?.id;
     const taskId = parseInt(req.params.taskId);
 
@@ -25,7 +25,7 @@ export const verifyTaskOwnership: RequestHandler = async (req, res, next) => {
     next();
 };
 
-export const verifyListOwnership: RequestHandler = async (req, res, next) => {
+export const verifyListOwnership: RequestHandler = async (req, _res, next) => {
     const userId = (req as any).user?.id;
     const listId = parseInt(req.params.listId);
 
@@ -51,7 +51,7 @@ export const verifyListOwnership: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const verifyMicroTaskOwnership: RequestHandler = async (req, res, next) => {
+export const verifyMicroTaskOwnership: RequestHandler = async (req, _res, next) => {
     const userId = (req as any).user?.id;
     const microTaskId = parseInt(req.params.microTaskId);
 
