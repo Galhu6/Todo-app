@@ -1,6 +1,6 @@
 import type { RequestHandler, Request, Response, NextFunction } from "express";
-import { createMicroTask, deleteMicroTask, getMicroTasks, updateMicroTask } from "../services/MicroTasks/microTaskService";
-import { HttpError } from "../middlewares/errorHandler";
+import { createMicroTask, deleteMicroTask, getMicroTasks, updateMicroTask } from "../services/MicroTasks/microTaskService.js";
+import { HttpError } from "../middlewares/errorHandler.js";
 
 export const getMicroTaskController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const taskId = parseInt(req.params.taskId);

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { authMiddleware } from "../middlewares/authMiddleware";
-import { verifyTaskOwnership, verifyMicroTaskOwnership } from "../middlewares/verifyOwnerships";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { verifyTaskOwnership, verifyMicroTaskOwnership } from "../middlewares/verifyOwnerships.js";
 import { createMicroTaskController, deleteMicroTaskController, getMicroTaskController, updateMicroTaskControlelr } from "../controllers/microTaskController.js";
 
 const router = Router();
