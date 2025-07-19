@@ -65,7 +65,13 @@ A basic schema for users, lists and tasks is expected (see `schema.sql`). `db.ts
 
 ### AI Chat
 
-The `/api/ai/chat` endpoint exposes a simple AI assistant powered by OpenAI. Lists now include an `overall_goal` field which the assistant uses to recommend and evaluate tasks. The chat can also create new lists or tasks when asked, storing them via the backend services.
+The `/api/ai/chat` endpoint exposes an AI assistant powered by OpenAI. Beyond creating lists and tasks, the assistant can now:
+
+- Generate task recommendations and statistics
+- Create sub lists and micro tasks
+- Send WhatsApp notifications
+- Provide morning or evening summaries
+- Add calendar events and share motivational tips
 
 ## Testing
 

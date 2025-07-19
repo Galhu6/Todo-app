@@ -50,7 +50,26 @@ export const Tasks = ({ listId }: { listId: number }) => {
     const [editDueDate, seteditDueDate] = useState<Date>(new Date());
     const [newSubListName, setNewSubListName] = useState("");
     const [draggingTaskId, setDraggingTaskId] = useState<number | null>(null);
-    const [microTasksMap, setMicroTasksMap] = useState<Record<number, MicroTask[]>>({});
+    const [microTasksMap, setMicroTasksMap] = useState<Record<number, MicroTask[]>>(() => {
+        const stored = localStorage.getItem('microTasksMap');
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored) as Record<string, MicroTask[]>;
+                const map: Record<number, MicroTask[]> = {};
+                for (const key in parsed) {
+                    map[Number(key)] = parsed[key];
+                }
+                return map;
+            } catch {
+                return {};
+            }
+        }
+        return {};
+    });
+
+    useEffect(() => {
+        localStorage.setItem('microTasksMap', JSON.stringify(microTasksMap));
+    }, [microTasksMap]);
     const [activeMicroParent, setActiveMicroParent] = useState<number | null>(null);
     const [draggingMicro, setDraggingMicro] = useState<{ taskId: number; micro: MicroTask } | null>(null);
     const [newSubListGoal, setNewSubListGoal] = useState("");

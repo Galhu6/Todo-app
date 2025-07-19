@@ -4,7 +4,13 @@ import type { ChatCompletionTool } from "openai/resources";
 import { getChatContext, saveChatContext } from "../services/Chat/chatService.js";
 import { getUserLists, createList } from "../services/Lists/listService.js";
 import { getAllTasks, createTask } from "../services/Tasks/tasksService.js";
+import { createMicroTask } from "../services/MicroTasks/microTaskService.js";
+import { getUserStats, getRecommendations, getDailySummary } from "../services/Stats/statsService.js";
+import { sendWhatsApp } from "../services/Whatsapp/whatsappService.js";
+import { creatCalendarEvent } from "../services/Calendar/calendarService.js";
 import { HttpError } from "../middlewares/errorHandler.js";
+import { QUOTES, TIPS } from "../utils/motivations.js";
+
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -58,7 +64,130 @@ export const chatWithAi: RequestHandler = async (req: Request, res: Response, ne
                         required: ['listId', 'description', 'dueDate']
                     }
                 }
+            },
+            {
+                type: 'function',
+                function: {
+                    name: 'addSubList',
+                    description: 'create a sub list under an existing list',
+                    parameters: {
+                        type: 'object',
+                        properties: {
+                            parentListId: { type: 'integer', description: 'Id of parent list' },
+                            name: { type: 'string', description: 'Name of the sub list' },
+                            overallGoal: { type: 'string', description: 'Overall goal for  sub list' }
+                        },
+                        required: ['parentListId', 'name']
+                    }
+                }
+            },
+            {
+                type: 'function',
+                function: {
+                    name: 'addMicroTask',
+                    description: 'create a micro task linked to a task',
+                    parameters: {
+                        type: 'object',
+                        properties: {
+                            taskId: { type: 'integer', description: 'Parent task id' },
+                            description: { type: 'string', description: 'Micro task description' },
+                        },
+                        required: ['taskId', 'description']
+                    }
+                }
+            },
+            {
+                type: 'function',
+                function: {
+                    name: 'recommendTasks',
+                    description: 'get task reccomendations for the user',
+                    parameters: {
+                        type: 'object',
+                        properties: {},
+                    }
+                }
+            },
+            {
+                type: 'function',
+                function: {
+                    name: 'getStats',
+                    description: 'return statistics about tasks',
+                    parameters: {
+                        type: 'object',
+                        properties: {},
+                    }
+                }
+            },
+            {
+                type: 'function',
+                function: {
+                    name: 'sendWhatsapp',
+                    description: 'send a Whatsapp message to the user',
+                    parameters: {
+                        type: 'object',
+                        properties: {
+                            phone: { type: 'string', description: 'Recipient phone number' },
+                            body: { type: 'string', description: 'Message body' },
+                        },
+                        required: ['phone', 'body']
+                    }
+                }
+            },
+            {
+                type: 'function',
+                function: {
+                    name: 'dailySummary',
+                    description: 'get a summary of today\'s tasks',
+                    parameters: {
+                        type: 'object',
+                        properties: {
+                            part: { type: 'integer', enum: ['morning', 'evening'] },
+                        },
+                        required: ['part']
+                    }
+                }
+            },
+            {
+                type: 'function',
+                function: {
+                    name: 'addCalenderEvent',
+                    description: 'add an event to Google calender',
+                    parameters: {
+                        type: 'object',
+                        properties: {
+                            accessToken: { type: 'string' },
+                            summary: { type: 'string' },
+                            description: { type: 'string' },
+                            startTime: { type: 'string' },
+                            endTime: { type: 'string' }
+                        },
+                        required: ['accessToken', 'summary', 'startTime', 'endTime']
+                    }
+                }
+            },
+            {
+                type: 'function',
+                function: {
+                    name: 'motivation',
+                    description: 'get a random motivational quote',
+                    parameters: {
+                        type: 'object',
+                        properties: {}
+                    }
+                }
+            },
+            {
+                type: 'function',
+                function: {
+                    name: 'productivityTip',
+                    description: 'get a random productivity tip',
+                    parameters: {
+                        type: 'object',
+                        properties: {}
+                    }
+                }
             }
+
         ];
 
 
@@ -94,6 +223,47 @@ export const chatWithAi: RequestHandler = async (req: Request, res: Response, ne
                     }
                     const newTask = await createTask(args.description, listId, due);
                     reply = `Created task "${newTask.description}" in list ${newTask.listId}`;
+                } else if (call.function.name === 'addSubList') {
+                    const parentId = parseInt(args.parentListId);
+                    if (!parentId || !lists.some((l: any) => l.id === parentId)) {
+                        next(new HttpError(403, 'parent list dows not belong to user'));
+                        return;
+                    }
+                    const sub = await createList(args.name, userId, args.overallGoal, parentId);
+                    reply = `Created sublist ${sub.name} under list ${parentId}`;
+                } else if (call.function.name === 'addMicroTask') {
+                    const taskId = parseInt(args.taskId);
+                    if (!taskId || !tasks.some((t: any) => t.id = taskId)) {
+                        next(new HttpError(404, 'task not found'));
+                        return;
+                    }
+                    const mt = await createMicroTask(args.description, taskId);
+                    reply = `create micro task "${mt.description}"`;
+                } else if (call.function.name === "recomendedTasks") {
+                    const recs = await getRecommendations(userId);
+                    reply = 'Recommended tasks: ' + recs.map(r => r.description).join(', ');
+                } else if (call.function.name === 'getStats') {
+                    const stats = await getUserStats(userId);
+                    reply = `Completed: ${stats.completed}, Pending: ${stats.pending}, Overdue: ${stats.overdue}`;
+                } else if (call.function.name === 'sendWhatsApp') {
+                    await sendWhatsApp(args.phone, args.body);
+                    reply = 'WhatsApp message sent';
+                } else if (call.function.name === 'dailySummary') {
+                    const summary = await getDailySummary(userId, args.part);
+                    const list = summary.tasks.map((t: any) => t.description).join(', ');
+                    reply = `${args.part} summary: ${list}`;
+                } else if (call.function.name === 'addCalenderEvent') {
+                    await creatCalendarEvent(args.accessToken, {
+                        summary: args.summary,
+                        description: args.description,
+                        startTime: args.startTime,
+                        endTime: args.endTime
+                    });
+                    reply = 'calendar event added';
+                } else if (call.function.name === 'motivation') {
+                    reply = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+                } else if (call.function.name === 'productivityTip') {
+                    reply = TIPS[Math.floor(Math.random() * TIPS.length)];
                 }
             } catch (err) {
                 reply = `sorry, I could not process that command`;
