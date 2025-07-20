@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppContext } from "../../../context/AppContext";
-import { createMicroTask, deleteMicroTask, updateMicroTask } from "../../../services/MicroTasks/microTaskService";
+import { createMicroTask, deleteMicroTask, updateMicroTask } from "./microTasksApi.js";
 import type { JSX } from "react";
 
 export type MicroTask = {
@@ -26,7 +26,7 @@ export const MicroTasks = ({ parentId, tasks, setTasks, onClose, onDragStart }: 
     const [subInputMap, setSubInputMap] = useState<Record<number, string>>({});
     const addTask = async () => {
         if (!newDesc.trim()) return;
-        const created = await createMicroTask(newDesc, parentId);
+        const created = await createMicroTask(parentId, newDesc);
         setTasks([...tasks, created]);
         setNewDesc("");
     };
