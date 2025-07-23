@@ -10,7 +10,7 @@ export async function createMicroTask(description: string, taskId: number) {
 
 export async function getMicroTasks(taskId: number) {
     const result = await pool.query(
-        `SELECT * FROM micro_tasls WHERE task_id = $1 ORDER BY id;`,
+        `SELECT * FROM micro_tasks WHERE task_id = $1 ORDER BY id;`,
         [taskId]
     );
     return result.rows;

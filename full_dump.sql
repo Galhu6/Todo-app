@@ -67,7 +67,8 @@ CREATE TABLE public.lists (
     created_at timestamp without time zone DEFAULT now(),
     name character varying(100) NOT NULL,
     isdeleted boolean DEFAULT false,
-    overall_goal text
+    overall_goal text,
+    parent_list_id integer
 );
 
 
@@ -270,23 +271,23 @@ COPY public.chat_contexts (id, user_id, context, updated_at) FROM stdin;
 -- Data for Name: lists; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.lists (id, user_id, created_at, name, isdeleted, overall_goal) FROM stdin;
-2	10	2025-06-25 10:48:26.653874	my tasks	f	\N
-1	10	2025-06-25 10:47:10.010096	Tasks	t	\N
-3	1	2025-06-25 11:52:31.091876	my tasks	t	\N
-4	1	2025-06-25 12:07:49.713701	tasks	t	\N
-5	1	2025-06-25 12:09:30.439398	tht	t	\N
-7	3	2025-06-25 13:52:49.566264	tasks	t	\N
-8	3	2025-06-25 13:53:03.065129	tasks 2	f	\N
-6	1	2025-06-25 13:44:06.423522	tasd	t	\N
-9	1	2025-06-25 15:33:53.447415	tasas	t	\N
-10	1	2025-06-27 11:01:51.856049	tasks 2	f	\N
-11	1	2025-06-30 20:58:10.482895	tasks	f	\N
-12	1	2025-07-01 23:06:11.46307	cooking	f	\N
-13	1	2025-07-02 12:32:55.80688	sports	f	being healthy
-14	1	2025-07-02 13:23:58.775638	dates	f	\N
-16	1	2025-07-08 21:53:01.812541	Funny Buisness	f	have fun
-15	1	2025-07-02 13:49:11.759055	Funny Business	t	\N
+COPY public.lists (id, user_id, created_at, name, isdeleted, overall_goal, parent_list_id) FROM stdin;
+2	10	2025-06-25 10:48:26.653874	my tasks	f	\N	\N
+1	10	2025-06-25 10:47:10.010096	Tasks	t	\N	\N
+3	1	2025-06-25 11:52:31.091876	my tasks	t	\N	\N
+4	1	2025-06-25 12:07:49.713701	tasks	t	\N	\N
+5	1	2025-06-25 12:09:30.439398	tht	t	\N	\N
+7	3	2025-06-25 13:52:49.566264	tasks	t	\N	\N
+8	3	2025-06-25 13:53:03.065129	tasks 2	f	\N	\N
+6	1	2025-06-25 13:44:06.423522	tasd	t	\N	\N
+9	1	2025-06-25 15:33:53.447415	tasas	t	\N	\N
+10	1	2025-06-27 11:01:51.856049	tasks 2	f	\N	\N
+11	1	2025-06-30 20:58:10.482895	tasks	f	\N	\N
+12	1	2025-07-01 23:06:11.46307	cooking	f	\N	\N
+13	1	2025-07-02 12:32:55.80688	sports	f	being healthy	\N
+14	1	2025-07-02 13:23:58.775638	dates	f	\N	\N
+16	1	2025-07-08 21:53:01.812541	Funny Buisness	f	have fun	\N
+15	1	2025-07-02 13:49:11.759055	Funny Business	t	\N	\N
 \.
 
 
@@ -473,6 +474,8 @@ ALTER TABLE ONLY public.chat_contexts
 
 ALTER TABLE ONLY public.lists
     ADD CONSTRAINT lists_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+ALTER TABLE ONLY public.lists
+    ADD CONSTRAINT lists_parent_list_fkey FOREIGN KEY (parent_list_id) REFERENCES public.lists(id) ON DELETE CASCADE;
 
 
 --

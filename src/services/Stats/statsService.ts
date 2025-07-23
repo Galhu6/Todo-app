@@ -2,9 +2,9 @@ import { pool } from "../../db.js";
 
 export async function getUserStats(userId: number) {
     const result = await pool.query(
-        `SELECT COUNT(*) FILTER (WHERE t.status = 'completed') A completed,
+        `SELECT COUNT(*) FILTER (WHERE t.status = 'completed') AS completed,
         COUNT(*) FILTER (WHERE t.status = 'pending') AS pending,
-        COUNT(*) FILTER (WEHRE t.status = 'overdue') AS overdue
+        COUNT(*) FILTER (WHERE t.status = 'overdue') AS overdue
         FROM tasks t
         JOIN lists l ON t.list_id = l.id
         WHERE l.user_id = $1 AND t.isdeleted = false`,
@@ -17,7 +17,7 @@ export async function getRecommendations(userId: number) {
     const result = await pool.query(
         `SELECT t.* FROM tasks t
         JOIN lists l ON t.list_id = l.id
-        WHERE l.user_id = $1 AND t.status <> 'completed AND t.isdeleted = false
+        WHERE l.user_id = $1 AND t.status <> 'completed' AND t.isdeleted = false
         ORDER BY t.due_date ASC LIMIT 5`,
         [userId]
     );
