@@ -114,8 +114,8 @@ export async function getAllTasks(listId: number) {
     const result = await pool.query(
         `
         SELECT t.* FROM tasks t
-        LEFT JOIN task_list-links ON t.id = l.task_id
-         WHERE (t.list_id = $1 OR l.list_id = $1) AND t.isdeleted = false;
+        LEFT JOIN task_list_links l ON t.id = l.task_id
+        WHERE (t.list_id = $1 OR l.list_id = $1) AND t.isdeleted = false;
         `, [listId]
     );
     return result.rows;
