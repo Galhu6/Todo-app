@@ -21,7 +21,7 @@ export const createMicroTaskController: RequestHandler = async (req: Request, re
     } catch (err) { next(err) };
 };
 
-export const updateMicroTaskControlelr: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+export const updateMicroTaskController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const microTaskId = parseInt(req.params.microTaskId);
     const { completed, parentId, description } = req.body;
     if (!microTaskId || (completed === undefined && parentId === undefined && description === undefined)) {
@@ -37,7 +37,7 @@ export const updateMicroTaskControlelr: RequestHandler = async (req: Request, re
 export const deleteMicroTaskController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const microTaskId = parseInt(req.params.microTaskId);
     if (!microTaskId) {
-        next(new HttpError(400, 'micro task id required')); return; return;
+        next(new HttpError(400, 'micro task id required')); return;
     }
     try {
         const mt = await deleteMicroTask(microTaskId);

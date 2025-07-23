@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { createTask, allTasks, deletedTasks, completeTask, editTask, deleteTask, duplicateTask, setTaskPending } from "./tasksApi.js";
+import { createTask, allTasks, deletedTasks, completeTask, editTask, deleteTask, duplicateTask, setTaskPending, shareTaskToList } from "./tasksApi.js";
 import { createList, subLists } from "../Lists/listsApi.js";
 import { fetchMicroTasks, createMicroTask as apiCreateMicroTask, updateMicroTask as apiUpdateMicroTask, deleteMicroTask as apiDeleteMicroTask } from './microTasksApi.js';
 import type { MicroTask } from "./MicroTasks.js";
@@ -16,6 +16,7 @@ export class Task {
     status?: string;
     created_at?: Date;
     isDeleted?: boolean;
+    recurrence?: string;
 
     constructor(
         id: number,
@@ -24,7 +25,8 @@ export class Task {
         due_date: Date,
         status: string,
         created_at = new Date(),
-        isDeleted = false
+        isDeleted = false,
+        recurrence?: string
 
     ) {
         this.id = id;
@@ -34,21 +36,24 @@ export class Task {
         this.status = status;
         this.created_at = created_at;
         this.isDeleted = isDeleted;
+        this.recurrence = recurrence;
     }
 
 }
 
 export const Tasks = ({ listId }: { listId: number }) => {
-    const { tasksRefreshToken, selectedListId, setSelectedListId, setSelectedListName, setSelectedListGoal, lists, setLists, refreshTasks, draggingListId, setDraggingListId } = useAppContext();
+    const { tasksRefreshToken, selectedListId, setSelectedListId, setSelectedListName, setSelectedListGoal, lists, setLists, refreshTasks, draggingListId, setDraggingListId, secondSelectedListId } = useAppContext();
     const [tasks, setTasks] = useState<Task[]>([]);
     const [trash, setTrash] = useState<Task[]>([]);
     const [showTrash, setShowTrash] = useState(false);
     const [subListsState, setSubListsState] = useState<List[]>([])
     const [newDescription, setNewDescription] = useState("");
+    const [newRecurrence, setNewRecurrence] = useState<string>("none")
     const [descriptionEdit, setdescriptionEdit] = useState("");
     const [editTaskId, setEditTaskId] = useState<number | null>(null)
     const [newDueDate, setNewDueDate] = useState<Date>(new Date());
     const [editDueDate, seteditDueDate] = useState<Date>(new Date());
+    const [editRecurrence, setEditRecurrence] = useState<string>('none');
     const [newSubListName, setNewSubListName] = useState("");
     const [draggingTaskId, setDraggingTaskId] = useState<number | null>(null);
     const [microTasksMap, setMicroTasksMap] = useState<Record<number, MicroTask[]>>(() => {
@@ -96,7 +101,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
         };
 
         fetchTasks();
-    }, [listId, tasksRefreshToken]);
+    }, [listId, selectedListId, tasksRefreshToken]);
 
     useEffect(() => {
         setActiveMicroParent(null);
@@ -165,7 +170,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
     const handleCreate = async () => {
         if (!newDescription.trim() || !newDueDate) return;
         if (!listId) return;
-        const newTask = { description: newDescription, dueDate: newDueDate }
+        const newTask = { description: newDescription, dueDate: newDueDate, recurrence: newRecurrence !== 'none' ? newRecurrence : undefined }
         const created = await createTask(listId, newTask);
         setTasks([...tasks, created])
         setNewDescription("");
@@ -200,6 +205,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
         const updates: any = {}
         if (descriptionEdit.trim()) updates.newDescription = descriptionEdit;
         if (editDueDate) updates.newDueDate = editDueDate;
+        if(editRecurrence) updates.newRecurrence = editRecurrence !== 'none' ? editRecurrence : undefined;
         if (Object.keys(updates).length === 0) return;
 
         const updated = await editTask(listId, taskId, updates);
@@ -228,6 +234,12 @@ export const Tasks = ({ listId }: { listId: number }) => {
         refreshTasks();
     };
 
+    const handleShare = async (taskId: number) => {
+        if(!listId || !secondSelectedListId) return;
+        await shareTaskToList(listId, taskId, secondSelectedListId);
+        refreshTasks();
+    };
+
     const openMicroTasks = async (taskId: number) => {
         const newId = activeMicroParent === taskId ? null : taskId;
         setActiveMicroParent(newId);
@@ -235,7 +247,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
             try {
                 const mts = await fetchMicroTasks(taskId);
                 setMicroTasksMap({ ...microTasksMap, [newId]: mts });
-            } catch (e) {
+            } catch {
                 console.error("failed to fetch micro tasks");
                 setMicroTasksMap({ ...microTasksMap, [newId]: [] });
             }
@@ -339,6 +351,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
                                 onDelete={() => handleDelete(task.id)}
                                 onDuplicate={() => handleTaskDuplicate(task.id)}
                                 onComplete={() => task.status === 'completed' ? handleTaskPending : handleTaskComplete(task.id)}
+                                onShare={() => handleShare(task.id)}
                             />
 
                             {(editTaskId === task.id) && (<div ref={editFormRef} className="flex flex-col gap-2 rounded bg-white dark:bg-gray-800 p-4">
@@ -356,6 +369,15 @@ export const Tasks = ({ listId }: { listId: number }) => {
                                     placeholder="edit task dueDate"
                                     className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
                                 />
+                                <select value={editRecurrence}
+                                onChange={e => setEditRecurrence(e.target.value)}
+                                className="flex-grow rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none">
+                                    <option value="none">No Repeat</option>
+                                    <option value="daly">Daily</option>
+                                    <option value="weekly">weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="yearly">Yearly</option>
+                                </select>
                                 <button onClick={() => handleEdit(task.id)}
                                     className="self-start rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500"
                                 >
@@ -410,6 +432,15 @@ export const Tasks = ({ listId }: { listId: number }) => {
                             onChange={(e) => setNewDueDate(new Date(e.target.value))}
                             className="rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring focus:ring-indigo-500"
                         />
+                        <select value={newRecurrence}
+                        onChange={e => setNewRecurrence(e.target.value)}
+                        className="rounded bg-gray-200 dark:bg-gray-700 p-2 dark:text-white focus:outline-none focus:ring">
+                            <option value="none">No Repeat</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
                         <button
                             onClick={handleCreate}
                             className="rounded bg-indigo-600 px-3 py-2 text-white transition hover:bg-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"

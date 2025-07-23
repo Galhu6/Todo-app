@@ -1,20 +1,20 @@
 import { pool } from "../../db.js";
 
-function toUtcTimestamp(date: Date) {
+function toUtcTimestamp(date: Date): string {
     return new Date(date).toISOString().replace('T', ' ').replace('Z', '');
 }
 
-export async function createTask(description: string, listId: number, dueDate: Date) {
+export async function createTask(description: string, listId: number, dueDate: Date, recurrence?: string) {
     const utcDate = toUtcTimestamp(dueDate);
     const result = await pool.query(
         `
-        INSERT INTO tasks (description, list_id, due_date) VALUES ($1, $2, $3) RETURNING *;
-        `, [description, listId, utcDate]
+        INSERT INTO tasks (description, list_id, due_date, recurrence) VALUES ($1, $2, $3, $4) RETURNING *;
+        `, [description, listId, utcDate, recurrence]
     );
     return result.rows[0];
 };
 
-export async function editTask(taskId: number, listId: number, newDesc?: string, newDueDate?: Date) {
+export async function editTask(taskId: number, listId: number, newDesc?: string, newDueDate?: Date, newRecurrence?: string) {
     const updates: string[] = [];
     const values: any[] = [taskId, listId];
 
@@ -27,6 +27,10 @@ export async function editTask(taskId: number, listId: number, newDesc?: string,
         updates.push(`due_date = $${values.length + 1}`);
         values.push(toUtcTimestamp(newDueDate))
 
+    }
+    if(newRecurrence !== undefined) {
+        updates.push(`recurrence = $${values.length + 1}`);
+        values.push(newRecurrence);
     }
 
     if (updates.length === 0) return null;
@@ -43,12 +47,39 @@ export async function editTask(taskId: number, listId: number, newDesc?: string,
 };
 
 export async function completeTask(taskId: number) {
-    const result = await pool.query(
-        `
+    const taskRes = await pool.query(`SELECT * FROM tasks WHERE id = $1`, [taskId]);
+    const task = taskRes.rows[0];
+    if(!task) return null;
+    if(task.recurrence) {
+        const nextDate = new Date(task.due_date);
+        switch (task.recurrence) {
+            case 'daily':
+                nextDate.setDate(nextDate.getDate() + 1);
+                break;
+            case 'weekly':
+                nextDate.setDate(nextDate.getDate() + 7);
+                break;
+            case 'monthly':
+                nextDate.setDate(nextDate.getMonth() + 1);
+                break;
+            case 'yearly':
+                nextDate.setDate(nextDate.getFullYear() + 1);
+                break;
+        }
+        const result = await pool.query(
+            `UPDATE tasks SET due_date = $1, status = 'pending' WHERE id = $2 RETURNING *;`,
+            [toUtcTimestamp(nextDate), taskId]
+        );
+        return result.rows[0];
+    } else {
+        const result = await pool.query(
+            `
         UPDATE tasks SET status = 'completed' WHERE id = $1 RETURNING *;
         `, [taskId]
     );
     return result.rows[0];
+    }
+        
 
 };
 export async function setTaskPending(taskId: number) {
@@ -82,7 +113,9 @@ export async function getTask(listId: number, taskId: number) {
 export async function getAllTasks(listId: number) {
     const result = await pool.query(
         `
-        SELECT * FROM tasks WHERE list_id = $1 and isdeleted = false;
+        SELECT t.* FROM tasks t
+        LEFT JOIN task_list-links ON t.id = l.task_id
+         WHERE (t.list_id = $1 OR l.list_id = $1) AND t.isdeleted = false;
         `, [listId]
     );
     return result.rows;
@@ -103,9 +136,23 @@ export async function duplicateTask(listId: number, taskId: number) {
         INSERT INTO tasks (
         description,
         list_id,
-        due_date) VALUES ($1, $2, $3) RETURNING *;
-        `, [currentTask.description, currentTask.list_id, toUtcTimestamp(currentTask.due_date)]
+        due_date, recurrence) VALUES ($1, $2, $3, $4) RETURNING *;
+        `, [currentTask.description, currentTask.list_id, toUtcTimestamp(currentTask.due_date), currentTask.recurrence]
 
     );
     return result.rows[0]
+}
+
+export async function addTaskToList(taskId: number, listId: number) {
+    await pool.query(
+        `INSERT INTO task_list_links (task_id, list_id) VALUES ($1, $2) ON CONFLICT DO NOTHING;`,
+        [taskId, listId]
+    );
+}
+
+export async function removeTaskFromList(taskId: number, listId: number) {
+    await pool.query(
+        `DELETE FROM task_list_links WHERE task_id = $1 AND list_id = $2;`,
+        [taskId, listId]
+    );
 }

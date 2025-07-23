@@ -10,7 +10,7 @@ import listRoutes from "./routes/listRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import microTaskRoutes from "./routes/microTasksRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
-import calendarRoutes from "./routes/calendarRoutes.js"
+import calendarRoutes from "./routes/calendarRoutes.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 dotenv.config();
 

@@ -15,7 +15,7 @@ export const selectedTask = async (listId: number, taskId: number) =>
     }).then(res => res.json()).then(data => data.task);
 
 
-export const createTask = async (listId: number, task: { description: string, dueDate: Date }) =>
+export const createTask = async (listId: number, task: { description: string, dueDate: Date, recurrence?: string }) =>
     authFetch(`${server}/api/lists/${listId}/new-task`, {
         method: "POST",
         body: JSON.stringify(task)
@@ -24,7 +24,7 @@ export const createTask = async (listId: number, task: { description: string, du
 export const editTask = async (
     listId: number,
     taskId: number,
-    updates: { newDescription?: string, newDueDate?: Date | null }) =>
+    updates: { newDescription?: string, newDueDate?: Date | null, newRecurrence?: string }) =>
     authFetch(`${server}/api/lists/${listId}/tasks/${taskId}`, {
         method: "PATCH",
         body: JSON.stringify(updates)
@@ -48,3 +48,15 @@ export const setTaskPending = async (listId: number, taskId: number) => authFetc
 export const duplicateTask = async (listId: number, taskId: number) => authFetch(`${server}/api/lists/${listId}/tasks/${taskId}/duplicate`, {
     method: "POST",
 }).then(res => res.json()).then(data => data.task)
+
+export const shareTaskToList = async (listId: number, taskId: number, targetListId: number) => authFetch(
+    `${server}/api/lists/${listId}/tasks/${taskId}/share/${targetListId}`, {
+        method: "POST",
+    }
+).then(res => res.json())
+
+export const unshareTaskFromList = async (listId: number, taskId: number, targetListId: number) => authFetch(
+    `${server}/api/lists/${listId}/tasks/${taskId}/share/${targetListId}`, {
+        method: "DELETE",
+    }
+).then(res => res.json())

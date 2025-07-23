@@ -8,7 +8,9 @@ import {
     getTasksController,
     duplicateTaskController,
     setTaskPendingController,
-    getDeletedTasksController
+    getDeletedTasksController,
+    addTaskToListController,
+    removeTaskFromListController
 } from "../controllers/taskController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { verifyListOwnership, verifyTaskOwnership } from "../middlewares/verifyOwnerships.js";
@@ -25,6 +27,8 @@ router.patch("/lists/:listId/tasks/:taskId", verifyTaskOwnership, editTaskContro
 router.post("/lists/:listId/tasks/:taskId/complete", verifyTaskOwnership, completeTaskController);
 router.post("/lists/:listId/tasks/:taskId/set-pending", verifyTaskOwnership, setTaskPendingController);
 router.post("/lists/:listId/tasks/:taskId/duplicate", verifyTaskOwnership, duplicateTaskController);
+router.post("/lists/:listId/tasks/:taskId/share/:targetListId", verifyTaskOwnership, addTaskToListController);
+router.delete("/lists/:listId/tasks/:taskId/share/:targetListId", verifyTaskOwnership, removeTaskFromListController);
 router.delete("/lists/:listId/tasks/:taskId", verifyTaskOwnership, deleteTaskController);
 
 export default router;

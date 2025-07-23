@@ -10,7 +10,7 @@ export async function createMicroTask(description: string, taskId: number) {
 
 export async function getMicroTasks(taskId: number) {
     const result = await pool.query(
-        `SELECT * FROM micro_tasls WHERE task_id = $1 and is_deleted=false;`,
+        `SELECT * FROM micro_tasls WHERE task_id = $1 ORDER BY id;`,
         [taskId]
     );
     return result.rows;
@@ -34,14 +34,14 @@ export async function updateMicroTask(id: number, updates: { completed?: boolean
     if (fields.length === 0) return null;
     const res = await pool.query(
         `UPDATE micro_tasks SET ${fields.join(', ')} WHERE id = $1 RETURNING *;`,
-        [values]
+        values
     );
     return res.rows[0];
 }
 
 export async function completeMicroTask(id: number) {
     const result = await pool.query(
-        `UPDATE micro_tasks SET is_complete = true WHERE id = $1 RETURNING *;`,
+        `UPDATE micro_tasks SET completed = true WHERE id = $1 RETURNING *;`,
         [id]
     );
     return result.rows[0];
@@ -49,7 +49,7 @@ export async function completeMicroTask(id: number) {
 
 export async function deleteMicroTask(id: number) {
     const result = await pool.query(
-        `UPDATE micro_tasks SET isdeleted=true WHERE RETURNING *;`,
+        `DELETE FROM micro_tasks WHERE id = $1 RETURNING *;`,
         [id]
     );
     return result.rows[0];

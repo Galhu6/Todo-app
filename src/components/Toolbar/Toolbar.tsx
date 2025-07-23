@@ -7,9 +7,10 @@ interface ToolbarProps {
     onOpen?: () => void;
     onDuplicate?: () => void;
     onComplete?: () => void;
+    onShare?: () => void;
 }
 
-export const Toolbar: FC<ToolbarProps> = ({ onAdd, onEdit, onDelete, onOpen, onDuplicate, onComplete }) => (
+export const Toolbar: FC<ToolbarProps> = ({ onAdd, onEdit, onDelete, onOpen, onDuplicate, onComplete, onShare }) => (
     <div className='absolute right-1 top-1 hidden gap-1 rounded bg-gray-200 dark:bg-gray-700 p-1 shadow group-hover:flex text-xs'>
         {onAdd && (
             <button
@@ -30,6 +31,13 @@ export const Toolbar: FC<ToolbarProps> = ({ onAdd, onEdit, onDelete, onOpen, onD
                 onClick={(e) => { e.stopPropagation(); onDuplicate(); }}
                 className='hover:text-indigo-400'>
                 ⧉
+            </button>
+        )}
+        {onShare && (
+            <button
+            onClick={(e) => {e.stopPropagation(); onShare(); }}
+            className='hover:text-indigo-400'>
+                🔗
             </button>
         )}
         {onComplete && (

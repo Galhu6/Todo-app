@@ -3,6 +3,7 @@ import { Tasks } from "../../components/Dashboard/Tasks/Tasks.js";
 import { Navbar } from "../../components/Navbar/Navbar.js";
 import { Footer } from "../../components/Footer/Footer.js";
 import { Chat } from "../../components/Chat/Chat.js";
+import {HabitTracker } from "../../components/HabitTracker/index.js";
 import { useAppContext } from "../../context/AppContext.js";
 import { useState } from "react";
 
@@ -38,6 +39,7 @@ export const Dashboard = () => {
                                         <p className="mb-2 text-sm text-gray-500 dark:text-gray-300">Goal: {selectedListGoal}</p>
                                     )}
                                     <Tasks listId={selectedListId} />
+                                    <HabitTracker />
                                 </>
                             )}
                         </div>

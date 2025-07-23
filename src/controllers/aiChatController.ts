@@ -233,7 +233,7 @@ export const chatWithAi: RequestHandler = async (req: Request, res: Response, ne
                     reply = `Created sublist ${sub.name} under list ${parentId}`;
                 } else if (call.function.name === 'addMicroTask') {
                     const taskId = parseInt(args.taskId);
-                    if (!taskId || !tasks.some((t: any) => t.id = taskId)) {
+                    if (!taskId || !tasks.some((t: any) => t.id === taskId)) {
                         next(new HttpError(404, 'task not found'));
                         return;
                     }

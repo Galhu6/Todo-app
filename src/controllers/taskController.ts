@@ -1,16 +1,16 @@
 import type { RequestHandler, Request, Response, NextFunction } from "express"
-import { completeTask, createTask, deleteTask, duplicateTask, editTask, getAllTasks, getTask, setTaskPending, getDeletedTasks } from "../services/Tasks/tasksService.js";
+import { completeTask, createTask, deleteTask, duplicateTask, editTask, getAllTasks, getTask, setTaskPending, getDeletedTasks, addTaskToList, removeTaskFromList } from "../services/Tasks/tasksService.js";
 import { HttpError } from "../middlewares/errorHandler.js";
 
 export const createTaskController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
-    const { description, dueDate } = req.body
+    const { description, dueDate, recurrence } = req.body
     const listId = parseInt(req.params.listId)
     if (!listId || !description || !dueDate) {
         next(new HttpError(400, "List id and task description and due date are required"));
         return;
     }
     try {
-        const newTask = await createTask(description, listId, dueDate);
+        const newTask = await createTask(description, listId, dueDate, recurrence);
         if (!newTask) {
             next(new HttpError(500, "failed to create task"));
             return;
@@ -25,7 +25,7 @@ export const createTaskController: RequestHandler = async (req: Request, res: Re
     }
 };
 export const editTaskController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
-    const { newDescription, newDueDate } = req.body;
+    const { newDescription, newDueDate, newRecurrence } = req.body;
     const listId = parseInt(req.params.listId);
     const taskId = parseInt(req.params.taskId)
 
@@ -35,7 +35,7 @@ export const editTaskController: RequestHandler = async (req: Request, res: Resp
     }
 
     try {
-        const editedTask = await editTask(taskId, listId, newDescription, newDueDate);
+        const editedTask = await editTask(taskId, listId, newDescription, newDueDate, newRecurrence);
         if (!editedTask) {
             next(new HttpError(404, "Task not found"));
             return;
@@ -187,3 +187,37 @@ export const duplicateTaskController: RequestHandler = async (req: Request, res:
         next(err);
     };
 };
+
+export const addTaskToListController: RequestHandler = async(req: Request, res: Response, next: NextFunction) => {
+    const taskId = parseInt(req.params.taskId);
+    const targetListId = parseInt(req.params.targetListId);
+    if(!taskId || !targetListId) {
+        next(new HttpError(400, ' missing task id or list id'));
+        return;
+    }
+    try {
+        await addTaskToList(taskId, targetListId);
+        res.status(200).json({ success: true });
+        return;
+    } catch (err) {
+        next(err);
+        return;
+    }
+};
+
+export const removeTaskFromListController: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+    const taskId = parseInt(req.params.taskId);
+    const targetListId = parseInt(req.params.targetListId);
+    if(!taskId || !targetListId) {
+        next(new HttpError(400, 'missing task id or list id'));
+        return;
+    }
+    try {
+        await removeTaskFromList(taskId, targetListId);
+        res.status(200).json({ success: true });
+        return;
+    } catch(err) {
+        next(err);
+        return;
+    }
+}

@@ -4,7 +4,7 @@ export async function getUserStats(userId: number) {
     const result = await pool.query(
         `SELECT COUNT(*) FILTER (WHERE t.status = 'completed') A completed,
         COUNT(*) FILTER (WHERE t.status = 'pending') AS pending,
-        COUNT(*) FILTER (WEHRE t.status = 'overdeu') AS overdue
+        COUNT(*) FILTER (WEHRE t.status = 'overdue') AS overdue
         FROM tasks t
         JOIN lists l ON t.list_id = l.id
         WHERE l.user_id = $1 AND t.isdeleted = false`,
@@ -15,10 +15,10 @@ export async function getUserStats(userId: number) {
 
 export async function getRecommendations(userId: number) {
     const result = await pool.query(
-        `SELECT * t.* FROM tasks t
+        `SELECT t.* FROM tasks t
         JOIN lists l ON t.list_id = l.id
         WHERE l.user_id = $1 AND t.status <> 'completed AND t.isdeleted = false
-        ORDER BY t.due_data ASC LIMIT 5`,
+        ORDER BY t.due_date ASC LIMIT 5`,
         [userId]
     );
     return result.rows;
@@ -26,7 +26,7 @@ export async function getRecommendations(userId: number) {
 
 export async function getDailySummary(userId: number, part: 'morning' | 'evening') {
     const result = await pool.query(
-        `SELECTt.* FROM tasks t
+        `SELECT t.* FROM tasks t
         JOIN lists l ON t.list_id = l.id
         WHERE l.user_id = $1 AND t.status <> 'completed' AND t.isdeleted = false
         AND t.due_date::date = CURRENT_DATE`,
