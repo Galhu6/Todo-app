@@ -9,13 +9,13 @@ import morgan from "morgan";
 process.env.TZ = "UTC";
 
 import authRoutes from "./routes/authRoutes.ts";
-import listRoutes from "./routes/listRoutes.js";
-import taskRoutes from "./routes/taskRoutes.js";
-import microTaskRoutes from "./routes/microTasksRoutes.js";
-import aiRoutes from "./routes/aiRoutes.js";
-import calendarRoutes from "./routes/calendarRoutes.js";
-import { errorHandler } from "./middlewares/errorHandler.js";
-import { logger } from "./logger.js";
+import listRoutes from "./routes/listRoutes.ts";
+import taskRoutes from "./routes/taskRoutes.ts";
+import microTaskRoutes from "./routes/microTasksRoutes.ts";
+import aiRoutes from "./routes/aiRoutes.ts";
+import calendarRoutes from "./routes/calendarRoutes.ts";
+import { errorHandler } from "./middlewares/errorHandler.ts";
+import { logger } from "./logger.ts";
 dotenv.config();
 
 const app = express();
