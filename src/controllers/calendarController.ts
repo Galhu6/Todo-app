@@ -1,5 +1,5 @@
 import type { RequestHandler, Request, Response, NextFunction } from "express";
-import { creatCalendarEvent } from "../services/Calendar/calendarService";
+import { createCalendarEvent } from "../services/Calendar/calendarService";
 import { HttpError } from "../middlewares/errorHandler";
 
 export const addEvent: RequestHandler = async (
@@ -19,7 +19,7 @@ export const addEvent: RequestHandler = async (
   }
 
   try {
-    const event = await creatCalendarEvent(accessToken, {
+    const event = await createCalendarEvent(accessToken, {
       summary,
       description,
       startTime: new Date(startTime).toISOString(),

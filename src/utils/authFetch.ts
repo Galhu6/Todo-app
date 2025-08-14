@@ -13,7 +13,10 @@ export const authFetch = async (
   }
   const opts: RequestInit = {
     ...init,
-    headers,
+    headers: {
+      ...(init.headers as any),
+      ...(init.body ? { "Content-Type": "application/json" } : {}),
+    },
     credentials: "include",
   };
   let res = await fetch(input, opts);

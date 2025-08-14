@@ -2,7 +2,7 @@ import twilio from "twilio";
 
 const accountSid = process.env.TWILIO_SID;
 const authToken = process.env.TWILIO_TOKEN;
-const from = `whatsapp:${process.env.WHATAPP_FROM}`;
+const from = `whatsapp:${process.env.WHATSAPP_FROM}`;
 
 const client = twilio(accountSid || "", authToken || "");
 export async function sendWhatsApp(recieverNumber: string, body: string) {
