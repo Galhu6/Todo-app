@@ -11,7 +11,7 @@ import {
   getDailySummary,
 } from "../services/Stats/statsService";
 import { sendWhatsApp } from "../services/Whatsapp/whatsappService";
-import { creatCalendarEvent } from "../services/Calendar/calendarService";
+import { createCalendarEvent } from "../services/Calendar/calendarService";
 import { HttpError } from "../middlewares/errorHandler";
 import { QUOTES, TIPS } from "../utils/motivations";
 
@@ -281,7 +281,7 @@ export const chatWithAi: RequestHandler = async (
           const list = summary.tasks.map((t: any) => t.description).join(", ");
           reply = `${args.part} summary: ${list}`;
         } else if (call.function.name === "addCalenderEvent") {
-          await creatCalendarEvent(args.accessToken, {
+          await createCalendarEvent(args.accessToken, {
             summary: args.summary,
             description: args.description,
             startTime: args.startTime,
