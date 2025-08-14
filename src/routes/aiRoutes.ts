@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { chatWithAi, getChatHistory } from "../controllers/aiChatController.js";
-import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { chatWithAi, getChatHistory } from "../controllers/aiChatController";
+import { authMiddleware } from "../middlewares/authMiddleware";
 const router = Router();
 
 router.use(authMiddleware);

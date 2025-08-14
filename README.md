@@ -1,86 +1,72 @@
 # Todo App
 
-This repository contains a full stack application for managing TODO lists. The front end is built with **React**, **TypeScript** and **Vite**, styled using **Tailwind CSS**, while the back end exposes a REST API using **Express** and **PostgreSQL**.
+A Full-Stack productivity app (React + Vite + TS, Express + Postgres). Features:
 
-## Getting Started
+- Auth (Email/Google) with HTTP-only cookies
+  Lists, tasks, micro-tasks, recurring items
+  -Optional WhatsApp notifications via Twilio
 
-Install dependencies and start both servers during development:
+## Quick Start (Local)
+
+### Prerequisites
+
+- Node 20+
+- Postgres 14+
+- .env based on `.env.example`
+
+### Setup
 
 ```bash
+#install dependencies
 npm install
-npm run dev:server    # start the Express API with nodemon
-npm run dev           # start the Vite development server
+
+# start backend
+npm run dev:server
+
+#start frontend
+npm run dev
 ```
 
-Environment variables are expected in a `.env` file and include:
+Set `VITE_SERVER_URL` to your server URL (default http:localhost:3000).
 
-- `DATABASE_URL` – connection string for PostgreSQL
-- `JWT_SECRET` – secret used to sign authentication tokens
-- `CLIENT_ID` – Google OAuth client id (for social login)
-- `OPENAI_API_KEY` – API key for OpenAI requests
+## Enviroment
 
-## Project Structure
+Copy `.env.exemple` -> `.env` and vill values.
 
-```
-src/
-  server.ts             # Express application entry point
-  db.ts                 # PostgreSQL connection helper
-  controllers/          # Route handlers
-  routes/               # API route definitions
-  services/             # Database access logic
-  middlewares/          # Reusable Express middleware
-  components/           # React UI components
-  screens/              # Page level React components
-```
+## Scripts
 
-### Backend
+`npm run dev` - start fronend dev
 
-The API is defined in `src/server.ts` and mounts three main route groups:
+`npm run dev:server` - start backend dev
 
-- `api/auth` – authentication endpoints
-- `api/lists` – CRUD operations for lists
-- `api/` – task related endpoints
+`npm run seed` - seed demo data
 
-Controllers under `src/controllers` handle incoming requests by calling service functions. Service modules encapsulate SQL queries using the `pg` module. Authentication uses **JWT** tokens generated in `Auth/authService.ts`. Middleware such as `authMiddleware` and `verifyOwnerships` enforce token validation and resource ownership.
+`npm test` - run tests
 
-### Frontend
+## API (Selected)
 
-React components live in `src/components` and are grouped by feature:
+POST /api/ath/login - return cookies (access/refresh)
 
-- **Auth** – login, signup and Google OAuth components
-- **Dashboard** – lists and tasks management UI
-- **DashboardProtection** – redirects unauthenticated users
-- **Navbar**, **Footer**, **ImageCarousell** and **LogoGrid** – layout components
-  The LogoGrid arranges technology logos in a responsive grid that scales across screen sizes.
+POST /api/auth/refresh - rotates tokens
 
-Screen components in `src/screens` assemble these pieces. The entry point `App.tsx` defines routes using `react-router-dom`.
+GET /api/lists - list current user's lists
 
-Data fetching happens in small API wrappers (`listsApi.ts` and `tasksApi.ts`) which call the Express backend with the user token.
+POST /api/lists/:listId/tasks - create task
 
-The UI supports light and dark themes. Click the sun/moon button or press **D** at any time to toggle dark mode.
+## Security
 
-### Database
+Helmet CORS (allowlist), rate limiting
 
-A basic schema for users, lists and tasks is expected (see `schema.sql`). `db.ts` exposes a single `Pool` instance used by the service layer. Each service (e.g. `listService.ts` or `tasksService.ts`) performs parameterised queries and returns plain JavaScript objects to the controllers.
+HTTP-only cookies for JWT
 
-### AI Chat
+Zod Validation
 
-The `/api/ai/chat` endpoint exposes an AI assistant powered by OpenAI. Beyond creating lists and tasks, the assistant can now:
+## Demo
 
-- Generate task recommendations and statistics
-- Create sub lists and micro tasks
-- Send WhatsApp notifications
-- Provide morning or evening summaries
-- Add calendar events and share motivational tips
+(to be added)
 
-## Testing
+## Deployment
 
-Unit tests can be executed with:
+Frontend: Vercel
 
-```bash
-npm test
-```
-
-Jest is configured through `jest.config.ts`. Currently there are no application specific test files, but the configuration is in place for future additions.
-
-
+Backend+DB: Render/Railway
