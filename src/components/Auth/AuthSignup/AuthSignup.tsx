@@ -47,7 +47,7 @@ export const AuthSignup = () => {
   const handleName = (): boolean => signupName.trim().length >= 2;
 
   const handleEmail = (): boolean =>
-    /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(signupEmail);
+    /^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/.test(signupEmail);
 
   const handleSubmit = async () => {
     if (
