@@ -1,13 +1,18 @@
 import type { Config } from "jest";
 
 const config: Config = {
-  preset: "ts-jest",
+  preset: "ts-jest/preset/default-esm",
   testEnvironment: "node",
   testMatch: ["**/__tests__/**/*.test.ts"],
+  extensionsToTreatAsEsm: [".ts"],
   globals: {
     "ts-jest": {
       tsconfig: "./tsconfig.json",
+      useESM: true,
     },
+  },
+  moduleNameMapper: {
+    "^(\\.{1,2}/.*)\\.js$": "$1",
   },
 };
 

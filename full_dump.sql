@@ -146,6 +146,14 @@ CREATE TABLE public.task_list_links (
 ALTER TABLE public.task_list_links OWNER TO postgres;
 
 --
+-- Name: task_list_links_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.task_list_links
+    ADD CONSTRAINT task_list_links_pkey PRIMARY KEY (task_id, list_id);
+
+
+--
 -- Name: tasks; Type: TABLE; Schema: public; Owner: postgres
 --
 

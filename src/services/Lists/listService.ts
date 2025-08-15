@@ -24,6 +24,7 @@ export async function editList(
 ) {
   const updates: string[] = [];
   const values: any[] = [userId, listId];
+
   if (newName !== undefined) {
     updates.push(`name = $${values.length + 1}`);
     values.push(newName);
@@ -33,9 +34,10 @@ export async function editList(
     values.push(newGoal);
   }
   if (parentListId !== undefined) {
-    updates.push(`parent_list_id =$${values.length + 1}`);
+    updates.push(`parent_list_id = $${values.length + 1}`);
     values.push(parentListId);
   }
+
   if (updates.length === 0) return null;
 
   const query = `

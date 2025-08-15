@@ -14,10 +14,12 @@
     "target": "ES2022",
     "module": "NodeNext",
     "strict": true,
+    "isolatedModules": true,
     "outDir": "dist",
     "rootDir": "./src",
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "types": ["node"]
   }
 }

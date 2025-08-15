@@ -72,10 +72,10 @@ export async function completeTask(taskId: number) {
         nextDate.setDate(nextDate.getDate() + 7);
         break;
       case "monthly":
-        nextDate.setDate(nextDate.getMonth() + 1);
+        nextDate.setMonth(nextDate.getMonth() + 1);
         break;
       case "yearly":
-        nextDate.setDate(nextDate.getFullYear() + 1);
+        nextDate.setFullYear(nextDate.getFullYear() + 1);
         break;
     }
     const result = await pool.query(
