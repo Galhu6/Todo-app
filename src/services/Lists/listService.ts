@@ -1,4 +1,5 @@
 import { pool } from "../../db";
+import { HttpError } from "../../middlewares/errorHandler";
 
 export async function createList(
   name: string,
@@ -6,12 +7,19 @@ export async function createList(
   overallGoal?: string,
   parentListId?: number
 ) {
-  const result = await pool.query(
-    `INSERT INTO Lists (name, user_id, overall_goal, parent_list_id)
+  try {
+    const result = await pool.query(
+      `INSERT INTO Lists (name, user_id, overall_goal, parent_list_id)
     VALUES ($1, $2, $3, $4) RETURNING *;`,
-    [name, userId, overallGoal, parentListId]
-  );
-  return result.rows[0];
+      [name, userId, overallGoal, parentListId]
+    );
+    return result.rows[0];
+  } catch (err: any) {
+    if (err.code === "23505") {
+      throw new HttpError(409, "list already exists", err, err.code);
+    }
+    throw err;
+  }
 }
 
 export async function editList(
