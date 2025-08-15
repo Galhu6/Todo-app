@@ -217,6 +217,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
     setEditTaskId(task.id);
     setdescriptionEdit(task.description);
     seteditDueDate(new Date(task.due_date));
+    setEditRecurrence(task.recurrence ?? "none");
   };
 
   const handleCreate = async () => {
@@ -266,8 +267,7 @@ export const Tasks = ({ listId }: { listId: number }) => {
     if (descriptionEdit.trim()) updates.newDescription = descriptionEdit;
     if (editDueDate) updates.newDueDate = editDueDate;
     if (editRecurrence)
-      updates.newRecurrence =
-        editRecurrence !== "none" ? editRecurrence : undefined;
+      updates.newRecurrence = editRecurrence !== "none" ? editRecurrence : null;
     if (Object.keys(updates).length === 0) return;
 
     const updated = await editTask(listId, taskId, updates);

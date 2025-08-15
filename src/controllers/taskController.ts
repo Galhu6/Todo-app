@@ -54,7 +54,13 @@ export const editTaskController: RequestHandler = async (
   const listId = parseInt(req.params.listId);
   const taskId = parseInt(req.params.taskId);
 
-  if (!listId || !taskId || (!newDescription && !newDueDate)) {
+  if (
+    !listId ||
+    !taskId ||
+    (newDescription === undefined &&
+      newDueDate === undefined &&
+      newRecurrence === undefined)
+  ) {
     next(new HttpError(400, "new task updates and ids are required"));
     return;
   }
