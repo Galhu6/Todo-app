@@ -11,13 +11,28 @@ export async function createTask(
   recurrence?: string
 ) {
   const utcDate = toUtcTimestamp(dueDate);
-  const result = await pool.query(
-    `
+  try {
+    const result = await pool.query(
+      `
         INSERT INTO tasks (description, list_id, due_date, recurrence) VALUES ($1, $2, $3, $4) RETURNING *;
         `,
-    [description, listId, utcDate, recurrence]
-  );
-  return result.rows[0];
+      [description, listId, utcDate, recurrence]
+    );
+    return result.rows[0];
+  } catch (err: any) {
+    if (err.code === "23505") {
+      await pool.query(
+        `SELECT setval('tasks_id_seq', (SELECT COALESCE(MAX(id), 0) + 1 FROM tasks));`
+      );
+      const retry = await pool.query(
+        `
+      INSERT INTO tasks (description, list_id, due_date, recurrence) VALUES ($1, $2, $3, $4) RETURNING *;`,
+        [description, listId, utcDate, recurrence]
+      );
+      return retry.rows[0];
+    }
+    throw err;
+  }
 }
 
 export async function editTask(

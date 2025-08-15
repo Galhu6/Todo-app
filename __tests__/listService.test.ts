@@ -14,7 +14,7 @@ describe("editList", () => {
     await editList(10, 5, "New Name", "New Goal", 3);
 
     expect(mock.mock.calls[0][0]).toContain(
-      "UPDATE lists SET name = $3, overall_goal = $4, parent_list = $5"
+      "UPDATE Lists SET name = $3, overall_goal = $4, parent_list_id = $5"
     );
     expect(mock.mock.calls[0][1]).toEqual([5, 10, "New Name", "New Goal", 3]);
   });

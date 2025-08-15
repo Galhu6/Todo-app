@@ -1,6 +1,6 @@
 import { jest } from "@jest/globals";
 import { pool } from "../src/db";
-import { completeTask } from "../src/services/Tasks/tasksService";
+import { completeTask, createTask } from "../src/services/Tasks/tasksService";
 
 describe("completeTask", () => {
   afterEach(() => {
@@ -24,7 +24,7 @@ describe("completeTask", () => {
     await completeTask(1);
 
     expect(mock.mock.calls[1][0]).toBe(
-      "UPDATE tasks SET due_date = $1, status = 'pending', WHERE id = $2 RETURNING *;"
+      "UPDATE tasks SET due_date = $1, status = 'pending' WHERE id = $2 RETURNING *;"
     );
     expect(mock.mock.calls[1][1][1]).toBe(1);
   });
@@ -41,5 +41,29 @@ describe("completeTask", () => {
       "UPDATE tasks SET status = 'completed'"
     );
     expect(mock.mock.calls[1][1]).toEqual([1]);
+  });
+});
+
+describe("createTask", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("resets sequence and retries on duplicate key", async () => {
+    const insertQuery =
+      "INSERT INTO tasks (description, list_id, due_date, recurrence) VALUES ($1, $2, $3, $4) RETURNING *;";
+    const mock = jest
+      .spyOn(pool, "query")
+      .mockRejectedValueOnce({ code: "23505" })
+      .mockResolvedValueOnce({})
+      .mockResolvedValueOnce({ rows: [{ id: 11 }] });
+
+    const result = await createTask("desc", 1, new Date("2025-01-01"));
+
+    expect(mock).toHaveBeenCalledTimes(3);
+    expect(mock.mock.calls[1][0]).toContain("setval('tasks_id_seq'");
+    const normalized = (s: string) => s.replace(/\s+/g, " ").trim();
+    expect(normalized(mock.mock.calls[2][0])).toBe(normalized(insertQuery));
+    expect(result.id).toBe(11);
   });
 });
