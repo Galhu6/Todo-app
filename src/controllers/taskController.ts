@@ -14,6 +14,7 @@ import {
 } from "../services/Tasks/tasksService";
 import { HttpError } from "../middlewares/errorHandler";
 import { logger } from "../logger";
+import { isValidISOSDate, isValidRecurrence } from "../utils/validation";
 
 export const createTaskController: RequestHandler = async (
   req: Request,
@@ -31,8 +32,20 @@ export const createTaskController: RequestHandler = async (
     );
     return;
   }
+  if (!isValidISOSDate(dueDate)) {
+    next(new HttpError(400, "Invalid due date"));
+    return;
+  }
+  if (recurrence && !isValidRecurrence(recurrence)) {
+    next(new HttpError(400, "Invalid recurrence"));
+  }
   try {
-    const newTask = await createTask(description, listId, dueDate, recurrence);
+    const newTask = await createTask(
+      description,
+      listId,
+      new Date(dueDate),
+      recurrence
+    );
     if (!newTask) {
       next(new HttpError(500, "failed to create task"));
       return;
@@ -66,11 +79,19 @@ export const editTaskController: RequestHandler = async (
   }
 
   try {
+    if (newDueDate !== undefined && !isValidISOSDate(newDueDate)) {
+      next(new HttpError(400, "Invalid due date"));
+      return;
+    }
+    if (newRecurrence !== undefined && !isValidRecurrence(newRecurrence)) {
+      next(new HttpError(400, "Invalid recurrence"));
+      return;
+    }
     const editedTask = await editTask(
       taskId,
       listId,
       newDescription,
-      newDueDate,
+      newDueDate ? new Date(newDueDate) : undefined,
       newRecurrence
     );
     if (!editedTask) {

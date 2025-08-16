@@ -1,4 +1,4 @@
-import { verifyGoogleToken } from "../components/Auth/GoogleLogin/googleVerify";
+import { verifyGoogleToken } from "../services/Auth/googleVerify";
 import {
   loginUser,
   registerUser,
@@ -8,6 +8,17 @@ import {
 } from "../services/Auth/authService";
 import { HttpError } from "../middlewares/errorHandler";
 import type { Request, Response, RequestHandler, NextFunction } from "express";
+
+const isProd = process.env.NODE_ENV === "production";
+const baseCookieOptions: {
+  httpOnly: boolean;
+  secure: boolean;
+  sameSite: "none" | "lax";
+} = {
+  httpOnly: true,
+  secure: isProd,
+  sameSite: isProd ? "none" : "lax",
+};
 
 export const signUp: RequestHandler = async (
   req: Request,
@@ -31,15 +42,11 @@ export const signUp: RequestHandler = async (
     const refreshTtlMs = 30 * 24 * 60 * 60 * 1000; // 30 d
     res
       .cookie("access", signup.token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
+        ...baseCookieOptions,
         maxAge: accessTtlMs,
       })
       .cookie("refresh", signup.refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
+        ...baseCookieOptions,
         maxAge: refreshTtlMs,
       })
       .status(201)
@@ -73,15 +80,11 @@ export const signIn: RequestHandler = async (
     const refreshTtlMs = 30 * 24 * 60 * 60 * 1000; // 30 d
     res
       .cookie("access", login.token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
+        ...baseCookieOptions,
         maxAge: accessTtlMs,
       })
       .cookie("refresh", login.refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
+        ...baseCookieOptions,
         maxAge: refreshTtlMs,
       })
       .status(201)
@@ -147,15 +150,11 @@ export const refreshToken: RequestHandler = async (
     const refreshTtlMs = 30 * 24 * 60 * 60 * 1000; // 30 d
     res
       .cookie("access", refreshed.token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
+        ...baseCookieOptions,
         maxAge: accessTtlMs,
       })
       .cookie("refresh", refreshed.refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
+        ...baseCookieOptions,
         maxAge: refreshTtlMs,
       })
       .status(201)
@@ -170,8 +169,8 @@ export const refreshToken: RequestHandler = async (
 
 export const logout: RequestHandler = (_req: Request, res: Response) => {
   res
-    .clearCookie("access", { httpOnly: true, secure: true, sameSite: "lax" })
-    .clearCookie("refresh", { httpOnly: true, secure: true, sameSite: "lax" })
+    .clearCookie("access", baseCookieOptions)
+    .clearCookie("refresh", baseCookieOptions)
     .json({ success: true });
 };
 

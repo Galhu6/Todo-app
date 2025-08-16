@@ -6,9 +6,9 @@ import {
   deleteList,
   deletedLists,
   subLists,
-} from "./listsApi.js";
-import { allTasks } from "../Tasks/tasksApi.js";
-import { useAppContext } from "../../../context/AppContext.js";
+} from "./listsApi";
+import { allTasks } from "../Tasks/tasksApi";
+import { useAppContext } from "../../../context/AppContext";
 import { Toolbar } from "../../Toolbar";
 
 export type List = {
@@ -248,14 +248,14 @@ export const Lists = () => {
     await editList(draggingId, undefined, undefined, targetId);
     // setLists(lists.filter(l => l.id !== draggingId));
     setDraggingId(null);
-    refreshLists();
+    await refreshLists();
   };
 
   const handleRootDrop = async () => {
     if (draggingId === null) return;
     await editList(draggingId, undefined, undefined, undefined);
     setDraggingId(null);
-    refreshLists();
+    await refreshLists();
   };
 
   const handleAddSubList = async (parentId: number) => {

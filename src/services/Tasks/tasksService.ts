@@ -1,4 +1,5 @@
 import { pool } from "../../db";
+import { isValidRecurrence } from "../../utils/validation";
 
 function toUtcTimestamp(date: Date): string {
   return new Date(date).toISOString().replace("T", " ").replace("Z", "");
@@ -8,7 +9,7 @@ export async function createTask(
   description: string,
   listId: number,
   dueDate: Date,
-  recurrence?: string
+  recurrence?: "daily" | "weekly" | "monthly"
 ) {
   const utcDate = toUtcTimestamp(dueDate);
   try {
@@ -40,7 +41,7 @@ export async function editTask(
   listId: number,
   newDesc?: string,
   newDueDate?: Date,
-  newRecurrence?: string
+  newRecurrence?: "daily" | "weekly" | "monthly"
 ) {
   const updates: string[] = [];
   const values: any[] = [taskId, listId];
@@ -77,8 +78,8 @@ export async function completeTask(taskId: number) {
   ]);
   const task = taskRes.rows[0];
   if (!task) return null;
-  if (task.recurrence) {
-    const nextDate = new Date(task.due_date);
+  const nextDate = new Date(task.due_date);
+  if (isValidRecurrence(task.recurrence) && !isNaN(nextDate.getTime())) {
     switch (task.recurrence) {
       case "daily":
         nextDate.setDate(nextDate.getDate() + 1);
@@ -89,24 +90,20 @@ export async function completeTask(taskId: number) {
       case "monthly":
         nextDate.setMonth(nextDate.getMonth() + 1);
         break;
-      case "yearly":
-        nextDate.setFullYear(nextDate.getFullYear() + 1);
-        break;
     }
     const result = await pool.query(
       `UPDATE tasks SET due_date = $1, status = 'pending' WHERE id = $2 RETURNING *;`,
       [toUtcTimestamp(nextDate), taskId]
     );
     return result.rows[0];
-  } else {
-    const result = await pool.query(
-      `
-        UPDATE tasks SET status = 'completed' WHERE id = $1 RETURNING *;
-        `,
-      [taskId]
-    );
-    return result.rows[0];
   }
+  const result = await pool.query(
+    `
+        UPDATE tasks SET status = 'completed' WHERE id = $1 RETURNING *;
+      `,
+    [taskId]
+  );
+  return result.rows[0];
 }
 export async function setTaskPending(taskId: number) {
   const result = await pool.query(

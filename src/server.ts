@@ -8,14 +8,14 @@ import morgan from "morgan";
 
 process.env.TZ = "UTC";
 
-import authRoutes from "./routes/authRoutes.ts";
-import listRoutes from "./routes/listRoutes.ts";
-import taskRoutes from "./routes/taskRoutes.ts";
-import microTaskRoutes from "./routes/microTasksRoutes.ts";
-import aiRoutes from "./routes/aiRoutes.ts";
-import calendarRoutes from "./routes/calendarRoutes.ts";
-import { errorHandler } from "./middlewares/errorHandler.ts";
-import { logger } from "./logger.ts";
+import authRoutes from "./routes/authRoutes";
+import listRoutes from "./routes/listRoutes";
+import taskRoutes from "./routes/taskRoutes";
+import microTaskRoutes from "./routes/microTasksRoutes";
+import aiRoutes from "./routes/aiRoutes";
+import calendarRoutes from "./routes/calendarRoutes";
+import { errorHandler } from "./middlewares/errorHandler";
+import { logger } from "./logger";
 dotenv.config();
 
 const app = express();
@@ -25,9 +25,11 @@ app.use(morgan("dev"));
 
 app.use(helmet());
 
+const CLIENT_URL = process.env.CLIENT_URL ?? "http://localhost:5173";
+
 app.use(
   cors({
-    origin: [process.env.VITE_FRONTEND_URL ?? "http://localhost:5173"],
+    origin: CLIENT_URL,
     credentials: true,
   })
 );

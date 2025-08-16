@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { sendChatMessage, fetchChatHistory } from "./chatApi.js";
-import { useAppContext } from "../../context/AppContext.js";
+import { sendChatMessage, fetchChatHistory } from "./chatApi";
+import { useAppContext } from "../../context/AppContext";
 
 interface Message {
   sender: "user" | "ai";

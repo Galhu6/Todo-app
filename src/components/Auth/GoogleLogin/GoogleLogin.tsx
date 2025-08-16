@@ -4,7 +4,7 @@ const server = import.meta.env.VITE_SERVER_URL;
 export const GoogleLoginButton = () => {
   const handleLogin = async (credentialResponse: any) => {
     const token = credentialResponse.credential;
-    const res = await fetch(`${server}/api/auth/google`, {
+    const res = await fetch(`${server}/api/auth/google/callback`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

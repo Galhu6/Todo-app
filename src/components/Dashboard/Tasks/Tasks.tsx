@@ -9,18 +9,18 @@ import {
   duplicateTask,
   setTaskPending,
   shareTaskToList,
-} from "./tasksApi.js";
-import { createList, subLists } from "../Lists/listsApi.js";
+} from "./tasksApi";
+import { createList, subLists } from "../Lists/listsApi";
 import {
   fetchMicroTasks,
   createMicroTask as apiCreateMicroTask,
   updateMicroTask as apiUpdateMicroTask,
   deleteMicroTask as apiDeleteMicroTask,
-} from "./microTasksApi.js";
-import type { MicroTask } from "./MicroTasks.js";
-import { MicroTasks } from "./MicroTasks.js";
-import type { List } from "../Lists/Lists.js";
-import { useAppContext } from "../../../context/AppContext.js";
+} from "./microTasksApi";
+import type { MicroTask } from "./MicroTasks";
+import { MicroTasks } from "./MicroTasks";
+import type { List } from "../Lists/Lists";
+import { useAppContext } from "../../../context/AppContext";
 import { Toolbar } from "../../Toolbar/";
 
 export class Task {

@@ -7,6 +7,56 @@ describe("completeTask", () => {
     jest.restoreAllMocks();
   });
 
+  const baseDate = "2024-01-15T00:00:00.00Z";
+  const ts = (d: Date) => d.toISOString().replace("T", " ").replace("Z", "");
+
+  it("advances due date for daily recurrence", async () => {
+    const mock = jest
+      .spyOn(pool, "query")
+      .mockResolvedValueOnce({
+        rows: [{ id: 1, recurrence: "daily", due_date: new Date(baseDate) }],
+      })
+      .mockResolvedValueOnce({ rows: [{ id: 1 }] });
+
+    await completeTask(1);
+
+    const expected = new Date(baseDate);
+    expected.setDate(expected.getDate() + 1);
+    expect(mock.mock.calls[1][1][0]).toBe(ts(expected));
+    expect(mock.mock.calls[1][1][1]).toBe(1);
+  });
+
+  it("advances due date for weekly recurrence", async () => {
+    const mock = jest
+      .spyOn(pool, "query")
+      .mockResolvedValueOnce({
+        rows: [{ id: 1, recurrence: "weekly", due_date: new Date(baseDate) }],
+      })
+      .mockResolvedValueOnce({ rows: [{ id: 1 }] });
+
+    await completeTask(1);
+
+    const expected = new Date(baseDate);
+    expected.setDate(expected.getDate() + 7);
+    expect(mock.mock.calls[1][1][0]).toBe(ts(expected));
+    expect(mock.mock.calls[1][1][1]).toBe(1);
+  });
+  it("advances due date for daily recurrence", async () => {
+    const mock = jest
+      .spyOn(pool, "query")
+      .mockResolvedValueOnce({
+        rows: [{ id: 1, recurrence: "daily", due_date: new Date(baseDate) }],
+      })
+      .mockResolvedValueOnce({ rows: [{ id: 1 }] });
+
+    await completeTask(1);
+
+    const expected = new Date(baseDate);
+    expected.setDate(expected.getDate() + 1);
+    expect(mock.mock.calls[1][1][0]).toBe(expected);
+    expect(mock.mock.calls[1][1][1]).toBe(1);
+  });
+
   it("advances due date for monthly recurrence", async () => {
     const mock = jest
       .spyOn(pool, "query")
@@ -23,9 +73,9 @@ describe("completeTask", () => {
 
     await completeTask(1);
 
-    expect(mock.mock.calls[1][0]).toBe(
-      "UPDATE tasks SET due_date = $1, status = 'pending' WHERE id = $2 RETURNING *;"
-    );
+    const expected = new Date(baseDate);
+    expected.setMonth(expected.getMonth() + 1);
+    expect(mock.mock.calls[1][1][0]).toBe(ts(expected));
     expect(mock.mock.calls[1][1][1]).toBe(1);
   });
 
