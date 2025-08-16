@@ -21,15 +21,20 @@ function signTokens(user: { id: number; email: string; name: string }) {
   return { token, refreshToken };
 }
 
-export function refreshAuthToken(refreshToken: string) {
+export async function refreshAuthToken(refreshToken: string) {
   const decoded = jwt.verify(
     refreshToken,
     process.env.JWT_SECRET!
   ) as jwt.JwtPayload & { id: number; email: string; name: string };
+  const dbRes = await pool.query(
+    `SELECT whatsapp_number FROM users WHERE id = $1`,
+    [decoded.id]
+  );
   const user = {
     id: decoded.id,
     email: decoded.email!.toLowerCase(),
     name: decoded.name!,
+    whatsappNumber: dbRes.rows[0]?.whatsapp_number || null,
   };
   return { ...signTokens(user), user };
 }
@@ -39,7 +44,8 @@ dotenv.config();
 export async function registerUser(
   email: string,
   password: string,
-  name: string
+  name: string,
+  whatsappNumber?: string
 ) {
   const isExist = await pool.query(
     `
@@ -54,18 +60,28 @@ export async function registerUser(
 
   try {
     const result = await pool.query(
-      //posting the email and password after hashing it
       `INSERT INTO Users (
             email,
             password_hash,
-            name) VALUES ($1, $2, $3) RETURNING id, email, name`,
-      [email.toLowerCase(), hashedPassword, name]
+            name,
+            whatsapp_number) VALUES ($1, $2, $3, $4) RETURNING id, email, name, whatsapp_number`,
+      [email.toLowerCase(), hashedPassword, name, whatsappNumber]
     );
     const user = result.rows[0];
 
     const { token, refreshToken } = signTokens(user);
-    return { success: true, token, refreshToken, user };
-  } catch (err) {
+    return {
+      success: true,
+      token,
+      refreshToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        whatsappNumber: user.whatsapp_number || null,
+      },
+    };
+  } catch (err: any) {
     logger.error("falied with err: ", err);
   }
 }
@@ -96,8 +112,19 @@ export async function loginUser(email: string, password: string) {
       id: user.id,
       email: user.email.toLowerCase(),
       name: user.name,
+      whatsappNumber: user.whatsapp_number || null,
     },
   };
+}
+
+export async function updateWhatsappNumber(
+  userId: number,
+  whatsappNumber: string
+) {
+  await pool.query(`UPDATE users SET whatsapp_num ber = $1 WHERE id =$2`, [
+    whatsappNumber,
+    userId,
+  ]);
 }
 
 export async function checkEmailInDB(email: string) {

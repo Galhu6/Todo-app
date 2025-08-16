@@ -9,7 +9,11 @@ import type { ReactNode } from "react";
 import type { List } from "../components/Dashboard/Lists/Lists";
 import { allLists } from "../components/Dashboard/Lists/listsApi";
 
-export type User = { id: number; name: string } | null;
+export type User = {
+  id: number;
+  name: string;
+  whatsappNumber?: string | null;
+} | null;
 
 interface AppContextValue {
   user: User;
@@ -111,7 +115,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         if (res.ok) {
           const data = await res.json();
           if (data.user?.id && data.user?.name) {
-            setUser({ id: data.user.id, name: data.user.name });
+            setUser({
+              id: data.user.id,
+              name: data.user.name,
+              whatsappNumber: data.user.whatsappNumber,
+            });
             localStorage.setItem("userId", String(data.user.id));
           }
         }

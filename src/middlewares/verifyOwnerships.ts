@@ -52,6 +52,36 @@ export const verifyListOwnership: RequestHandler = async (req, _res, next) => {
   }
 };
 
+export const verifyTargetListOwnership: RequestHandler = async (
+  req,
+  _res,
+  next
+) => {
+  const userId = (req as any).user?.id;
+  const targetListId = parseInt(req.params.targetListId);
+
+  if (!userId || isNaN(targetListId)) {
+    next(new HttpError(400, "Missing useror list id"));
+    return;
+  }
+
+  try {
+    const result = await pool.query(
+      `SELECT 1 FROM lists WHERE id = $1 AND user_id = $2`,
+      [targetListId, userId]
+    );
+
+    if (result.rows.length === 0) {
+      next(new HttpError(403, "Not authorized for this list"));
+      return;
+    }
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const verifyMicroTaskOwnership: RequestHandler = async (
   req,
   _res,

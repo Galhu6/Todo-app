@@ -4,6 +4,7 @@ import {
   registerUser,
   checkEmailInDB,
   refreshAuthToken,
+  updateWhatsappNumber,
 } from "../services/Auth/authService";
 import { HttpError } from "../middlewares/errorHandler";
 import type { Request, Response, RequestHandler, NextFunction } from "express";
@@ -13,7 +14,7 @@ export const signUp: RequestHandler = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { email, password, name } = req.body;
+  const { email, password, name, whatsappNumber } = req.body;
 
   if (!email || !password || !name) {
     next(new HttpError(400, "name/email/password missing"));
@@ -21,7 +22,7 @@ export const signUp: RequestHandler = async (
   }
 
   try {
-    const signup = await registerUser(email, password, name);
+    const signup = await registerUser(email, password, name, whatsappNumber);
     if (!signup) {
       next(new HttpError(500, "register failed"));
       return;
@@ -141,7 +142,7 @@ export const refreshToken: RequestHandler = async (
     return;
   }
   try {
-    const refreshed = refreshAuthToken(refresh);
+    const refreshed = await refreshAuthToken(refresh);
     const accessTtlMs = 30 * 60 * 1000; // 30 m
     const refreshTtlMs = 30 * 24 * 60 * 60 * 1000; // 30 d
     res
@@ -172,4 +173,23 @@ export const logout: RequestHandler = (_req: Request, res: Response) => {
     .clearCookie("access", { httpOnly: true, secure: true, sameSite: "lax" })
     .clearCookie("refresh", { httpOnly: true, secure: true, sameSite: "lax" })
     .json({ success: true });
+};
+
+export const updateWhatsapp: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = (req as any).user?.id;
+  const { whatsappNumber } = req.body;
+  if (!userId || !whatsappNumber) {
+    next(new HttpError(400, "user id and whatsapp number required"));
+    return;
+  }
+  try {
+    await updateWhatsappNumber(userId, whatsappNumber);
+    res.status(200).json({ success: true });
+  } catch (err) {
+    next(err);
+  }
 };

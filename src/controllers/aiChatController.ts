@@ -3,7 +3,11 @@ import { OpenAI } from "openai";
 import type { ChatCompletionTool } from "openai/resources";
 import { getChatContext, saveChatContext } from "../services/Chat/chatService";
 import { getUserLists, createList } from "../services/Lists/listService";
-import { getAllTasks, createTask } from "../services/Tasks/tasksService";
+import {
+  getAllTasks,
+  createTask,
+  addTaskToList,
+} from "../services/Tasks/tasksService";
 import { createMicroTask } from "../services/MicroTasks/microTaskService";
 import {
   getUserStats,
@@ -211,6 +215,21 @@ export const chatWithAi: RequestHandler = async (
           },
         },
       },
+      {
+        type: "function",
+        function: {
+          name: "shareTask",
+          description: "share a task to another list",
+          parameters: {
+            type: "object",
+            properties: {
+              taskId: { type: "integer" },
+              targetListId: { type: "integer" },
+            },
+            required: ["taskId", "targetListId"],
+          },
+        },
+      },
     ];
 
     const completion = await openai.chat.completions.create({
@@ -266,7 +285,7 @@ export const chatWithAi: RequestHandler = async (
           }
           const mt = await createMicroTask(args.description, taskId);
           reply = `create micro task "${mt.description}"`;
-        } else if (call.function.name === "recomendedTasks") {
+        } else if (call.function.name === "recommendTasks") {
           const recs = await getRecommendations(userId);
           reply =
             "Recommended tasks: " + recs.map((r) => r.description).join(", ");
@@ -292,6 +311,19 @@ export const chatWithAi: RequestHandler = async (
           reply = QUOTES[Math.floor(Math.random() * QUOTES.length)];
         } else if (call.function.name === "productivityTip") {
           reply = TIPS[Math.floor(Math.random() * TIPS.length)];
+        } else if (call.function.name === "shareTask") {
+          const taskId = parseInt(args.taskId);
+          const targetListId = parseInt(args.targetListId);
+          if (!taskId || !tasks.some((t: any) => t.id === taskId)) {
+            next(new HttpError(404, "task not found"));
+            return;
+          }
+          if (!targetListId || !lists.some((l: any) => l.id === targetListId)) {
+            next(new HttpError(403, "list does not belong to user"));
+            return;
+          }
+          await addTaskToList(taskId, targetListId);
+          reply = `shared task ${taskId} to list ${targetListId}`;
         }
       } catch (err) {
         reply = `sorry, I could not process that command... error: ${err}`;

@@ -16,6 +16,7 @@ import { authMiddleware } from "../middlewares/authMiddleware";
 import {
   verifyListOwnership,
   verifyTaskOwnership,
+  verifyTargetListOwnership,
 } from "../middlewares/verifyOwnerships";
 import { validate } from "../middlewares/validate";
 import { createTaskSchema } from "../schemas/taskSchemas";
@@ -64,11 +65,13 @@ router.post(
 router.post(
   "/lists/:listId/tasks/:taskId/share/:targetListId",
   verifyTaskOwnership,
+  verifyTargetListOwnership,
   addTaskToListController
 );
 router.delete(
   "/lists/:listId/tasks/:taskId/share/:targetListId",
   verifyTaskOwnership,
+  verifyTargetListOwnership,
   removeTaskFromListController
 );
 router.delete(
