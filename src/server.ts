@@ -5,6 +5,8 @@ import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import morgan from "morgan";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yamljs";
 
 process.env.TZ = "UTC";
 
@@ -46,6 +48,12 @@ app.use(
 app.use(cookieParser());
 
 app.use(express.json());
+
+app.use(
+  "/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(YAML.load("docs/openapi.yaml"))
+);
 
 app.get("/health", (_req, res) => {
   res.sendStatus(200);

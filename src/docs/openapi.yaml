@@ -1,0 +1,30 @@
+openapi: 3.0.3
+info: { title: Todo API, version: 1.0.0 }
+servers: [{ url: http://localhost:3000 }]
+paths:
+  /api/lists/new-lists:
+    post:
+      summary: Create list
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                {
+                  name: { type: string },
+                  parentListId: { type: integer, nullable: true },
+                }
+      responses: { "201": { description: Created } }
+/api/tasks/{taskId}/microtasks:
+  post:
+  summary: Create microtask
+  parameters:
+    [{ in: path, name: taskId, schema: { type: integer }, required: true }]
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema: { type: object, properties: { description: { type: string } } }
+  responses: { "201": { description: Created } }
