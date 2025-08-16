@@ -1,10 +1,281 @@
 openapi: 3.0.3
-info: { title: Todo API, version: 1.0.0 }
-servers: [{ url: http://localhost:3000 }]
+info:
+  title: Todo API
+  version: 1.0.0
+  description: |
+    REST API for managing lists, tasks, microtasks, authentication,
+    calendar events and AI chat.
+servers:
+  - url: http://localhost:3000
+    description: Local server
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: access
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        whatsappNumber:
+          type: string
+          nullable: true
+    List:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        overallGoal:
+          type: string
+          nullable: true
+        parentListId:
+          type: integer
+          nullable: true
+        userId:
+          type: integer
+        isDeleted:
+          type: boolean
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+        description:
+          type: string
+        listId:
+          type: integer
+        dueDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [pending, completed]
+        recurrence:
+          type: string
+          enum: [daily, weekly, monthly]
+          nullable: true
+        isDeleted:
+          type: boolean
+    MicroTask:
+      type: object
+      properties:
+        id:
+          type: integer
+        taskId:
+          type: integer
+        description:
+          type: string
+        completed:
+          type: boolean
 paths:
-  /api/lists/new-lists:
+  /api/auth/signup:
     post:
-      summary: Create list
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, name]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                name:
+                  type: string
+                whatsappNumber:
+                  type: string
+                  nullable: true
+      responses:
+        "201":
+          description: User registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /api/auth/login:
+    post:
+      summary: Authenticate user and set cookies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        "201":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /api/auth/google/callback:
+    post:
+      summary: Authenticate via Google
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token:
+                  type: string
+      responses:
+        "200":
+          description: Login successful
+  /api/auth/check-email:
+    get:
+      summary: Check if email exists
+      parameters:
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        "200":
+          description: Email availability
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exists:
+                    type: boolean
+  /api/auth/refresh:
+    post:
+      summary: Refresh access and refresh tokens
+      responses:
+        "201":
+          description: Tokens refreshed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /api/auth/logout:
+    post:
+      summary: Clear authentication cookies
+      responses:
+        "200":
+          description: Logged out
+  /api/auth/whatsapp:
+    patch:
+      summary: Update WhatsApp number
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [whatsappNumber]
+              properties:
+                whatsappNumber:
+                  type: string
+      responses:
+        "200":
+          description: Updated
+  /api/lists:
+    get:
+      summary: Get all lists for the user
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: List of lists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  list:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/List"
+  /api/lists/trash:
+    get:
+      summary: Get deleted lists
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: List of deleted lists
+  /api/lists/new-list:
+    post:
+      summary: Create a new list
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                overallGoal:
+                  type: string
+                  nullable: true
+                parentListId:
+                  type: integer
+                  nullable: true
+      responses:
+        "201":
+          description: List created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/List"
+  /api/lists/{listId}:
+    parameters:
+      - in: path
+        name: listId
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Get list by id
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/List"
+    patch:
+      summary: Update a list
+      security:
+        - cookieAuth: []
       requestBody:
         required: true
         content:
@@ -12,19 +283,359 @@ paths:
             schema:
               type: object
               properties:
-                {
-                  name: { type: string },
-                  parentListId: { type: integer, nullable: true },
-                }
-      responses: { "201": { description: Created } }
-/api/tasks/{taskId}/microtasks:
-  post:
-  summary: Create microtask
-  parameters:
-    [{ in: path, name: taskId, schema: { type: integer }, required: true }]
-  requestBody:
-    required: true
-    content:
-      application/json:
-        schema: { type: object, properties: { description: { type: string } } }
-  responses: { "201": { description: Created } }
+                name:
+                  type: string
+                overallGoal:
+                  type: string
+                  nullable: true
+                parentListId:
+                  type: integer
+                  nullable: true
+      responses:
+        "200":
+          description: List updated
+    delete:
+      summary: Soft delete a list
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: List deleted
+  /api/lists/{listId}/sub-lists:
+    get:
+      summary: Get sub lists
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: listId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Sub lists
+  /api/lists/{listId}/tasks:
+    get:
+      summary: Get tasks for a list
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: listId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Tasks array
+    post:
+      summary: Create task in list
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [description, dueDate]
+              properties:
+                description:
+                  type: string
+                dueDate:
+                  type: string
+                  format: date-time
+                recurrence:
+                  type: string
+                  enum: [daily, weekly, monthly]
+      responses:
+        "201":
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+  /api/lists/{listId}/tasks/trash:
+    get:
+      summary: Get deleted tasks for a list
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: listId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted tasks
+  /api/lists/{listId}/tasks/{taskId}:
+    parameters:
+      - in: path
+        name: listId
+        required: true
+        schema:
+          type: integer
+      - in: path
+        name: taskId
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Get task by id
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+    patch:
+      summary: Update task
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newDescription:
+                  type: string
+                newDueDate:
+                  type: string
+                  format: date-time
+                newRecurrence:
+                  type: string
+                  enum: [daily, weekly, monthly]
+      responses:
+        "200":
+          description: Task updated
+    delete:
+      summary: Delete task
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Task deleted
+  /api/lists/{listId}/tasks/{taskId}/complete:
+    post:
+      summary: Mark task complete
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: listId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: taskId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Task completion set
+  /api/lists/{listId}/tasks/{taskId}/set-pending:
+    post:
+      summary: Set task pending
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: listId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: taskId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Task pending
+  /api/lists/{listId}/tasks/{taskId}/duplicate:
+    post:
+      summary: Duplicate task
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: listId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: taskId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Task duplicated
+  /api/lists/{listId}/tasks/{taskId}/share/{targetListId}:
+    parameters:
+      - in: path
+        name: listId
+        required: true
+        schema:
+          type: integer
+      - in: path
+        name: taskId
+        required: true
+        schema:
+          type: integer
+      - in: path
+        name: targetListId
+        required: true
+        schema:
+          type: integer
+    post:
+      summary: Share task to another list
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Task shared
+    delete:
+      summary: Remove task from shared list
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Task unshared
+  /api/tasks/{taskId}/microtasks:
+    parameters:
+      - in: path
+        name: taskId
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Get microtasks for a task
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Microtasks array
+    post:
+      summary: Create microtask
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [description]
+              properties:
+                description:
+                  type: string
+      responses:
+        "201":
+          description: Microtask created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicroTask"
+  /api/micrtTasks/{microTaskId}:
+    patch:
+      summary: Update microtask
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: microTaskId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                completed:
+                  type: boolean
+                parentId:
+                  type: integer
+                description:
+                  type: string
+      responses:
+        "200":
+          description: Microtask updated
+  /api/microtasks/{microTaskId}:
+    delete:
+      summary: Delete microtask
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: microTaskId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Microtask deleted
+  /api/ai/chat:
+    get:
+      summary: Retrieve chat history
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Chat context
+    post:
+      summary: Chat with AI assistant
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message:
+                  type: string
+      responses:
+        "200":
+          description: AI reply
+  /api/calendar/event:
+    post:
+      summary: Create a calendar event
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [accessToken, summary, startTime, endTime]
+              properties:
+                accessToken:
+                  type: string
+                summary:
+                  type: string
+                description:
+                  type: string
+                startTime:
+                  type: string
+                  format: date-time
+                endTime:
+                  type: string
+                  format: date-time
+      responses:
+        "201":
+          description: Event created
