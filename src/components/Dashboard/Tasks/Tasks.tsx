@@ -62,7 +62,6 @@ export const Tasks = ({ listId }: { listId: number }) => {
     setSelectedListName,
     setSelectedListGoal,
     lists,
-    setLists,
     refreshTasks,
     draggingListId,
     setDraggingListId,
@@ -243,10 +242,10 @@ export const Tasks = ({ listId }: { listId: number }) => {
       selectedListId
     );
     setSubListsState([...subListsState, created]);
-    setLists([...lists, created]);
     refreshTasks();
     setNewSubListName("");
     setNewSubListGoal("");
+    setShowCreateSubList(false);
   };
 
   const handleSelectSubList = (list: List) => {

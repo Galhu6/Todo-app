@@ -30,7 +30,7 @@ router.patch(
   updateMicroTaskController
 );
 router.delete(
-  "/microtasks/:microTaskId",
+  "/microTasks/:microTaskId",
   verifyMicroTaskOwnership,
   deleteMicroTaskController
 );

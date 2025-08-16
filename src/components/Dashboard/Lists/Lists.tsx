@@ -48,6 +48,7 @@ export const Lists = () => {
   const [subListGoal, setSubListGoal] = useState("");
   const [editName, setEditName] = useState("");
   const [editingListId, setEditingListId] = useState<number | null>(null);
+  const [editingParentId, setEditingParentId] = useState<number | null>(null);
   const [progressMap, setProgressMap] = useState<
     Record<number, { completed: number; total: number }>
   >({});
@@ -161,9 +162,21 @@ export const Lists = () => {
   const handleEdit = async () => {
     if (!editingListId || !editName.trim()) return;
     const updated = await editList(editingListId, editName);
-    setLists(lists.map((list) => (list.id === editingListId ? updated : list)));
+    if (editingParentId !== null) {
+      setSubListMap((prev) => ({
+        ...prev,
+        [editingParentId]: (prev[editingParentId] || []).map((l) =>
+          l.id === editingListId ? updated : l
+        ),
+      }));
+    } else {
+      setLists(
+        lists.map((list) => (list.id === editingListId ? updated : list))
+      );
+    }
     setEditName("");
     setEditingListId(null);
+    setEditingParentId(null);
   };
 
   const handleDelete = async (listId: number, parentId?: number) => {
@@ -322,6 +335,8 @@ export const Lists = () => {
         }}
         onEdit={() => {
           setEditingListId(list.id);
+          setEditingParentId(parentId ?? null);
+          setEditName(list.name);
         }}
         onDelete={() => {
           handleDelete(list.id, parentId);
@@ -392,12 +407,16 @@ export const Lists = () => {
           />
           <button
             onClick={handleEdit}
-            className="rounded bg-indigo-600 px-2 text-white tex-sm"
+            className="rounded bg-indigo-600 px-2 text-white text-sm"
           >
             Update
           </button>
           <button
-            onClick={handleEdit}
+            onClick={() => {
+              setEditingListId(null);
+              setEditingParentId(null);
+              setEditName("");
+            }}
             className="rounded bg-gray-500 px-2 text-white text-sm"
           >
             Cancel
