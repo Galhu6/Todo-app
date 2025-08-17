@@ -17,6 +17,7 @@
   "dependencies": {
     "@react-oauth/google": "^0.12.2",
     "bcrypt": "^6.0.0",
+    "chart.js": "^4.5.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
@@ -33,6 +34,7 @@
     "pino": "^9.9.0",
     "pino-pretty": "^13.1.1",
     "react": "^19.1.0",
+    "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.2",
     "swagger-ui-express": "^5.0.1",

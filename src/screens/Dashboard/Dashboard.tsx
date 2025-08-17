@@ -4,6 +4,7 @@ import { Navbar } from "../../components/Navbar/Navbar";
 import { Footer } from "../../components/Footer/Footer";
 import { Chat } from "../../components/Chat/Chat";
 import { HabitTracker } from "../../components/HabitTracker/index";
+import Stats from "../Stats/Stats";
 import { useAppContext } from "../../context/AppContext";
 import { useState } from "react";
 
@@ -77,6 +78,7 @@ export const Dashboard = () => {
               )}
             </div>
           )}
+          <Stats />
         </main>
       </div>
       <Chat />

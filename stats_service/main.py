@@ -3,18 +3,21 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import psycopg
 from psycopg.rows import dict_row
+from dotenv import load_dotenv
+
+load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 CLIENT_URL = os.getenv("CLIENT_URL", "http://localhost:5173")
 
 app = FastAPI(title="Stats Service")
 
-app.add.middleware(
+app.add_middleware(
     CORSMiddleware,
     allow_origins=[CLIENT_URL],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_header=["*"],
+    allow_headers=["*"],
 )
 
 def get_conn():
@@ -24,7 +27,7 @@ def get_conn():
 
 @app.get("/stats")
 async def stats():
-    with get_conn as conn:
+    with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 "SELECT COUNT(*) AS total FROM tasks WHERE isdeleted=false;"

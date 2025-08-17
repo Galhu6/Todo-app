@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Pie } from "react-chartjs-2";
+import "chart.js/auto";
 
 interface StatsData {
   total_tasks: number;
@@ -30,12 +32,38 @@ export const Stats = () => {
     return <div>Loading...</div>;
   }
 
+  const data = {
+    lables: ["Completed", "Pending"],
+    datasets: [
+      {
+        data: [stats.completed_tasks, stats.pending_tasks],
+        backgroundColor: ["#4ade80", "#f87171"],
+        borderColor: ["#16a34a", "#dc2626"],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const options = {
+    plugins: {
+      legend: {
+        position: "bottom" as const,
+        labels: {
+          color: "#374151",
+        },
+      },
+    },
+  };
+
   return (
-    <div className="space-y-2">
-      <h2 className="text-xl font-semibold">Statistics</h2>
-      <p>Total Tasks: {stats.total_tasks}</p>
-      <p>Completed Tasks: {stats.completed_tasks}</p>
-      <p>Pending Tasks: {stats.pending_tasks}</p>
+    <div className="space-y-4 max-w-sm mx-auto p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+      <h2 className="text-xl font-semibold text-center">Statistics</h2>
+      <Pie data={data} options={options} />
+      <div className="text-center text-sm text-gray-600 dark:text-gray-300 space-x-2">
+        <span>Total Tasks: {stats.total_tasks}</span>
+        <span>Completed Tasks: {stats.completed_tasks}</span>
+        <span>Pending Tasks: {stats.pending_tasks}</span>
+      </div>
     </div>
   );
 };
