@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAppContext } from "../../context/AppContext";
 import { Pie } from "react-chartjs-2";
 import "chart.js/auto";
 
@@ -11,11 +12,13 @@ interface StatsData {
 export const Stats = () => {
   const [stats, setStats] = useState<StatsData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { tasksRefreshToken } = useAppContext();
 
   useEffect(() => {
     const url =
       import.meta.env.VITE_STATS_SERVICE_URL || "http://localhost:8000/stats";
     const userId = localStorage.getItem("userId") ?? "";
+    setError(null);
     fetch(url, { headers: { "X-User-ID": userId } })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch stats");
@@ -23,7 +26,7 @@ export const Stats = () => {
       })
       .then(setStats)
       .catch((err) => setError(err.message));
-  }, []);
+  }, [tasksRefreshToken]);
 
   if (error) {
     return <div className="text-red-500">{error}</div>;
