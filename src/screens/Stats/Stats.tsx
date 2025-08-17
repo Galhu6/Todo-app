@@ -15,7 +15,8 @@ export const Stats = () => {
   useEffect(() => {
     const url =
       import.meta.env.VITE_STATS_SERVICE_URL || "http://localhost:8000/stats";
-    fetch(url)
+    const userId = localStorage.getItem("userId") ?? "";
+    fetch(url, { headers: { "X-User-ID": userId } })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch stats");
         return res.json();
