@@ -7,6 +7,7 @@
     "dev": "vite",
     "dev:server": "nodemon --watch src --ext ts,tsx,js,json --exec tsx src/server.ts",
     "build": "tsc -p tsconfig.json",
+    "build:web": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",

@@ -13,6 +13,7 @@ A Full-Stack productivity app (React + Vite + TS, Express + Postgres). Features:
 - Node 20+
 - Postgres 14+
 - .env based on `.env.example`
+- Optional Python 3.10+ for stats microservice
 
 ### Setup
 
@@ -23,11 +24,15 @@ npm install
 # start backend
 npm run dev:server
 
-#start frontend
+# start frontend
 npm run dev
+
+# start stats microservice (optional)
+cd stats_service && uvicorn main:app -- reload
 ```
 
 Set `VITE_SERVER_URL` to your server URL (default http:localhost:3000).
+Set `VITE_STATS_SERVICE_URL` to the stats microservice URL if different from `http://localhost:8000/stats`.
 
 ## Enviroment
 

@@ -25,7 +25,7 @@ router.post(
   createMicroTaskController
 );
 router.patch(
-  "/micrtTasks/:microTaskId",
+  "/microtasks/:microTaskId",
   verifyMicroTaskOwnership,
   updateMicroTaskController
 );

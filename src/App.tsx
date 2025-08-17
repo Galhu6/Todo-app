@@ -4,6 +4,7 @@ import { DashboardProtection } from "./components/DashboardProtection/DashboardP
 import { Dashboard } from "./screens/Dashboard/Dashboard";
 import { AuthScreen } from "./screens/AuthScreen/AuthScreen";
 import { AppProvider } from "./context/AppContext";
+import Stats from "./screens/Stats/Stats";
 
 function App() {
   return (
@@ -17,6 +18,14 @@ function App() {
             element={
               <DashboardProtection>
                 <Dashboard />
+              </DashboardProtection>
+            }
+          />
+          <Route
+            path="/dashboard/stats"
+            element={
+              <DashboardProtection>
+                <Stats />
               </DashboardProtection>
             }
           />

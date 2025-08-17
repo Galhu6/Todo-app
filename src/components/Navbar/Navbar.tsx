@@ -30,8 +30,19 @@ export const Navbar = () => {
       </Link>
 
       <div className="flex gap-6 text-sm md:flex">
-        {location.pathname.startsWith("/dashboard") ||
-        location.pathname.startsWith("/auth") ? (
+        {location.pathname.startsWith("/dashboard") ? (
+          <>
+            <span className="text-indigo-400 font-semibold">
+              {user ? `Hello ${user.name}!` : "To Dashboard"}
+            </span>
+            <Link
+              to="/dashboard/stats"
+              className="text-gray-900 dark:text-gray-100 hover:text-indigo-400"
+            >
+              stats
+            </Link>
+          </>
+        ) : location.pathname.startsWith("/auth") ? (
           <span className="text-indigo-400 font-semibold">
             {user ? `Hello ${user.name}!` : "To Dashboard"}
           </span>
