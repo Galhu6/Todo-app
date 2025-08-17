@@ -28,7 +28,7 @@ npm run dev:server
 npm run dev
 
 # start stats microservice (optional)
-cd stats_service && uvicorn main:app -- reload
+npm run py-init
 ```
 
 Set `VITE_SERVER_URL` to your server URL (default http:localhost:3000).

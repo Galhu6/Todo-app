@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "seed": "node --loader ts-node/esm src/db/seed.ts",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "py-init": " py -m uvicorn main:app --reload --app-dir stats_service"
   },
   "dependencies": {
     "@react-oauth/google": "^0.12.2",
